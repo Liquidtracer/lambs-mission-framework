@@ -1,44 +1,44 @@
-# Instrukser for AI/Codex
+# Instructions for AI/Codex
 
-## Samarbeid og oppdragsomfang
+## Collaboration and task scope
 
-Behandle brukeren som en erfaren Arma 3-mission maker og teknisk samarbeidspartner. Ikke forklar grunnleggende konsepter uten at det er etterspurt. Svar forholdsvis konsist, men forklar viktige tradeoffs og begrensninger.
+Treat the user as an experienced Arma 3 mission maker and technical collaborator. Do not explain basic concepts unless asked. Keep responses relatively concise, but explain important tradeoffs and limitations.
 
-Ved gjennomgang, vurdering, forklaring eller forslag skal filer ikke endres med mindre implementering allerede er avtalt. Ved implementering, gjennomfør innenfor avtalt omfang uten unødvendige bekreftelser. Ikke utfør uvedkommende refaktorering, opprydding, modernisering eller redesign.
+When reviewing, assessing, explaining or proposing, do not change files unless implementation has already been agreed. When implementing, proceed within the agreed scope without unnecessary confirmations. Do not perform unrelated refactoring, cleanup, modernization or redesign.
 
-Bevar eksisterende gameplay, UI, informasjonsflyt og betjening med mindre en oppførselsendring er uttrykkelig bestilt. Beskriv nødvendige oppførselsendringer tydelig; ikke skjul dem som «opprydding» eller «robusthet». Tilsiktede særvalg er ikke feil bare fordi en annen løsning virker mer generell.
+Preserve existing gameplay, UI, information flow and controls unless a behavior change is explicitly requested. Describe necessary behavior changes clearly; do not hide them as “cleanup” or “robustness”. Intentional design choices are not errors just because another solution seems more general.
 
-Før ombygging anbefales, identifiser det konkrete problemet, minste nyttige endring og kostnaden i kompleksitet, migrering og testing. Vurder om dagens løsning bør beholdes. Ved refaktorering må gameplay-hensikt og forskjeller mellom kontrakter bevares; still ett målrettet spørsmål hvis avgjørende hensikt er ukjent.
+Before recommending a rebuild, identify the concrete problem, the smallest useful change and the cost in complexity, migration and testing. Consider whether the current solution should be retained. When refactoring, preserve gameplay intent and differences between contracts; ask one focused question if essential intent is unknown.
 
-Behandle forslag under utforsking som hypoteser, ikke beslutninger. Utfordre med begrunnelse, skill teknisk mulighet fra anbefaling, og forklar hvorfor en anbefaling eventuelt endres.
+Treat suggestions during exploration as hypotheses, not decisions. Challenge them with reasoning, distinguish technical possibility from recommendation, and explain why a recommendation changes, if it does.
 
-## Dokumenter som skal leses
+## Documents to read
 
-- Følg [docs/development.md](docs/development.md) for utviklingsprinsipper, navngivning, kommentarer, filheadere, testing og dokumentasjons-/changelog-policy.
-- Før teknisk arbeid med SQF, LMF, initialisering, integrasjon, locality, multiplayer eller JIP: les fellesdelen av [docs/architecture.md](docs/architecture.md), deretter berørte modulavsnitt og avhengigheter. Les hele dokumentet ved bred arkitekturgjennomgang eller uklart omfang.
-- Bruk [docs/mission-maker-reference.md](docs/mission-maker-reference.md) ved arbeid med mission-maker-rettede kall og konfigurasjon. Dette er den kanoniske praktiske referansen.
-- Uendret innhold som allerede er tilgjengelig i konteksten trenger ikke leses på nytt. Arkitekturdokumentet er ikke obligatorisk for oppgaver som åpenbart ikke berører teknisk mission-funksjonalitet.
+- Follow [docs/development.md](docs/development.md) for development principles, naming, comments, file headers, testing and documentation/changelog policy.
+- Before technical work involving SQF, LMF, initialization, integration, locality, multiplayer or JIP: read the common section of [docs/architecture.md](docs/architecture.md), then the affected module sections and dependencies. Read the entire document for a broad architecture review or unclear scope.
+- Use [docs/mission-maker-reference.md](docs/mission-maker-reference.md) when working with mission-maker-facing calls and configuration. This is the canonical practical reference.
+- Unchanged content already available in context does not need to be read again. The architecture document is not mandatory for tasks that clearly do not affect technical mission functionality.
 
-Dokumentasjonen erstatter ikke kodeundersøkelse. Oppdater berørte dokumenter ved avtalte kontrakts-/oppførselsendringer etter utviklingsguiden. Ved ren vurdering skal dokumentasjonsrettinger foreslås, ikke utføres. Ikke opprett nye dokumentasjonsfiler, reviewrapporter, endringslogger eller testplaner uten uttrykkelig bestilling; lever slike resultater i samtalen som standard.
+Documentation does not replace code inspection. Update affected documents for agreed contract/behavior changes according to the development guide. For assessment-only work, propose documentation corrections rather than implementing them. Do not create new documentation files, review reports, changelogs or test plans without an explicit request; deliver such results in the conversation by default.
 
-## Kritiske tekniske krav
+## Critical technical requirements
 
-Dedicated server og Join-in-Progress (JIP) er grunnleggende krav. Ta hensyn til faktisk locality, initialisering, execution context, state og nettverksbruk; en løsning som bare virker i editoren er ikke tilstrekkelig.
+Dedicated server operation and Join-in-Progress (JIP) are fundamental requirements. Account for actual locality, initialization, execution context, state and network usage; a solution that only works in the editor is not sufficient.
 
-Undersøk relevant LMF-kode før du beskriver eller endrer den. Bruk eksisterende framework fremfor å anta at et parallelt system må bygges. Kode/config beskriver implementasjonen; brukerkrav og avklarte designvalg beskriver hensikten. Synliggjør motstrid og manglende kontekst fremfor å gjette. Ved debugging, søk faktisk årsak fremfor bare en workaround.
+Inspect the relevant LMF code before describing or changing it. Use the existing framework rather than assuming a parallel system must be built. Code/config describes the implementation; user requirements and agreed design choices describe the intent. Make contradictions and missing context explicit rather than guessing. When debugging, seek the actual cause rather than just a workaround.
 
-Ikke finn på Arma 3-kommandoer, SQF-syntaks, funksjoner, engine- eller modoppførsel. Når en vurdering avhenger av engine-oppførsel, undersøk den konkrete siden i den aktuelle [Bohemia Interactive Community Wiki](https://community.bohemia.net/wiki/), inkludert relevante syntaks-, locality-, execution-, MP- og versjonsvilkår. For ACE/CBA-spesifikk oppførsel, bruk relevant prosjektdokumentasjon eller kildekode og skill aktuell upstream-kilde fra installert modversjon.
+Do not invent Arma 3 commands, SQF syntax, functions, engine or mod behavior. When an assessment depends on engine behavior, inspect the specific page in the current [Bohemia Interactive Community Wiki](https://community.bohemia.net/wiki/), including relevant syntax, locality, execution, MP and version conditions. For ACE/CBA-specific behavior, use relevant project documentation or source code and distinguish the current upstream source from the installed mod version.
 
-Oppgi kildesidene som brukes. Skill dokumentert kontrakt, community-kommentarer, kodeutledet tolkning og utestede antakelser. Påpek tvetydig eller mangelfull dokumentasjon; foreslå ved behov en minimal reproduksjon eller dedicated-test.
+Identify the source pages used. Distinguish documented contracts, community comments, interpretations derived from code and untested assumptions. Point out ambiguous or incomplete documentation; propose a minimal reproduction or dedicated-server test when needed.
 
-Skill uttrykkelig mellom statisk kode-/referansekontroll, parser-/syntakskontroll, lokal runtime-test, dedicated-test med flere klienter og JIP-test. Rapporter bare utført kontroll og hva den dokumenterer. En lokal test eller parserkontroll beviser ikke korrekt multiplayer-oppførsel. Skill rapportert symptom, kodeutledet risiko og runtime-bekreftet årsak; oppgi korte, konkrete gjenstående tester når relevant.
+Explicitly distinguish static code/reference checks, parser/syntax checks, local runtime tests, dedicated-server tests with multiple clients and JIP tests. Report only checks actually performed and what they establish. A local test or parser check does not prove correct multiplayer behavior. Distinguish reported symptoms, risks derived from code and runtime-confirmed causes; give short, concrete remaining tests when relevant.
 
-## Prosjektgrenser og beskyttet konfigurasjon
+## Project boundaries and protected configuration
 
-Både `framework/` og `settings/` er LMF: implementasjon og mission-maker-konfigurasjon. Rotfilene gir også utviklingsmission og integrasjon; `description.ext` er blandet. Klassifiser etter innhold, ikke bare plassering. Ikke flytt funksjonalitet mellom lagene som uvedkommende opprydding.
+Both `framework/` and `settings/` are LMF: implementation and mission-maker configuration. Root files also provide the development mission and integration; `description.ext` is mixed. Classify by content, not just location. Do not move functionality between layers as unrelated cleanup.
 
-`mission.sqm` er bevisst ubinarisert og kan inspiseres, men må aldri redigeres direkte. Eden Editor er autoriteten for endringer. Beskriv nødvendige Eden-endringer for brukeren; oppgi manglende kontekst fremfor å anta innholdet.
+`mission.sqm` is intentionally unbinarized and may be inspected, but must never be edited directly. Eden Editor is the authority for changes. Describe necessary Eden changes to the user; identify missing context rather than assuming the contents.
 
-Forward Deploy og Vehicle Service skal ikke gjennomgås eller endres uten uttrykkelig forespørsel, heller ikke i brede kartlegginger. Avgrensningen gjelder ikke den delte Paradrop-modulen eller øvrig kjøretøyinitialisering og asset spawnere. Bevar dokumentert designbegrunnelse og særvalg.
+Forward Deploy and Vehicle Service must not be reviewed or changed without an explicit request, including in broad surveys. This boundary does not apply to the shared Paradrop module or other vehicle initialization and asset spawners. Preserve documented design rationale and intentional choices.
 
-De konfigurerte Nopryl-UID-ene gir tilsiktet vedvarende teknisk/admin-tilgang. Listene i `framework/XEH_preInit.sqf` og `description.ext` betjener forskjellige tilgangssystemer. Ikke fjern, konsolider eller endre dem som opprydding.
+The configured Nopryl UIDs provide intentional persistent technical/admin access. The lists in `framework/XEH_preInit.sqf` and `description.ext` serve different access systems. Do not remove, consolidate or change them as cleanup.

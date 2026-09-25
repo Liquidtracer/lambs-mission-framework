@@ -1,162 +1,162 @@
-# Utvikling av Lambs Mission Framework
+# Developing Lambs Mission Framework
 
-Utviklingsprinsipper og kodekonvensjoner for LMF. Teknisk arkitektur og modulkontrakter står i [architecture.md](architecture.md); praktiske mission-maker-kall står i [mission-maker-reference.md](mission-maker-reference.md). AI/Codex-instrukser står i [AGENTS.md](../AGENTS.md).
+Development principles and code conventions for LMF. Technical architecture and module contracts are in [architecture.md](architecture.md); practical mission-maker calls are in [mission-maker-reference.md](mission-maker-reference.md). AI/Codex instructions are in [AGENTS.md](../AGENTS.md).
 
-## Prosjektmodell og lagdeling
+## Project model and layers
 
-Repositoryroten er også den direkte kjørbare Arma 3-utviklingsmissionen `LMF_DEV.Altis/`. Både `framework/` og `settings/` er LMF: implementasjonen ligger hovedsakelig i `framework/`, mens `settings/` er konfigurasjonslaget for mission makers. Rotfilene gir integrasjon og utviklings-/testmission; `description.ext` inneholder både LMF-integrasjon og mission-oppsett. Klassifiser innhold etter funksjon, ikke bare mappeplassering.
+The repository root is also the directly runnable Arma 3 development mission `LMF_DEV.Altis/`. Both `framework/` and `settings/` are LMF: the implementation is mainly in `framework/`, while `settings/` is the configuration layer for mission makers. Root files provide integration and the development/test mission; `description.ext` contains both LMF integration and mission setup. Classify content by function, not just folder location.
 
-Undersøk innstillinger og deres bruk før de klassifiseres som generelle eller mission-spesifikke. Skill mellom framework-kode, LMF-konfigurasjon og mission-integrasjon. Ikke flytt funksjonalitet mellom lagene uten å vurdere hvor den naturlig hører hjemme. Utviklingsmissionen skal være minimal; midlertidig testkode fjernes normalt før commit med mindre den er nyttig permanent test-/integrasjonsinfrastruktur.
+Inspect settings and their use before classifying them as general or mission-specific. Distinguish framework code, LMF configuration and mission integration. Do not move functionality between layers without considering where it naturally belongs. The development mission should be minimal; temporary test code is normally removed before committing unless it is useful permanent test/integration infrastructure.
 
-`mission.sqm` lagres bevisst ubinarisert og kan inspiseres, men skal aldri redigeres direkte. Endringer gjøres kun gjennom Eden Editor. Manglende Eden-kontekst skal beskrives, ikke erstattes med antakelser.
+`mission.sqm` is intentionally stored unbinarized and may be inspected, but must never be edited directly. Changes are made only through Eden Editor. Missing Eden context must be described, not replaced with assumptions.
 
-Kode og konfigurasjon beskriver dagens implementasjon; eksplisitte krav og avklarte designvalg beskriver tilsiktet oppførsel. Ved motstrid må avviket synliggjøres. Bruk eksisterende LMF der det passer fremfor å bygge parallelle systemer.
+Code and configuration describe the current implementation; explicit requirements and agreed design choices describe intended behavior. Where they conflict, the discrepancy must be made explicit. Use existing LMF where it fits rather than building parallel systems.
 
-## Endringsdisiplin
+## Change discipline
 
-Feilretting, optimalisering og refaktorering skal som utgangspunkt bevare eksisterende gameplay, UI, informasjonsflyt og brukerbetjening. Ikke innfør designendringer som en del av teknisk opprydding. Tilsiktede begrensninger og særvalg skal ikke behandles som feil bare fordi en annen løsning virker mer generell eller ryddig.
+Bug fixes, optimization and refactoring should preserve existing gameplay, UI, information flow and user controls by default. Do not introduce design changes as part of technical cleanup. Intentional limitations and specific design choices must not be treated as errors just because another solution seems more general or cleaner.
 
-Beskriv nødvendige oppførselsendringer uttrykkelig. Ikke skjul endret funksjonalitet, utseende eller betjening bak formuleringer som «opprydding» eller «forbedret robusthet».
+Describe necessary behavior changes explicitly. Do not hide changes in functionality, appearance or controls behind phrases such as “cleanup” or “improved robustness”.
 
-Før du anbefaler ombygging av et fungerende system, beskriv det konkrete problemet, minste nyttige endring og kostnaden i kompleksitet, migrering og testing. Vurder eksplisitt om dagens løsning bør beholdes. Færre kodelinjer eller mer generell arkitektur er ikke alene tilstrekkelig begrunnelse.
+Before recommending a rebuild of a working system, describe the concrete problem, the smallest useful change and the cost in complexity, migration and testing. Explicitly consider whether the current solution should be retained. Fewer lines of code or a more general architecture are not sufficient justification on their own.
 
-Ved refaktorering skal du identifisere hvilken gameplay-hensikt koden ivaretar, og hvilke forskjeller som må bevares. Hvis ukjent hensikt er avgjørende for anbefalingen, still ett målrettet spørsmål før løsningen fastlegges. Ikke anta at like kodeblokker har samme kontrakt.
+When refactoring, identify the gameplay intent the code serves and which differences must be preserved. If unknown intent is critical to the recommendation, ask one focused question before settling on the solution. Do not assume similar code blocks have the same contract.
 
-Når ny funksjonalitet skal inn i LMF, behandle den som langsiktig og gjenbrukbar framework-kode, men unngå unødvendig abstraksjon og overengineering.
+When adding new functionality to LMF, treat it as long-term, reusable framework code, but avoid unnecessary abstraction and overengineering.
 
-## Multiplayer og initialisering
+## Multiplayer and initialization
 
-Alle missions kjøres på dedicated server.
+All missions run on a dedicated server.
 
-Alle missions skal støtte Join-in-Progress (JIP).
+All missions must support Join-in-Progress (JIP).
 
-Dette er grunnleggende krav for all teknisk utvikling i prosjektet.
+These are fundamental requirements for all technical development in the project.
 
-Når du foreslår, skriver eller vurderer tekniske løsninger, ta hensyn til Arma 3s faktiske multiplayer- og execution-modell. Løsningen skal fungere korrekt under reelle multiplayer-forhold, ikke bare i editoren eller i en enkel lokal test.
+When proposing, writing or assessing technical solutions, account for Arma 3's actual multiplayer and execution model. The solution must work correctly under real multiplayer conditions, not just in the editor or a simple local test.
 
-Tenk gjennom relevante forhold som locality, initialization, execution context, state og JIP uten å låse løsningen til bestemte mekanismer på forhånd.
+Consider relevant aspects such as locality, initialization, execution context, state and JIP without committing the solution to specific mechanisms in advance.
 
-Vurder ytelse, nettverksbruk, robusthet, lesbarhet og vedlikeholdbarhet i den graden det er relevant for problemet.
+Consider performance, network usage, robustness, readability and maintainability to the extent relevant to the problem.
 
-Ikke finn på Arma 3-kommandoer, SQF-syntaks, funksjoner eller engine behaviour. Hvis teknisk korrekthet er usikker, verifiser fremfor å gjette.
+Do not invent Arma 3 commands, SQF syntax, functions or engine behavior. If technical correctness is uncertain, verify rather than guess.
 
-Ved debugging, forsøk å identifisere den faktiske årsaken til problemet fremfor bare å lage en workaround.
+When debugging, try to identify the actual cause of the problem rather than merely creating a workaround.
 
-## Teknisk verifisering og kilder
+## Technical verification and sources
 
-Når en teknisk vurdering avhenger av hva en Arma 3-kommando, funksjon eller engine-mekanisme faktisk gjør, skal den aktuelle informasjonen verifiseres mot den nåværende Bohemia Interactive Community Wiki:
+When a technical assessment depends on what an Arma 3 command, function or engine mechanism actually does, verify the relevant information against the current Bohemia Interactive Community Wiki:
 
 https://community.bohemia.net/wiki/
 
-Ikke stol utelukkende på innebygd modellkunnskap når oppdatert dokumentasjon kan undersøkes.
+Do not rely solely on built-in model knowledge when up-to-date documentation can be consulted.
 
-Ved bruk eller vurdering av SQF-kommandoer, undersøk den konkrete wiki-siden for kommandoen og kontroller relevante forhold som:
+When using or assessing SQF commands, inspect the specific wiki page for the command and check relevant aspects such as:
 
-* syntaks og alternative syntaksformer
-* argument- og returtyper
+* syntax and alternative syntax forms
+* argument and return types
 * locality
-* local eller global effect
+* local or global effect
 * execution context
-* multiplayer-oppførsel
-* server- og client-begrensninger
-* versjonskrav og eventuell branch-avhengighet
-* dokumenterte edge cases og relevante merknader
+* multiplayer behavior
+* server and client restrictions
+* version requirements and any branch dependency
+* documented edge cases and relevant notes
 
-Skill mellom:
+Distinguish between:
 
-* dokumentert kommando- eller engine-oppførsel
-* community-kommentarer og eksempler på wiki-en
-* tolkninger basert på eksisterende LMF-kode
-* antakelser som fortsatt krever testing
+* documented command or engine behavior
+* community comments and examples on the wiki
+* interpretations based on existing LMF code
+* assumptions that still require testing
 
-Community Wiki-en er en Bohemia-hostet, community-vedlikeholdt referanse og kan inneholde ufullstendig, uklar eller foreldet informasjon. Hvis dokumentasjonen er tvetydig, motsier eksisterende kode eller ikke dekker den aktuelle multiplayer-situasjonen, skal usikkerheten påpekes.
+The Community Wiki is a Bohemia-hosted, community-maintained reference and may contain incomplete, unclear or outdated information. If the documentation is ambiguous, contradicts existing code or does not cover the multiplayer situation in question, point out the uncertainty.
 
-Foreslå ved behov en minimal reproduksjon eller en test på dedicated server fremfor å presentere antatt engine behaviour som fakta.
+When needed, propose a minimal reproduction or a dedicated-server test rather than presenting assumed engine behavior as fact.
 
-Når en teknisk konklusjon bygger på wiki-dokumentasjon, oppgi hvilke kommando- eller temasider som ble brukt.
+When a technical conclusion relies on wiki documentation, identify the command or topic pages used.
 
-For ACE- og CBA-spesifikk oppførsel skal relevant dokumentasjon eller kildekode fra det aktuelle prosjektet undersøkes. BIKI alene er ikke tilstrekkelig for å fastslå mod-spesifikke kontrakter. Skill mellom dagens dokumentasjon/kildekode og den modversjonen missionen faktisk kjøres med når dette kan påvirke konklusjonen.
+For ACE- and CBA-specific behavior, inspect relevant documentation or source code from the respective project. BIKI alone is not sufficient to establish mod-specific contracts. Distinguish current documentation/source code from the mod version the mission actually runs with when this could affect the conclusion.
 
-## Navngivning i LMF
+## Naming in LMF
 
-Aktive framework-helpers og framework-state skal bruke `lmf_`-prefiks og følge navngivningen i den relevante modulen. Mission-spesifikke `a2k_*`-helpers skal ikke omdøpes som del av generell LMF-opprydding.
+Active framework helpers and framework state must use the `lmf_` prefix and follow the naming conventions of the relevant module. Mission-specific `a2k_*` helpers must not be renamed as part of general LMF cleanup.
 
-Navne- og kommentarreglene gjelder ny og endret kode innenfor oppgavens omfang. Eksisterende avvik utenfor dette omfanget skal ikke standardiseres uten avtale.
+Naming and comment rules apply to new and changed code within the task's scope. Existing deviations outside this scope must not be standardized without agreement.
 
-Mapper/handlinger bruker camelCase og beskrivende hele ord med etablerte fagforkortelser. Script-/includefiler har beskrivende navn uten `fn_`; execution context alene er ikke tilstrekkelig navn.
+Folders/actions use camelCase and descriptive whole words with established technical abbreviations. Script/include files have descriptive names without `fn_`; execution context alone is not a sufficient name.
 
-Lokale variabler, parametere og lokale kodevariabler bruker `_camelCase`, uten interne understreker. Dette gjelder også private innstillinger i `settings/`. Forkortelser behandles som ord: `_nvg`, `_apcCamo`, `_groupId`, `_rifleGlAmmo` og `_firedEh`. Samme identifikator skal ha samme skrivemåte i definisjoner og alle referanser, også i strenger med variabelnavn eller SQF-kode.
+Local variables, parameters and local code variables use `_camelCase`, without internal underscores. This also applies to private settings in `settings/`. Abbreviations are treated as words: `_nvg`, `_apcCamo`, `_groupId`, `_rifleGlAmmo` and `_firedEh`. The same identifier must have the same spelling in definitions and all references, including strings containing variable names or SQF code.
 
-Globale LMF-navn bruker `lmf_camelCase` eller modulens etablerte `lmf_modul_camelCase`. Registrerte funksjoner bruker `lmf_modul_fnc_camelCase`, med samsvar mellom funksjonsklasse, `fn_*.sqf`-fil og kallesteder. Globale mission-settings beholder `var_camelCase`; intern framework-state bruker `lmf_`. Konstanter beholder `LMF_UPPER_SNAKE_CASE` som et uttrykkelig unntak.
+Global LMF names use `lmf_camelCase` or the module's established `lmf_modul_camelCase`. Registered functions use `lmf_modul_fnc_camelCase`, with matching function classes, `fn_*.sqf` files and call sites. Global mission settings retain `var_camelCase`; internal framework state uses `lmf_`. Constants retain `LMF_UPPER_SNAKE_CASE` as an explicit exception.
 
-Etablerte modul-prefikser beholdes. CamelCase-standardisering gir ikke i seg selv grunnlag for å endre begreper, HashMap-nøkler, action-/event-/marker-/layer-ID-er, Eden-navn eller eksterne ACE-/CBA-/BIS-/modnavn. Engine- og callback-definerte variabler beholder kontraktens navn. Ved omdøping må inkluderingsscoper og alle relevante referanser kontrolleres for kollisjoner og brudd; endre ikke scope, verdier eller execution som del av navneendringen.
+Established module prefixes are retained. CamelCase standardization does not in itself justify changing terms, HashMap keys, action/event/marker/layer IDs, Eden names or external ACE/CBA/BIS/mod names. Engine- and callback-defined variables retain the names specified by their contracts. When renaming, check include scopes and all relevant references for collisions and breakage; do not change scope, values or execution as part of the rename.
 
-## Kommentarstil og filheadere
+## Comment style and file headers
 
-Kommentarer i `framework/` og `settings/` skrives på engelsk, i vanlig setningsform og med ett mellomrom etter `//`. Kommentartekst, headertitler og seksjonsnavn begynner med stor forbokstav og bruker ellers vanlig setningsform. Ikke bruk gjennomgående versaler, gjennomgående små bokstaver eller stor forbokstav i hvert ord. Etablerte forkortelser, egennavn og kodeidentifikatorer beholder korrekt skrivemåte. Unngå dekorative bannere og generelle `INIT`-/`RETURN`-etiketter.
+Comments in `framework/` and `settings/` are written in English, in normal sentence case and with one space after `//`. Comment text, header titles and section names begin with a capital letter and otherwise use normal sentence case. Do not use all caps, all lowercase or title case. Established abbreviations, proper names and code identifiers retain their correct spelling. Avoid decorative banners and generic `INIT`/`RETURN` labels.
 
-Et avgrenset unntak gjelder de tre hovedseksjonene i `framework/XEH_postInit.sqf`: `All machines`, `Server` og `Player clients`. Disse bruker én ASCII-kommentarlinje på formen `// --- All machines ---`, fylt ut med bindestreker til og med kolonne 100. Underseksjoner følger vanlig kommentarstil uten dekorative skiller.
+A limited exception applies to the three main sections in `framework/XEH_postInit.sqf`: `All machines`, `Server` and `Player clients`. These use one ASCII comment line in the form `// --- All machines ---`, padded with hyphens through column 100. Subsections follow the normal comment style without decorative separators.
 
-Foretrekk én kort kommentarlinje direkte over koden når det er tilstrekkelig. Slå sammen seksjonsnavn og nødvendig veiledning, og unngå gjentakelser mellom filheader, seksjonskommentar og eksempel. Bruk flere linjer når kontrakten eller begrunnelsen trenger det; ikke press teksten sammen til uleselige langlinjer.
+Prefer one short comment line directly above the code when sufficient. Combine section names and necessary guidance, and avoid repetition between the file header, section comment and example. Use multiple lines when the contract or rationale requires it; do not compress the text into unreadably long lines.
 
-Alle kodefiler i `framework/` og `settings/` skal ha en `/* ... */`-filheader med en egen, kort og menneskelesbar tittellinje, etterfulgt av en beskrivelse av filens formål. Headeren skal tilføre formål eller kontrakt utover filnavnet. Det skal være nøyaktig én tom linje etter avsluttende `*/` før kode, preprosessordirektiver eller neste kommentar starter. Dokumenter relevante argumenter, returverdier, locality-/execution-krav og eventuelt et nyttig kalleksempel, uten obligatoriske tomme felt. For include-fragmenter beskrives inkluderingspunkt og arvede forutsetninger når dette er relevant. Vanlige kommentarer inne i filen bruker `//`.
+All code files in `framework/` and `settings/` must have a `/* ... */` file header with a separate, short, human-readable title line, followed by a description of the file's purpose. The header should add purpose or contract information beyond the filename. There must be exactly one blank line after the closing `*/` before code, preprocessor directives or the next comment begins. Document relevant arguments, return values, locality/execution requirements and, where useful, a call example, without mandatory empty fields. For include fragments, describe the inclusion point and inherited assumptions where relevant. Ordinary comments inside the file use `//`.
 
-Forklar hvorfor, begrensninger og spesielle verdier. Fjern kommentarer som bare gjentar navn eller selvforklarende kode. Behold mer veiledning i `settings/` enn i intern framework-kode, men samle gjentakelser. Dokumenter dagens oppførsel uten løpende refaktoreringshistorikk, og bevar forfatter- og kildekreditering. Bevisst utkommentert kode skal ikke aktiveres som del av kommentaropprydding.
+Explain why, limitations and special values. Remove comments that merely repeat names or self-explanatory code. Retain more guidance in `settings/` than in internal framework code, but consolidate repetition. Document current behavior without ongoing refactoring history, and preserve author and source credits. Intentionally commented-out code must not be activated as part of comment cleanup.
 
-## Enkelhet for mission makers
+## Simplicity for mission makers
 
-Mission makers forholder seg hovedsakelig til `settings/`. Prioriter forståelig konfigurasjon og gode standardverdier. Vanlig mission-oppsett skal ikke kreve endringer i `framework/`; mission-integrasjon hører fortsatt hjemme i missionens egne scripts og Eden.
+Mission makers mainly work with `settings/`. Prioritize understandable configuration and good defaults. Normal mission setup should not require changes in `framework/`; mission integration still belongs in the mission's own scripts and Eden.
 
-Unngå nye innstillinger, kompatibilitetslag og omfattende logging uten et konkret behov. Legg kompleksiteten internt når det gjør det vanlige oppsettet enklere, men ikke bygg generelle systemer for hypotetiske behov.
+Avoid new settings, compatibility layers and extensive logging without a concrete need. Keep complexity internal when it simplifies normal setup, but do not build general systems for hypothetical needs.
 
-Ved endring av eksisterende funksjonskall eller konfigurasjon, kontroller relevante kallesteder og beskriv nødvendig migrering kort. Ikke anta at ukjente kallesteder er verifisert.
+When changing existing function calls or configuration, check relevant call sites and briefly describe any required migration. Do not assume unknown call sites have been verified.
 
-## Testing og rapportering
+## Testing and reporting
 
-Skill tydelig mellom:
+Clearly distinguish between:
 
-* statisk kodegjennomgang og kontroll av filreferanser
-* parser-/syntakskontroll
-* lokal test i Arma
-* test på dedicated server med flere klienter
-* JIP-testing
+* static code review and file-reference checks
+* parser/syntax checks
+* local testing in Arma
+* dedicated-server testing with multiple clients
+* JIP testing
 
-Oppgi hva som faktisk er kontrollert, hva kontrollen dokumenterer og hva som gjenstår. En bestått parserkontroll eller lokal test dokumenterer ikke korrekt multiplayer-oppførsel.
+State what has actually been checked, what the checks establish and what remains. A passed parser check or local test does not establish correct multiplayer behavior.
 
-Skill mellom rapportert symptom, feil eller risiko utledet fra kode og årsak bekreftet gjennom runtime-observasjon. Ikke presenter en sannsynlig årsak som runtime-bekreftet.
+Distinguish reported symptoms, errors or risks derived from code and causes confirmed through runtime observation. Do not present a likely cause as runtime-confirmed.
 
-Ved relevante endringer skal gjenstående spilltester beskrives kort og konkret, med utløsende situasjon og forventet resultat. Oppsummer hva som er endret og eventuelle følger for mission makers.
+For relevant changes, describe remaining in-game tests briefly and concretely, with the triggering situation and expected result. Summarize what changed and any implications for mission makers.
 
-Etter større oppførselsendringer, anbefal en avgrenset spilltest før neste større ombygging av samme system. Bruk rapportert testsituasjon, forventet og faktisk oppførsel samt testmiljø som grunnlag for videre vurdering. Be bare om manglende testopplysninger når de er nødvendige for konklusjonen.
+After major behavior changes, recommend a focused in-game test before the next major rebuild of the same system. Use the reported test situation, expected and actual behavior, and test environment as the basis for further assessment. Ask for missing test details only when they are necessary for the conclusion.
 
-## Dokumentasjonsvedlikehold
+## Documentation maintenance
 
-[README.md](../README.md) er den offentlige inngangen. [architecture.md](architecture.md) beskriver arkitektur og modulkontrakter, med tydelig skille mellom besluttet design, implementasjon, rapportert runtime-observasjon og uavklart oppførsel. Dokumentet erstatter ikke kodeundersøkelse og skal ikke brukes som løpende reviewrapport, endringslogg eller detaljert testplan.
+[README.md](../README.md) is the public entry point. [architecture.md](architecture.md) describes architecture and module contracts, clearly distinguishing agreed design, implementation, reported runtime observation and unresolved behavior. The document does not replace code inspection and must not be used as an ongoing review report, changelog or detailed test plan.
 
-Når en avtalt implementering endrer arkitektur, initialisering, funksjonskontrakter eller dokumentert oppførsel, oppdater berørte deler av arkitekturdokumentet. Revider gjeldende beskrivelse på hovedstedet og fjern utdatert dobbeltføring; ikke legg en ny endringsrapport ved siden av gammel tekst. Bevar designbegrunnelser, tilsiktede særvalg og relevante uavklarte begrensninger.
+When an agreed implementation changes architecture, initialization, function contracts or documented behavior, update the affected parts of the architecture document. Revise the current description in its primary location and remove outdated duplication; do not add a new change report alongside old text. Preserve design rationale, intentional choices and relevant unresolved limitations.
 
-[mission-maker-reference.md](mission-maker-reference.md) er den kanoniske praktiske mission-maker-referansen. Ved endring av dokumenterte entrypoints, argumenter eller kallkrav skal relevante eksempler kontrolleres og oppdateres. Detaljkontrakter hører også hjemme ved den aktuelle koden. En eventuell framtidig presentasjon av innholdet skal bygge på denne kilden, ikke kreve en separat vedlikeholdt referanse.
+[mission-maker-reference.md](mission-maker-reference.md) is the canonical practical mission-maker reference. When documented entrypoints, arguments or call requirements change, check and update relevant examples. Detailed contracts also belong alongside the relevant code. Any future presentation of the content should be based on this source, not require a separately maintained reference.
 
-Hvis dokumentasjonen motsier koden, skill mellom feil beskrivelse og implementasjon som avviker fra avklart design. Vesentlige tekniske konklusjoner må verifiseres mot aktuell kode, konfigurasjon og relevante engine-/modkilder.
+If the documentation contradicts the code, distinguish an incorrect description from an implementation that deviates from agreed design. Significant technical conclusions must be verified against current code, configuration and relevant engine/mod sources.
 
-## Endringslogg
+## Changelog
 
-[CHANGELOG.md](../CHANGELOG.md) er en kort, menneskelesbar versjonsoversikt for LMF, ikke en arbeidslogg. Etter avtalt LMF-implementering skal du vurdere om utviklingsversjonen trenger en ny eller oppdatert oppføring. Vedlikeholdet inngår i implementeringen, men hver endring krever ikke et loggpunkt.
+[CHANGELOG.md](../CHANGELOG.md) is a short, human-readable version overview for LMF, not a work log. After an agreed LMF implementation, consider whether the development version needs a new or updated entry. Maintenance is part of implementation, but not every change requires a log entry.
 
-Logg nye eller fjernede funksjoner, merkbare endringer i gameplay eller betjening, viktige feilrettinger og vesentlige endringer i arkitektur eller konfigurasjon. Vurder betydningen for spillere og mission makers, ikke antall endrede kodelinjer. Rene dokumentasjons-, kommentar- og formateringsendringer, isolerte omdøpinger, lokal kodeopprydding og små tekst-, UI- eller timingjusteringer logges normalt ikke.
+Log new or removed features, noticeable changes in gameplay or controls, important bug fixes and significant changes to architecture or configuration. Consider the impact on players and mission makers, not the number of changed lines of code. Pure documentation, comment and formatting changes, isolated renames, local code cleanup and small text, UI or timing adjustments are normally not logged.
 
-Bruk testen: Ville dette fortjent en plass i en kort «hva er nytt»-oppsummering sammenlignet med forrige utgivelse? Hvis nei, utelat punktet. Ved tvil, ikke legg til et nytt punkt. Samle relaterte endringer i ett punkt og oppdater eksisterende punkter i utviklingsversjonen fremfor å logge mellomsteg, følgefeil og finjusteringer separat. Logg bare gjennomførte endringer, ikke forslag, planer eller gjennomganger.
+Use this test: Would this deserve a place in a short “what's new” summary compared with the previous release? If not, omit the item. When in doubt, do not add a new item. Combine related changes into one item and update existing items in the development version rather than logging intermediate steps, follow-on bugs and fine-tuning separately. Log only completed changes, not proposals, plans or reviews.
 
-Skriv korte engelske punkter med ett av disse prefiksene:
+Write short English items with one of these prefixes:
 
-* **Added:** Ny funksjonalitet.
-* **Improved:** Vesentlig forbedring av eksisterende funksjonalitet eller struktur.
-* **Tweaked:** Tilsiktet justering av oppførsel, balanse eller standardverdier.
-* **Fixed:** Rettelse av feil eller utilsiktet oppførsel.
-* **Removed:** Fjernet funksjonalitet eller støtte.
+* **Added:** New functionality.
+* **Improved:** Significant improvement to existing functionality or structure.
+* **Tweaked:** Intentional adjustment to behavior, balance or defaults.
+* **Fixed:** Correction of errors or unintended behavior.
+* **Removed:** Removed functionality or support.
 
-Beskriv resultatet fremfor interne arbeidssteg. Ikke lov bedre ytelse, bekreftet multiplayer-støtte eller vellykket testing uten grunnlag. Mission-spesifikke endringer hører ikke hjemme i LMF-loggen.
+Describe the result rather than internal work steps. Do not promise better performance, confirmed multiplayer support or successful testing without evidence. Mission-specific changes do not belong in the LMF changelog.
 
-Hold nyeste versjon øverst, med én Markdown-overskrift per versjon, for eksempel `## LMF 2.0.0 — Unreleased`. Bruk punktlister som `- **Fixed:** Short description.`, tom linje etter overskrifter og mellom versjoner, og kodeformatering rundt identifikatorer ved behov. Unngå tabeller, tomme kategorier og tomme «Known bugs»-seksjoner.
+Keep the newest version at the top, with one Markdown heading per version, for example `## LMF 2.0.0 — Unreleased`. Use bullet lists such as `- **Fixed:** Short description.`, a blank line after headings and between versions, and code formatting around identifiers when needed. Avoid tables, empty categories and empty “Known bugs” sections.
 
-Bevar eldre versjonshistorikk, også eldre detaljnivå og eventuelle ukategoriserte punkter. Ikke flytt eldre endringer til utviklingsversjonen, finn på utgivelsesdatoer eller anta at en historisk versjon er utgitt. Endre versjonsnummer eller marker en versjon som utgitt bare etter avtale.
+Preserve older version history, including its earlier level of detail and any uncategorized items. Do not move older changes into the development version, invent release dates or assume a historical version was released. Change the version number or mark a version as released only by agreement.
