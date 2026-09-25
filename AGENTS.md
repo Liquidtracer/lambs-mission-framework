@@ -37,7 +37,7 @@ Explicitly distinguish static code/reference checks, parser/syntax checks, local
 
 Both `framework/` and `settings/` are LMF: implementation and mission-maker configuration. Root files also provide the development mission and integration; `description.ext` is mixed. Classify by content, not just location. Do not move functionality between layers as unrelated cleanup.
 
-`mission.sqm` is intentionally unbinarized and may be inspected, but must never be edited directly. Eden Editor is the authority for changes. Describe necessary Eden changes to the user; identify missing context rather than assuming the contents.
+`mission.sqm` is owned by Eden Editor and intentionally unbinarized. It may be inspected and diffed, but must never be edited directly. Describe necessary Eden changes to the user; identify missing context rather than assuming the contents. Do not revert it automatically. Do not stage or commit it unless the user explicitly asks to capture the current Eden-generated version. Incidental changes from opening or saving the development mission in Eden must be left untouched and excluded from unrelated commits. When the user explicitly approves a new version, inspect the diff first and keep the change separate from unrelated documentation or framework changes where practical. Do not add `mission.sqm` to `.gitignore` or hide it with Git index flags such as `assume-unchanged` or `skip-worktree`.
 
 Forward Deploy and Vehicle Service must not be reviewed or changed without an explicit request, including in broad surveys. This boundary does not apply to the shared Paradrop module or other vehicle initialization and asset spawners. Preserve documented design rationale and intentional choices.
 
