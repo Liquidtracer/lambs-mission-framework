@@ -1,6 +1,6 @@
 # LMF · Mission Maker Reference
 
-Practical function calls for mission scripts and triggers using the LMF 2.0.0 system-based names.
+The canonical practical mission-maker reference for mission scripts and triggers using the LMF 2.0.0 system-based names. Code and settings paths are relative to the mission root. See [architecture.md](architecture.md) for technical context and [development.md](development.md) for development conventions.
 
 
 
@@ -129,7 +129,7 @@ Spawns a QRF vehicle with crew and, where applicable, infantry passengers.
 
 **Categories:** CAR, CARARMED, TRUCK, APC, TANK, HELITRANSPORT, HELIATTACK, UAV.
 
-Use an LMF category, not a classname. The delay applies with multiple tickets. UAV uses the grenade-dropping task described under UAV task.
+Use an LMF category, not a classname. The delay applies with multiple tickets. UAV uses the grenade-dropping task.
 
 
 
@@ -152,7 +152,7 @@ Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs a
 * **4. Flight height, metres** — Number. Default: 200.
 * **5. Payload: "" for infantry; otherwise vehicle classname or category** — String. Default: "".
 
-**Vehicle payload categories:** CAR, CARARMED, TRUCK, APC, TANK. The transport aircraft comes from \_para\_Vehicle in AI settings.
+**Vehicle payload categories:** CAR, CARARMED, TRUCK, APC, TANK. The transport aircraft comes from \_paraVehicle in AI settings.
 
 **Drop zone:** Use a marker, trigger or location for a fixed zone. The only supported array value is \[0,0,0], which selects autonomous mode; ordinary position arrays are unsupported. In autonomous mode, an object spawn position supplies the initial aircraft heading; an array spawn position uses a random heading. A fixed drop zone determines the heading towards that zone.
 
@@ -160,11 +160,13 @@ Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs a
 
 ### Supply drop
 
-Creates a transport, pilot and payload, parachutes the payload into the drop point, then sends the aircraft away. The payload receives BFT tracking when enabled.
+Creates a transport, pilot and payload, delivers it using PARACHUTE or SLINGLOAD according to var\_supplyDropDelivery, then sends the aircraft away. The payload receives BFT tracking when enabled.
 
 **Run on:** Server · **Use:** spawn
 
 **Example**
+
+This aircraft example requires var\_supplyDropDelivery = "PARACHUTE". For SLINGLOAD, supply a helicopter capable of lifting the configured payload.
 
 \["mrk\_supplySpawn", "mrk\_supplyDrop", "C\_Plane\_Civil\_01\_F", "B\_supplyCrate\_F"] spawn lmf\_supplyDrop\_fnc\_deliverSupplies;
 
@@ -175,7 +177,7 @@ Creates a transport, pilot and payload, parachutes the payload into the drop poi
 * **2. Transport classname** — String. Default: "C\_Plane\_Civil\_01\_F".
 * **3. Crate or vehicle classname** — String. Default: "B\_supplyCrate\_F".
 
-Supply valid positions, such as marker names or \[x,y,z]. Payload delivery uses ACE Cargo. Direct calls bypass the player menu's quota and active-delivery lock.
+Supply valid positions, such as marker names or \[x,y,z]. PARACHUTE delivery uses ACE Cargo; SLINGLOAD uses helicopter sling loading. Direct calls bypass the player menu's quota and request cooldown.
 
 
 

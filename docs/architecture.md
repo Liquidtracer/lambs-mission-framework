@@ -1,6 +1,6 @@
-# Lambs Mission Framework – agentoversikt
+# Lambs Mission Framework – arkitektur og prosjektkontekst
 
-LMF 2.0.0 i `LMF_DEV.Altis`. Dokumentet er agentens tekniske kart og varige prosjektkontekst. Kode/config beskriver implementasjonen; brukerkrav og avklarte designvalg beskriver hensikten. Arbeidsregler står i `AGENTS.md`, praktiske kall i `LMF_MM_FUNCTIONS.md`.
+LMF 2.0.0 i `LMF_DEV.Altis`. Dokumentet beskriver teknisk arkitektur, modulkontrakter og varig prosjektkontekst. Kode/config beskriver implementasjonen; brukerkrav og avklarte designvalg beskriver hensikten. Utviklingsstandarder står i [development.md](development.md), AI/Codex-instrukser i [AGENTS.md](../AGENTS.md) og praktiske kall i [mission-maker-reference.md](mission-maker-reference.md). Kodestier og settings-stier i dokumentet er relative til missionroten.
 
 Les **Felles prosjektkontekst** før teknisk arbeid, deretter relevante modulavsnitt og avhengighetene i indeksen. Les hele dokumentet ved bred gjennomgang eller uklart omfang. Oversikten erstatter ikke undersøkelse av berørt kode.
 
@@ -8,7 +8,7 @@ Les **Felles prosjektkontekst** før teknisk arbeid, deretter relevante modulavs
 
 **Avklart avgrensning – Vehicle Service:** Komponenten beholdes, men er ifølge mission maker praktisk talt ikke i bruk. Den skal ikke vurderes, gjennomgås eller endres med mindre brukeren uttrykkelig ber om arbeid med Vehicle Service. Dette gjelder også generelle LMF-kartlegginger, feilgjennomganger og forbedringsforslag. Eksisterende beskrivelse beholdes som referanse, ikke som en liste over oppfølgingsarbeid. Avgrensningen gjelder `framework/vehicleService/`, ikke øvrig kjøretøyinitialisering eller asset spawnere.
 
-**Evidens:** Beskrivelsene bygger på den statiske kartleggingen 2026-09-23 og tidligere dokumentert kilde-/testerfaring. Dokumentasjonsredigeringen er ikke en ny full engine-, parser- eller spillverifisering. Installert modversjon og samlet dedicated-/JIP-godkjenning er ikke etablert. «Design» er avklart hensikt, «Implementasjon» er kodebeskrivelse, «Observasjon» er rapportert runtime og «Uavklart» er en konkret begrensning eller manglende verifisering. Umerket teknisk beskrivelse angir implementasjonen, ikke et testbevis. Kildelenkene er tidligere grunnlag; kontroller relevant aktuell dokumentasjon ved tekniske konklusjoner.
+**Evidens:** Beskrivelsene bygger på den statiske kartleggingen 2026-09-23 og tidligere dokumentert kilde-/testerfaring. Dokumentasjonsredigeringen er ikke en ny full engine-, parser- eller spillverifisering. Utviklingsmissionen er rapportert startet vellykket etter repository-klargjøringen. Dedicated/JIP-oppførsel har tidligere rapportert runtime-validering, men er ikke regresjonstestet på nytt spesifikt etter klargjøringen. Dette bekrefter ikke at alle modulspesifikke edge cases er testet; konkrete begrensninger nedenfor beholdes. Installerte modversjoner er ikke fastslått. «Design» er avklart hensikt, «Implementasjon» er kodebeskrivelse, «Observasjon» er rapportert runtime og «Uavklart» er en konkret begrensning eller manglende verifisering. Umerket teknisk beskrivelse angir implementasjonen, ikke et testbevis. Kildelenkene er tidligere grunnlag; kontroller relevant aktuell dokumentasjon ved tekniske konklusjoner.
 
 ## Felles prosjektkontekst
 
@@ -17,12 +17,12 @@ Les **Felles prosjektkontekst** før teknisk arbeid, deretter relevante modulavs
 - `framework/`: gjenbrukbar LMF-kode, organisert etter system. Mapper angir ikke execution context; guards, initpunkt og kontrakter avgjør dette.
 - `settings/`: LMF-konfigurasjon for mission makers. Se settings-tabellen nedenfor.
 - `description.ext`: LMF-delene registrerer CfgFunctions, XEH, objektsortering og notifications og må følge frameworket ved overføring. Resten er mission-oppsett.
-- `init.sqf`, `initServer.sqf`, `initPlayerLocal.sqf`, `onFlare.sqs`, `mission/` og Eden er mission-integrasjon. `initPlayerLocal.sqf` inneholder bare kommentarer og er et ledig integrasjonspunkt.
+- `init.sqf`, `initServer.sqf`, `initPlayerLocal.sqf`, `onFlare.sqs` og Eden er mission-integrasjon. `initPlayerLocal.sqf` inneholder bare kommentarer og er et ledig integrasjonspunkt.
 - `mission.sqm` lagres bevisst ubinarisert som versjonskontrollert Eden-output. Agenter kan lese og undersøke filen, inkludert Eden-navn, init-felt, triggere og modulsynkronisering. Filen skal aldri redigeres direkte; endringer gjøres kun gjennom Eden Editor.
 
 Funksjonsnavn er `lmf_<system>_fnc_<handling>`. Registrerte funksjonsklasser samsvarer med `fn_<handling>.sqf`; undermapper endrer ikke systemtaggen. Runtime-definerte helpers bruker samme navneform, men defineres ved sine initpunkter. Registrering er ikke en API-whitelist: offentlig bruk avgjøres av kontrakt, eksempler og kallesteder. Manglende public/private-markering er akseptert design, ikke et ombyggingsbehov.
 
-Mapper/handlinger bruker camelCase og beskrivende hele ord med etablerte fagforkortelser. Script-/includefiler har beskrivende navn uten `fn_`; execution context alene er ikke tilstrekkelig navn. XEH-filene, config-headere og settings følger etablerte konvensjoner. Detaljerte navne- og kommentarregler står bare i `AGENTS.md`.
+Script-/includefiler har navn uten `fn_`; XEH-filene, config-headere og settings følger etablerte konvensjoner. Navne- og kommentarregler står i [development.md](development.md).
 
 LMF 2.0.0s systemnavn er ikke bakoverkompatible, og legacy-aliaser finnes ikke. Ved overføring må framework, settings, LMF-config, missionkall og eventuelle Eden-kall kontrolleres samlet. Aktive framework-helpers/state bruker `lmf_`; `a2k_*` under framework finnes bare i utkommentert historisk medical-kode. Missionens egne `a2k_*` skal ikke omdøpes som LMF-opprydding.
 
