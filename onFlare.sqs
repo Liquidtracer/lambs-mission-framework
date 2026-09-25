@@ -1,0 +1,3 @@
+params ["_colorRGB", "_shooter", "_projectile"];
+
+[_colorRGB,_shooter,_projectile] call lmf_ai_fnc_onFlare;

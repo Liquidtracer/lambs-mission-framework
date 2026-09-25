@@ -1,0 +1,13 @@
+* text=auto
+
+*.sqf text
+*.sqs text
+*.hpp text
+*.ext text
+*.sqm text
+*.md text
+
+*.paa binary
+*.jpg binary
+*.jpeg binary
+*.png binary

@@ -1,0 +1,89 @@
+/*
+    Spawn patrol
+    Spawns infantry and assigns a patrol task.
+    Author: nkenny. Contributor: Drgn V4karian, Alex2k.
+
+    Arguments:
+        0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
+        1: Patrol target <OBJECT, STRING or ARRAY> (default: [0, 0, 0])
+        2: Group type or soldier count <STRING or NUMBER> (default: "TEAM"; "SQUAD", "TEAM", "SENTRY", "ATTEAM", "AATEAM" or "MGTEAM")
+        3: Patrol radius in meters <NUMBER> (default: 200)
+        4: Patrol speed preset <STRING> (default: "SLOW"; "FAST", "SLOW" or "ATTACK")
+        5: Patrol formation <STRING> (default: "STAG COLUMN")
+
+    Example:
+        [spawn_1, "mrk_patrol", "TEAM", 200, "FAST", "LINE"] spawn lmf_ai_fnc_spawnPatrol;
+*/
+
+waitUntil {sleep 1; CBA_missionTime > 0};
+private _spawner = [] call lmf_ai_fnc_isSpawner;
+if !(_spawner) exitWith {};
+
+#include "spawnDefinitions.sqf"
+
+params [["_spawnPos", [0,0,0]],["_patrolTarget", [0,0,0]],["_grpType", "TEAM"],["_patrolRadius", 200],["_patrolSpeed", "SLOW"],["_formation", "STAG COLUMN"]];
+_spawnPos = _spawnPos call CBA_fnc_getPos;
+_patrolTarget = _patrolTarget call CBA_fnc_getPos;
+private _behaviour = "";
+private _speed = "";
+
+if (_patrolSpeed == "SLOW") then {
+	_behaviour = "SAFE";
+	_speed = "LIMITED";
+};
+if (_patrolSpeed == "FAST") then {
+	_behaviour = "AWARE";
+	_speed = "NORMAL";
+};
+if (_patrolSpeed == "ATTACK") then {
+	_behaviour = "AWARE";
+	_speed = "LIMITED";
+};
+
+// Prepare and spawn the group
+private _type = [_grpType] call _typeMaker;
+private _grp = [_spawnPos,var_enemySide,_type] call BIS_fnc_spawnGroup;
+[_spawnPos,_grp,selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
+_grp deleteGroupWhenEmpty true;
+_grp setGroupIDGlobal [format ["Infantry Patrol (%1)", groupId _grp]];
+_grp setVariable ["lmf_ai_joinableGroup", true];
+_grp setSpeedMode "FULL";
+_grp setCombatMode "RED";
+
+// Assign the patrol task.
+[_grp, _patrolTarget, _patrolRadius, _behaviour, _speed, _formation] call lmf_ai_fnc_taskPatrol;
+
+if (_patrolSpeed == "ATTACK") then {
+	(leader _grp) setAnimSpeedCoef 1.6;
+};
+
+_grp addEventHandler ["EnemyDetected", {
+	params ["_group", "_newTarget"];
+	if (!isTouchingGround (vehicle _newTarget) || surfaceIsWater (getPos (leader _group))) exitWith {};
+	{deleteWaypoint _x} forEachReversed (waypoints _group);
+	(_group addWaypoint [ATLToASL (getPos _newTarget),-1]) setWaypointType "GUARD";
+	{
+		_x setAnimSpeedCoef 1;
+		_x setUnitPos "AUTO";
+	} forEach (units _group);
+	_group enableIRLasers true;
+	_group enableGunLights "Auto";
+	_group setGroupIDGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
+	_group removeEventHandler [_thisEvent, _thisEventHandler];
+}];
+
+_grp addEventHandler ["CombatModeChanged", {
+	params ["_group", "_newMode"];
+	{
+		_x setAnimSpeedCoef 1;
+	} forEach (units _group);
+	_group removeEventHandler [_thisEvent, _thisEventHandler];
+}];
+
+_grp addEventHandler ["UnitKilled", {
+	params ["_group", "_unit", "_killer", "_instigator", "_useEffects"];
+	_aliveUnits = ((units _group) select {alive _x});
+	if (count _aliveUnits != 1) exitWith {};
+	[_aliveUnits#0] spawn lmf_ai_fnc_reassignSurvivor;
+	_group removeEventHandler [_thisEvent, _thisEventHandler];
+}];
