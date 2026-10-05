@@ -3,6 +3,7 @@
     Delivers a crate or vehicle using the mission's PARACHUTE or SLINGLOAD setting.
     Run scheduled on the server, which owns the aircraft and pilot group.
     Slingload uses UNHOOK, with forced release after 60 seconds within 250 metres.
+    Landing restores damage and creates a fixed global marker when BFT permits it.
     Author: Alex2k, G4rrus.
 
     Arguments:
@@ -145,23 +146,6 @@ if (!_attached) exitWith {
 
 if (_slingload) then {
     _dropWaypoint setWaypointType "UNHOOK";
-    // Keep the cargo protected until it has landed, including an accidental early release.
-    [_crate, _veh] spawn {
-        params ["_cargo", "_helicopter"];
-        waitUntil {
-            sleep 0.1;
-            isNull _cargo || {
-                getSlingLoad _helicopter != _cargo && {
-                    isTouchingGround _cargo
-                        || {surfaceIsWater (getPosWorld _cargo) && {(getPosASL _cargo select 2) < 1}}
-                }
-            }
-        };
-        if (isNull _cargo) exitWith {};
-        sleep 1;
-        _cargo setDamage 0;
-        _cargo allowDamage true;
-    };
 
     private _approachDeadline = time + 600;
     private _releaseDeadline = -1;
@@ -201,7 +185,7 @@ if (_slingload) then {
     private _straightAhead = _veh getRelPos [5000, 0];
     _veh doMove _straightAhead;
 
-    [_crate, "ACE_CARGO", [_veh, _cargoSize, 1, 1, true]] call lmf_paradrop_fnc_dropObject;
+    [_crate, "ACE_CARGO", [_veh, _cargoSize, 1, 1, true, false]] call lmf_paradrop_fnc_dropObject;
 };
 
 sleep 1;
@@ -209,22 +193,46 @@ sleep 1;
 private _flare = createVehicle ["F_20mm_Yellow", _veh modelToWorld [0,0,1], [], 0, "CAN_COLLIDE"];
 _flare setVelocity [0,0,-0.1];
 
-private _crateMarkerType = "loc_container";
-if (_crate isKindOf "LandVehicle") then {_crateMarkerType = "loc_car"};
-if (_crate isKindOf "Ship") then {_crateMarkerType = "loc_boat"};
+// Both delivery modes finish landing independently of the aircraft's return.
+[_crate, _veh, _slingload] spawn {
+    params ["_cargo", "_aircraft", "_slingload"];
+    waitUntil {
+        sleep 0.1;
+        isNull _cargo || {
+            isNull attachedTo _cargo && {!_slingload || {getSlingLoad _aircraft != _cargo}} && {
+                isTouchingGround _cargo || {((getPos _cargo) # 2) < 0.5}
+            }
+        }
+    };
+    if (isNull _cargo) exitWith {};
+    sleep 1;
+    if (isNull _cargo) exitWith {};
 
-[
-	_crate,
-	_crateMarkerType,
-	"ColorWEST",
-	[0.75, 0.75],
-	"",
-	0.25,
-	true,
-	false,
-	-1,
-	false
-] call lmf_bft_fnc_trackObject;
+    _cargo setDamage 0;
+    if (local _cargo) then {
+        _cargo allowDamage true;
+    } else {
+        [_cargo, true] remoteExecCall ["allowDamage", _cargo];
+    };
+    if (!_slingload) then {
+        {deleteVehicle _x} forEachReversed (attachedObjects _cargo);
+    };
+
+    if (!var_bft || {var_oldSchoolMap}) exitWith {};
+    private _markerType = "loc_container";
+    if (_cargo isKindOf "LandVehicle") then {_markerType = "loc_car"};
+    if (_cargo isKindOf "Ship") then {_markerType = "loc_boat"};
+
+    // Reserve a unique name and publish a fixed position; no object tracking or JIP script.
+    isNil {
+        lmf_supplyDrop_markerId = (missionNamespace getVariable ["lmf_supplyDrop_markerId", 0]) + 1;
+        private _marker = createMarker [format ["lmf_supplyDrop_landed_%1", lmf_supplyDrop_markerId], getPosATL _cargo];
+        _marker setMarkerColorLocal "ColorWEST";
+        _marker setMarkerSizeLocal [0.75, 0.75];
+        _marker setMarkerType _markerType;
+        _marker setMarkerShadow false;
+    };
+};
 
 _veh limitSpeed 999;
 _veh doMove (_spawnPos getPos [(_spawnPos distance2D _dropPos) + 10000,_dir - 180]);

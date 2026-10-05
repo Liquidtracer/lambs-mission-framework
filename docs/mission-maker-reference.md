@@ -160,7 +160,7 @@ Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs a
 
 ### Supply drop
 
-Creates a transport, pilot and payload, delivers it using PARACHUTE or SLINGLOAD according to var\_supplyDropDelivery, then sends the aircraft away. The payload receives BFT tracking when enabled.
+Creates a transport, pilot and payload, delivers it using PARACHUTE or SLINGLOAD according to var\_supplyDropDelivery, then sends the aircraft away. After landing, a fixed global marker records the delivery position when BFT is enabled and old-school map is disabled. It remains there if the payload is moved or deleted; joining players receive it automatically.
 
 **Run on:** Server · **Use:** spawn
 

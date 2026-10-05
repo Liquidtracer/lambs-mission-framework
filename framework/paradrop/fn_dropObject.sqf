@@ -13,7 +13,8 @@
 
     Modes and data:
         POSITION: [position, direction, attached item]
-        ACE_CARGO: [aircraft, original cargo size, stuck altitude, touchdown poll, reset damage immediately]
+        ACE_CARGO: [aircraft, original cargo size, stuck altitude, touchdown poll, reset damage immediately, manage landing]
+        Manage landing defaults to true. False leaves damage restoration and landing cleanup to the caller.
 */
 
 params [
@@ -86,7 +87,8 @@ switch (toUpper _mode) do {
             ["_cargoSize", 0, [0]],
             ["_stuckAltitude", 1, [0]],
             ["_touchdownPoll", 1, [0]],
-            ["_resetDamageImmediately", false, [true]]
+            ["_resetDamageImmediately", false, [true]],
+            ["_manageLanding", true, [true]]
         ];
 
         if (isNull _aircraft) exitWith {false};
@@ -126,11 +128,12 @@ switch (toUpper _mode) do {
             deleteVehicle _parachute;
         };
 
-        [_object, _touchdownPoll] spawn {
-            params ["_object", "_touchdownPoll"];
+        [_object, _touchdownPoll, _manageLanding] spawn {
+            params ["_object", "_touchdownPoll", "_manageLanding"];
             if (isNull _object) exitWith {};
 
-            waitUntil {sleep 0.1; (getPos _object) select 2 < 2};
+            waitUntil {sleep 0.1; isNull _object || {(getPos _object) select 2 < 2}};
+            if (isNull _object) exitWith {};
             if (!isNull attachedTo _object) then {
                 playSound3D [
                     "a3\sounds_f\weapons\Flare_Gun\flaregun_1_shoot.wss",
@@ -139,9 +142,23 @@ switch (toUpper _mode) do {
                 detach _object;
             };
 
-            waitUntil {sleep _touchdownPoll; isTouchingGround _object};
+            if (!_manageLanding) exitWith {};
+            waitUntil {
+                sleep _touchdownPoll;
+                isNull _object || {
+                    isNull attachedTo _object && {
+                        isTouchingGround _object || {((getPos _object) # 2) < 0.5}
+                    }
+                }
+            };
+            if (isNull _object) exitWith {};
             sleep 1;
-            _object allowDamage true;
+            if (isNull _object) exitWith {};
+            if (local _object) then {
+                _object allowDamage true;
+            } else {
+                [_object, true] remoteExecCall ["allowDamage", _object];
+            };
             _object setDamage 0;
             {deleteVehicle _x} forEachReversed (attachedObjects _object);
         };
