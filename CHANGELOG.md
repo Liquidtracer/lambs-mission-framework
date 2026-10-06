@@ -13,14 +13,13 @@ Historical entries below 2.0.0 retain their original detail and wording, with fo
 
 #### LMF 2.0.0 - Unreleased
 
-* **Added:** Mine-clearance support with AI engineer teams.
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
 * **Added:** Startup mission information and group-arrival notifications for leaders.
 * **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
 * **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
-* **Improved:** Reworked support requests around a shared menu, map selection and server-managed availability.
+* **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
 * **Improved:** Reworked AI helicopter landing searches and evacuation handling, and boat landing and follow-up tasks.
 * **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups.
 * **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.

@@ -65,10 +65,6 @@ var_supplyDropLimit = 12; // Number of available supply drops. Default: 0.
 var_suppDropPlane = "B_Heli_Transport_01_unarmed_F"; // Aircraft classname; planes and helicopters use the same parachute delivery.
 var_supplyDropVehicles = true; // Allows vehicle requests through supply drop.
 
-// Mine clearance support
-var_supportClearanceLimit = 0; // Number of dispatches; 0 disables support. Default: 0.
-var_supportVehicleClass = "B_Truck_01_transport_F"; // Support land vehicle classname.
-
 // Forward deploy
 var_forwardDeploy = false; // Allows group leaders to register for forward deployment during warmup. Default: false.
 var_deployHeight = 0; // Deployment height in metres: 0 = ground; positive values below 100 use 100. Default: 0.

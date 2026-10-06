@@ -12,8 +12,6 @@ enableSaving [false, false];
 
 [] execVM "framework\radio\configureAcreChannels.sqf";
 
-[] execVM "framework\support\initSupport.sqf";
-
 #include "medical\initUnconsciousEvent.sqf"
 
 if (var_supplyDropLimit > 0) then {
@@ -117,13 +115,10 @@ lmf_player_menuInit = [] spawn {
         waitUntil {uiSleep 0.2; !isNil "lmf_bft_fnc_registerMenu"};
         [] call lmf_bft_fnc_registerMenu;
     };
-    waitUntil {uiSleep 0.2; !isNil "lmf_support_fnc_registerMenu" && {!isNil "lmf_support_fnc_registerClearanceMenu"} && {!isNil "lmf_support_state"} && {!isNil "lmf_support_nextDispatch"}};
-    [] call lmf_support_fnc_registerMenu;
     if (var_supplyDropLimit > 0) then {
         waitUntil {uiSleep 0.2; !isNil "lmf_supplyDrop_fnc_registerMenu" && {!isNil "lmf_remainingSuppDrops"} && {!isNil "lmf_supplyDrop_nextRequest"}};
         [] call lmf_supplyDrop_fnc_registerMenu;
     };
-    [] call lmf_support_fnc_registerClearanceMenu;
     if (var_jipTp && {didJIP}) then {
         waitUntil {uiSleep 0.2; !isNil "lmf_jipTeleport_fnc_registerMenu" || {scriptDone lmf_jipTeleport_init}};
         if (!isNil "lmf_jipTeleport_fnc_registerMenu") then {

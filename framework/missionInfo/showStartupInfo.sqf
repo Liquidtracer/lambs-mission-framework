@@ -45,17 +45,7 @@ if (var_supplyDropLimit > 0 && {lmf_remainingSuppDrops > 0}) then {
         "Request supplies. Requires a map and long-range radio."
     };
     ["SUPPLY DROP", _body,
-        " Self-Interact » Support » Supply Drop"] call _addEntry;
-};
-
-if (lmf_support_state#3 && {side group player == lmf_support_state#2}) then {
-    private _body = if (lmf_support_state#0 > 0) then {
-        "Group leaders can request mine clearance. Requires a map and long-range radio."
-    } else {
-        "No mine-clearance dispatches remaining."
-    };
-    ["MINE CLEARANCE", _body,
-        " Self-Interact » Support » Mine Clearance"] call _addEntry;
+        " Self-Interact » Supply Drop"] call _addEntry;
 };
 
 if (lmf_warmup && {var_forwardDeploy}) then {
