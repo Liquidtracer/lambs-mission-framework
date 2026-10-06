@@ -62,8 +62,7 @@ var_supVehicle = "Box_IND_AmmoVeh_F"; // Vehicle supply crate
 
 // Supply drop
 var_supplyDropLimit = 12; // Number of available supply drops. Default: 0.
-var_suppDropPlane = "B_Heli_Transport_01_unarmed_F"; // Delivery aircraft classname.
-var_supplyDropDelivery = "SLINGLOAD"; // PARACHUTE supports planes and helicopters. SLINGLOAD requires a helicopter that can lift the configured cargo.
+var_suppDropPlane = "B_Heli_Transport_01_unarmed_F"; // Aircraft classname; planes and helicopters use the same parachute delivery.
 var_supplyDropVehicles = true; // Allows vehicle requests through supply drop.
 
 // Mine clearance support

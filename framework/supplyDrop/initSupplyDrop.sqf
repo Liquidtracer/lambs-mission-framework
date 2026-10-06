@@ -46,7 +46,7 @@ if (isServer) then {
 		lmf_remainingSuppDrops = lmf_remainingSuppDrops - 1;
 		publicVariable "lmf_remainingSuppDrops";
 
-		[_spawnPos,_dropPos,_plane,_crate,[_requester]] spawn lmf_supplyDrop_fnc_deliverSupplies;
+		[_spawnPos,_dropPos,_plane,_crate] spawn lmf_supplyDrop_fnc_deliverSupplies;
 
 		if (lmf_remainingSuppDrops <= 0) then {
 			["lmf_supplyDropEventClient",[]] call CBA_fnc_globalEvent;
@@ -67,11 +67,11 @@ if !(hasInterface) exitWith {};
 
 // Called once by the ordered client menu setup after replicated quota and deadline are available.
 lmf_supplyDrop_fnc_registerMenu = {
-    // Keep exhausted actions hidden, but allow setup refunds to restore access, including after JIP.
-    player setVariable ["lmf_supplyDrop_menuAvailable", lmf_remainingSuppDrops > 0];
+    // Client availability survives respawn; JIP initializes from the replicated quota.
+    lmf_supplyDrop_menuAvailable = lmf_remainingSuppDrops > 0;
     ["lmf_supplyDropEventClient", {
         params [["_available", false]];
-        player setVariable ["lmf_supplyDrop_menuAvailable", _available];
+        lmf_supplyDrop_menuAvailable = _available;
     }] call CBA_fnc_addEventHandler;
 
     lmf_supplyDrop_fnc_selectDropPosition = compile preprocessFileLineNumbers "framework\supplyDrop\selectDropPosition.sqf";
@@ -88,12 +88,12 @@ lmf_supplyDrop_fnc_registerMenu = {
         };
 
     	// Exit if not ready
-    	if !("ItemMap" in (assignedItems player)) exitWith {
+        if !("ItemMap" in (assignedItems _player)) exitWith {
     		["SUPPLY DROP", "A map is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
     	};
 
     	private _radios = ["ACRE_PRC148","ACRE_PRC152","ACRE_PRC77","ACRE_PRC117F","ACRE_SEM70"];
-    	if (_radios findIf {[player, _x] call acre_api_fnc_hasKindOfRadio} == -1) exitWith {
+        if (_radios findIf {[_player, _x] call acre_api_fnc_hasKindOfRadio} == -1) exitWith {
     		["SUPPLY DROP", "A long-range radio is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
     	};
 
@@ -113,12 +113,10 @@ lmf_supplyDrop_fnc_registerMenu = {
         [_player, _params select 0] spawn lmf_supplyDrop_fnc_selectDropPosition;
     };
 
-    // Retain the original player-object lifetime despite class-based registration.
+    // Availability belongs to the client; the statement receives ACE's current player.
     private _parentSupplyDrop = ["parentSupplyDrop","Supply Drop",["\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa",LMF_MAIN_COLOR],{true},{
-        params ["_target", "_player", "_params"];
-        _player isEqualTo (_params select 0)
-            && {_player getVariable ["lmf_supplyDrop_menuAvailable", false]}
-    },{},[player]] call ace_interact_menu_fnc_createAction;
+        lmf_supplyDrop_menuAvailable
+    }] call ace_interact_menu_fnc_createAction;
     ["CAManBase",1,["ACE_SelfActions","lmf_support"],_parentSupplyDrop,true] call ace_interact_menu_fnc_addActionToClass;
 
     private _suppliesMenu = ["parentSupplies","Supplies",["\A3\ui_f\data\IGUI\Cfg\simpleTasks\types\rearm_ca.paa",LMF_MAIN_COLOR],{true},{true}] call ace_interact_menu_fnc_createAction;

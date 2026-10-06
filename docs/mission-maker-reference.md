@@ -160,13 +160,13 @@ Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs a
 
 ### Supply drop
 
-Creates a transport, pilot and payload, delivers it using PARACHUTE or SLINGLOAD according to var\_supplyDropDelivery, then sends the aircraft away. After landing, a fixed global marker records the delivery position when BFT is enabled and old-school map is disabled. It remains there if the payload is moved or deleted; joining players receive it automatically.
+Creates a transport, pilot and payload, delivers it by parachute, then sends the aircraft away. After landing, a fixed global marker records the delivery position when BFT is enabled and old-school map is disabled. It remains there if the payload is moved or deleted; joining players receive it automatically.
 
 **Run on:** Server · **Use:** spawn
 
 **Example**
 
-This aircraft example requires var\_supplyDropDelivery = "PARACHUTE". For SLINGLOAD, supply a helicopter capable of lifting the configured payload.
+var\_suppDropPlane configures the aircraft used by player requests. Both plane and helicopter classnames use the same fly-over-and-parachute-drop behavior. Direct calls select the aircraft through argument 2.
 
 \["mrk\_supplySpawn", "mrk\_supplyDrop", "C\_Plane\_Civil\_01\_F", "B\_supplyCrate\_F"] spawn lmf\_supplyDrop\_fnc\_deliverSupplies;
 
@@ -177,7 +177,7 @@ This aircraft example requires var\_supplyDropDelivery = "PARACHUTE". For SLINGL
 * **2. Transport classname** — String. Default: "C\_Plane\_Civil\_01\_F".
 * **3. Crate or vehicle classname** — String. Default: "B\_supplyCrate\_F".
 
-Supply valid positions, such as marker names or \[x,y,z]. PARACHUTE delivery uses ACE Cargo; SLINGLOAD uses helicopter sling loading. Direct calls bypass the player menu's quota and request cooldown.
+Supply valid positions, such as marker names or \[x,y,z]. Delivery uses ACE Cargo and parachutes. Direct calls bypass the player menu's quota and request cooldown.
 
 
 

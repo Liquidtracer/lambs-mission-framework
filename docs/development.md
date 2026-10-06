@@ -42,6 +42,14 @@ Do not invent Arma 3 commands, SQF syntax, functions or engine behavior. If tech
 
 When debugging, try to identify the actual cause of the problem rather than merely creating a workaround.
 
+### ACE self-action lifetime
+
+Persistent player self-actions should normally be registered once per client as inherited `CAManBase` self-actions (`ace_interact_menu_fnc_addActionToClass`, type 1, inheritance enabled). Use ACE's current `_player` callback argument in conditions/statements that need the acting unit; do not capture the registration-time `player` in action parameters. Conditions that only need shared availability can read that state directly.
+
+Keep state that must survive player-object replacement at client/session lifetime rather than only on the initial unit. Retain existing group/server ownership and replication where appropriate; client-local state is not automatically restored on reconnect/JIP. Class registration alone does not fix unit-bound state or captured parameters. Intentional unit-bound actions/state remain valid: choose the lifetime from the behavior contract, document it, and do not add respawn support merely for consistency. Keep module-specific details in architecture.md and the relevant code.
+
+Reference: [ACE interaction framework](https://ace3.acemod.org/wiki/framework/interactionmenu-framework).
+
 ## Technical verification and sources
 
 When a technical assessment depends on what an Arma 3 command, function or engine mechanism actually does, verify the relevant information against the current Bohemia Interactive Community Wiki:
