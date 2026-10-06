@@ -1,4 +1,4 @@
-# Developing Lambs Mission Framework
+# Developing LAMBS Mission Framework
 
 Development principles and code conventions for LMF. Technical architecture and module contracts are in [architecture.md](architecture.md); practical mission-maker calls are in [mission-maker-reference.md](mission-maker-reference.md). AI/Codex instructions are in [AGENTS.md](../AGENTS.md).
 
@@ -86,6 +86,8 @@ When a technical conclusion relies on wiki documentation, identify the command o
 For ACE- and CBA-specific behavior, inspect relevant documentation or source code from the respective project. BIKI alone is not sufficient to establish mod-specific contracts. Distinguish current documentation/source code from the mod version the mission actually runs with when this could affect the conclusion.
 
 ## Naming in LMF
+
+Use `LAMBS Mission Framework` for the full project name and `LAMBS` for the acronym in human-readable text; always keep `LAMBS` uppercase. Preserve technical identifiers, paths, repository names, variables, prefixes and code symbols as defined.
 
 Active framework helpers and framework state must use the `lmf_` prefix and follow the naming conventions of the relevant module. Mission-specific `a2k_*` helpers must not be renamed as part of general LMF cleanup.
 

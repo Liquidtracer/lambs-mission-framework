@@ -1,6 +1,6 @@
 # LMF changelog
 
-Major changes to Lambs Mission Framework, newest first.
+Major changes to LAMBS Mission Framework, newest first.
 
 Last release: **LMF 1.4** - `CO25\\\_Steel\\\_Corridor\\\_I.WL\\\_Rosche`.
 Development mission: `LMF\\\_DEV.Altis`.

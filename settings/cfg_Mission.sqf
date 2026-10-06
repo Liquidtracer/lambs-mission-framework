@@ -4,7 +4,7 @@
 */
 
 // Mission metadata
-var_missionTitle = "Lambs Mission Framework";
+var_missionTitle = "LAMBS Mission Framework";
 var_missionSubtitle = "Development mission";
 var_author = "Alex2k";
 var_enemySide = EAST; // Enemy side: WEST, EAST or INDEPENDENT. Default: EAST.

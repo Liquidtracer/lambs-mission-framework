@@ -1,6 +1,6 @@
-# Lambs Mission Framework
+# LAMBS Mission Framework
 
-Lambs Mission Framework (LMF) is a reusable framework for Arma 3 mission making, covering AI spawning and tasks, player equipment, briefing, tracking, support services, warmup, respawn and administration.
+LAMBS Mission Framework (LMF) is a reusable framework for Arma 3 mission making, covering AI spawning and tasks, player equipment, briefing, tracking, support services, warmup, respawn and administration.
 
 `framework/` contains the framework implementation and assets. `settings/` provides mission-maker-facing LMF configuration.
 

@@ -1,4 +1,4 @@
-# Lambs Mission Framework – architecture and project context
+# LAMBS Mission Framework – architecture and project context
 
 LMF 2.0.0 in `LMF_DEV.Altis`. This document describes technical architecture, module contracts and lasting project context. Code/config describes the implementation; user requirements and agreed design choices describe the intent. Development standards are in [development.md](development.md), AI/Codex instructions in [AGENTS.md](../AGENTS.md) and practical calls in [mission-maker-reference.md](mission-maker-reference.md). Code and settings paths in this document are relative to the mission root.
 

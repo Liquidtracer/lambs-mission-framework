@@ -9,7 +9,7 @@
 */
 
 // Situation
-private _brfSituation = "Development mission for Lambs Mission Framework on Altis.";
+private _brfSituation = "Development mission for LAMBS Mission Framework on Altis.";
 
 // Enemy
 private _brfEnemyFaction = "Test opposition";
