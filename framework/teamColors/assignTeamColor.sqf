@@ -1,7 +1,7 @@
 /*
-    Assign team color
-    Assigns players to team colours.
-    Author: Alex2k. Contributor: Drgn V4karian.
+	Assign team color
+	Assigns players to team colors.
+	Author: Alex2k. Contributor: Drgn V4karian.
 */
 
 waitUntil {sleep 1; time > 5};

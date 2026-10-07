@@ -1,7 +1,7 @@
 /*
-    Rifleman loadout
-    Applies the Rifleman loadout to the supplied local unit.
-    Author: Alex2k.
+	Rifleman loadout
+	Applies the Rifleman loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

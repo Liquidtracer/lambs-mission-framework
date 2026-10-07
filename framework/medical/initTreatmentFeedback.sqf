@@ -1,6 +1,6 @@
 /*
-    Treatment feedback
-    Displays text when another player starts treating the local player.
+	Treatment feedback
+	Displays text when another player starts treating the local player.
 */
 
 ["lmf_medicalHelpMessage", {

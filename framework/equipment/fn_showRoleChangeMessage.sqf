@@ -1,6 +1,6 @@
 /*
-    Show role change message
-    Shows the supplied role name through the shared loadout notification.
+	Show role change message
+	Shows the supplied role name through the shared loadout notification.
 */
 
 params ["_loadout"];

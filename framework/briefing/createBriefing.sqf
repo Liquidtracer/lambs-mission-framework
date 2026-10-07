@@ -1,7 +1,7 @@
 /*
-    Mission briefing
-    Builds the player briefing from cfg_Briefing.sqf.
-    Author: nkenny. Contributors: Drgn V4karian, Alex2k.
+	Mission briefing
+	Builds the player briefing from cfg_Briefing.sqf.
+	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
 */
 
 #include "..\..\settings\cfg_Briefing.sqf"
@@ -10,77 +10,77 @@
 private _enemyText = format ["<font face='PuristaBold' color='%2'>%1</font><br/>", _brfEnemyFaction, LMF_ERROR_COLOR];
 private _enemyLines = [];
 {
-    _x params [["_title", ""], ["_content", ""]];
-    if (_title != "" && _content != "") then {
-        _enemyLines pushBack format ["<font color='%3' face='PuristaBold'>•</font> %1: %2", _title, _content, LMF_ERROR_COLOR];
-    };
+	_x params [["_title", ""], ["_content", ""]];
+	if (_title != "" && _content != "") then {
+		_enemyLines pushBack format ["<font color='%3' face='PuristaBold'>•</font> %1: %2", _title, _content, LMF_ERROR_COLOR];
+	};
 } forEach _brfEnemy;
 _enemyText = _enemyText + (_enemyLines joinString "<br/>");
 
 // Prepare friendly briefing text.
 private _friendText = format ["<font face='PuristaBold' color='%2'>%1</font><br/>", _brfFriendFaction, LMF_HIGHLIGHT_FRIENDLY_COLOR];
-private _friendLines = _brfFriend apply { format ["<font color='%2' face='PuristaBold'>•</font> %1", _x, LMF_HIGHLIGHT_FRIENDLY_COLOR] };
+private _friendLines = _brfFriend apply {format ["<font color='%2' face='PuristaBold'>•</font> %1", _x, LMF_HIGHLIGHT_FRIENDLY_COLOR]};
 _friendText = _friendText + (_friendLines joinString "<br/>");
 
 // Prepare execution briefing text.
 private _execText = "";
-if (_brfExecIntent != "") then { _execText = _execText + format ["<font face='PuristaBold'>COMMANDER'S INTENT</font><br/>%1<br/><br/>", _brfExecIntent]; };
+if (_brfExecIntent != "") then {_execText = _execText + format ["<font face='PuristaBold'>COMMANDER'S INTENT</font><br/>%1<br/><br/>", _brfExecIntent];};
 
 if (count _brfExecConop > 0) then {
-    _execText = _execText + "<font face='PuristaBold'>CONCEPT OF OPERATIONS</font><br/>";
-    private _conopLines = _brfExecConop apply { format ["<font face='PuristaBold'>•</font> %1", _x] };
-    _execText = _execText + (_conopLines joinString "<br/>");
+	_execText = _execText + "<font face='PuristaBold'>CONCEPT OF OPERATIONS</font><br/>";
+	private _conopLines = _brfExecConop apply {format ["<font face='PuristaBold'>•</font> %1", _x]};
+	_execText = _execText + (_conopLines joinString "<br/>");
 };
 
 if (count _brfExecCoord > 0) then {
-    if (_execText != "") then { _execText = _execText + "<br/><br/>"; };
-    _execText = _execText + "<font face='PuristaBold'>COORDINATING INSTRUCTIONS</font><br/>";
-    private _coordLines = _brfExecCoord apply { format ["<font face='PuristaBold'>•</font> %1", _x] };
-    _execText = _execText + (_coordLines joinString "<br/>");
+	if (_execText != "") then {_execText = _execText + "<br/><br/>";};
+	_execText = _execText + "<font face='PuristaBold'>COORDINATING INSTRUCTIONS</font><br/>";
+	private _coordLines = _brfExecCoord apply {format ["<font face='PuristaBold'>•</font> %1", _x]};
+	_execText = _execText + (_coordLines joinString "<br/>");
 };
 
 // Prepare logistics briefing text.
 private _adminText = "";
 if (count _brfAdministration > 0) then {
-    private _adminLines = _brfAdministration apply { format ["<font face='PuristaBold'>•</font> %1", _x] };
-    _adminText = _adminLines joinString "<br/>";
+	private _adminLines = _brfAdministration apply {format ["<font face='PuristaBold'>•</font> %1", _x]};
+	_adminText = _adminLines joinString "<br/>";
 };
 
 // Delete existing subjects
-[{!isNil "cba_help_DiaryRecordAddons"},{
-    player removeDiarySubject "cba_help_docs";
-    player removeDiarySubject "Units";
-    player removeDiarySubject "Diary";
-    player removeDiarySubject "Statistics";
+[{!isNil "cba_help_DiaryRecordAddons"}, {
+	player removeDiarySubject "cba_help_docs";
+	player removeDiarySubject "Units";
+	player removeDiarySubject "Diary";
+	player removeDiarySubject "Statistics";
 }, []] call CBA_fnc_waitUntilAndExecute;
 
 // Create the LMF briefing.
-player createDiarySubject ["lmf_diary","Mission","A3\3den\data\cfgwaypoints\sentry_ca.paa"];
+player createDiarySubject ["lmf_diary", "Mission", "A3\3den\data\cfgwaypoints\sentry_ca.paa"];
 #include "..\admin\createAdminDiary.sqf"
 
 // Thanks
 private _thanksText = format ["<font face='PuristaBold' size='16' color='%1'>THANKS TO</font><br/><font color='%2'>A big thank you to everyone who has lent a hand, shared an idea or helped figure things out along the way. From building LMF to making and testing missions, every bit of help is appreciated.</font>", LMF_MAIN_COLOR, LMF_TEXT_COLOR];
 {
-    _x params ["_name", ["_reason", ""]];
-    _thanksText = _thanksText + format ["<br/><br/><font face='PuristaBold' color='%2'>%1</font>", _name, LMF_LINK_COLOR];
-    if (_reason != "") then {
-        _thanksText = _thanksText + format ["<font color='%2'> - %1</font>", _reason, LMF_TEXT_COLOR];
-    };
+	_x params ["_name", ["_reason", ""]];
+	_thanksText = _thanksText + format ["<br/><br/><font face='PuristaBold' color='%2'>%1</font>", _name, LMF_LINK_COLOR];
+	if (_reason != "") then {
+		_thanksText = _thanksText + format ["<font color='%2'> - %1</font>", _reason, LMF_TEXT_COLOR];
+	};
 } forEach _thanks;
-player createDiaryrecord ["lmf_diary",["Thanks",_thanksText,"\A3\ui_f\data\igui\cfg\simpletasks\types\help_ca.paa"], taskNull, "", false];
+player createDiaryRecord ["lmf_diary", ["Thanks", _thanksText, "\A3\ui_f\data\igui\cfg\simpletasks\types\help_ca.paa"], taskNull, "", false];
 
 // Group roster
 lmf_briefing_fnc_refreshRoster = {
-    player setDiaryRecordText [["lmf_diary", lmf_toeBriefing], ["TO&E",[] call lmf_briefing_fnc_buildRosterText,"\A3\3den\data\displays\display3den\panelright\modegroups_ca.paa"]];
+	player setDiaryRecordText [["lmf_diary", lmf_toeBriefing], ["TO&E", [] call lmf_briefing_fnc_buildRosterText, "\A3\3den\data\displays\display3den\panelright\modegroups_ca.paa"]];
 };
-[{time > 5},{
-    lmf_toeBriefing = player creatediaryrecord ["lmf_diary",["Briefing",[] call lmf_briefing_fnc_buildRosterText,"\A3\3den\data\displays\display3den\panelright\modegroups_ca.paa"], taskNull, "", false];
+[{time > 5}, {
+	lmf_toeBriefing = player createDiaryRecord ["lmf_diary", ["Briefing", [] call lmf_briefing_fnc_buildRosterText, "\A3\3den\data\displays\display3den\panelright\modegroups_ca.paa"], taskNull, "", false];
 
-    // Map EH
-    addMissionEventHandler ["Map", {
-        params ["_mapIsOpened", "_mapIsForced"];
-        if (_mapIsOpened) then { player setDiaryRecordText [["lmf_diary", lmf_toeBriefing], ["TO&E",[] call lmf_briefing_fnc_buildRosterText,"\A3\3den\data\displays\display3den\panelright\modegroups_ca.paa"]]; };
-    }];
+	// Map EH
+	addMissionEventHandler ["Map", {
+		params ["_mapIsOpened", "_mapIsForced"];
+		if (_mapIsOpened) then {player setDiaryRecordText [["lmf_diary", lmf_toeBriefing], ["TO&E", [] call lmf_briefing_fnc_buildRosterText, "\A3\3den\data\displays\display3den\panelright\modegroups_ca.paa"]];};
+	}];
 }, []] call CBA_fnc_waitUntilAndExecute;
 
 // Technical
@@ -88,41 +88,41 @@ private _respawnLabel = var_respawnType;
 private _respawnDescription = "Mission-specific respawn rules.";
 private _respawnColor = LMF_TEXT_COLOR;
 if (typeName var_respawnType == "SCALAR") then {
-    _respawnLabel = format ["Delay (%1s)", var_respawnType];
-    _respawnDescription = "Configured delay before returning after death.";
+	_respawnLabel = format ["Delay (%1s)", var_respawnType];
+	_respawnDescription = "Configured delay before returning after death.";
 } else {
-    switch (var_respawnType) do {
-        case "OFF": {
-            _respawnLabel = "Disabled";
-            _respawnDescription = "Automatic respawn is disabled.";
-            _respawnColor = LMF_TEXT_COLOR_DARK;
-        };
-        case "WAVE": {
-            _respawnLabel = format ["Wave (%1m)", [var_respawnTime, "MM"] call BIS_fnc_secondsToString];
-            _respawnDescription = "Players return together at the next respawn wave.";
-        };
-        case "TICKETS": {
-            _respawnLabel = format ["Tickets (%1x)", var_respawnTickets];
-            _respawnDescription = "Respawn waves with a limited number of respawns per player.";
-        };
-    };
+	switch (var_respawnType) do {
+		case "OFF": {
+			_respawnLabel = "Disabled";
+			_respawnDescription = "Automatic respawn is disabled.";
+			_respawnColor = LMF_TEXT_COLOR_DARK;
+		};
+		case "WAVE": {
+			_respawnLabel = format ["Wave (%1m)", [var_respawnTime, "MM"] call BIS_fnc_secondsToString];
+			_respawnDescription = "Players return together at the next respawn wave.";
+		};
+		case "TICKETS": {
+			_respawnLabel = format ["Tickets (%1x)", var_respawnTickets];
+			_respawnDescription = "Respawn waves with a limited number of respawns per player.";
+		};
+	};
 };
 private _technicalRows = [
-    ["Map Access", ["Everyone", "Leaders Only", "Disabled"] select var_playerMaps, "Who is issued a map.", [LMF_TEXT_COLOR, LMF_TEXT_COLOR_DARK] select (var_playerMaps == 2)],
-    ["Map Mode", ["Standard", "Oldschool"] select var_oldSchoolMap, "Oldschool hides new markers received from others.", LMF_TEXT_COLOR],
-    ["Blue Force Tracker", ["Disabled", "Enabled"] select var_bft, "Shows tracked friendly positions on the map.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select var_bft],
-    ["Personal Radio", ["Disabled", "Everyone"] select var_personalRadio, "Short-range radios for everyone.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select var_personalRadio],
-    ["Respawn", _respawnLabel, _respawnDescription, _respawnColor]
+	["Map Access", ["Everyone", "Leaders Only", "Disabled"] select var_playerMaps, "Who is issued a map.", [LMF_TEXT_COLOR, LMF_TEXT_COLOR_DARK] select (var_playerMaps == 2)],
+	["Map Mode", ["Standard", "Oldschool"] select var_oldSchoolMap, "Oldschool hides new markers received from others.", LMF_TEXT_COLOR],
+	["Blue Force Tracker", ["Disabled", "Enabled"] select var_bft, "Shows tracked friendly positions on the map.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select var_bft],
+	["Personal Radio", ["Disabled", "Everyone"] select var_personalRadio, "Short-range radios for everyone.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select var_personalRadio],
+	["Respawn", _respawnLabel, _respawnDescription, _respawnColor]
 ];
 private _technicalText = format ["<font face='PuristaBold' size='16' color='%1'>TECHNICAL INFO</font><br/><font color='%2'>Mission settings shown during Safe Start are explained below.</font><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR];
 {
-    _x params ["_label", "_value", "_explanation", "_valueColor"];
-    _technicalText = _technicalText + format ["<br/><font face='PuristaBold' color='%4'>%1: </font><font color='%5'> [%2] </font><font color='%6'>- %3</font>", _label, _value, _explanation, LMF_MAIN_COLOR, _valueColor, LMF_TEXT_COLOR_DARK];
+	_x params ["_label", "_value", "_explanation", "_valueColor"];
+	_technicalText = _technicalText + format ["<br/><font face='PuristaBold' color='%4'>%1: </font><font color='%5'> [%2] </font><font color='%6'>- %3</font>", _label, _value, _explanation, LMF_MAIN_COLOR, _valueColor, LMF_TEXT_COLOR_DARK];
 } forEach _technicalRows;
-player createDiaryrecord ["lmf_diary", ["Technical", _technicalText, "\A3\missions_f_exp\data\img\classes\support_ca.paa"], taskNull, "", false];
+player createDiaryRecord ["lmf_diary", ["Technical", _technicalText, "\A3\missions_f_exp\data\img\classes\support_ca.paa"], taskNull, "", false];
 
 // Briefing
-player creatediaryrecord ["lmf_diary",[format ["OPORD"],format ["
+player createDiaryRecord ["lmf_diary", [format ["OPORD"], format ["
 <font color='%10' size='10'><marker name='mrk_clearMap'>[CLEAR COORDINATES]</marker></font><font color='%11' size='10'>  |  Made by %7 with LMF %8</font>
 <br/><font face='PuristaBold' color='%9' size='16'>SITUATION</font><br/>
 <font >%1</font>
@@ -134,4 +134,4 @@ player creatediaryrecord ["lmf_diary",[format ["OPORD"],format ["
 %5
 <br/><br/><font face='PuristaBold' size='16' color='%9'>ADMINISTRATION</font><br/>
 %6
-",_brfSituation,_enemyText,_friendText,_brfMission,_execText,_adminText, var_author, LMF_VERSION, LMF_MAIN_COLOR, LMF_LINK_COLOR, LMF_TEXT_COLOR_DARK, LMF_ERROR_COLOR, LMF_HIGHLIGHT_FRIENDLY_COLOR],"\A3\ui_f\data\igui\cfg\simpletasks\types\documents_ca.paa"],taskNull,"",false];
+", _brfSituation, _enemyText, _friendText, _brfMission, _execText, _adminText, var_author, LMF_VERSION, LMF_MAIN_COLOR, LMF_LINK_COLOR, LMF_TEXT_COLOR_DARK, LMF_ERROR_COLOR, LMF_HIGHLIGHT_FRIENDLY_COLOR], "\A3\ui_f\data\igui\cfg\simpletasks\types\documents_ca.paa"], taskNull, "", false];

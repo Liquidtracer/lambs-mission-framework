@@ -1,7 +1,7 @@
 /*
-    Radio operator loadout
-    Applies the RTO loadout to the supplied local unit.
-    Author: Alex2k.
+	Radio operator loadout
+	Applies the RTO loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

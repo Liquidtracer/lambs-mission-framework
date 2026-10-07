@@ -1,12 +1,12 @@
 /*
-    End warmup
-    Ends the warmup phase.
+	End warmup
+	Ends the warmup phase.
 
-    Arguments:
-        0: Requesting admin <OBJECT>
+	Arguments:
+		0: Requesting admin <OBJECT>
 
-    Example:
-        [player] call lmf_admin_fnc_endWarmup;
+	Example:
+		[player] call lmf_admin_fnc_endWarmup;
 */
 
 params ["_unit"];
@@ -18,7 +18,7 @@ params ["_unit"];
 		_result = ["Start mission?", "START MISSION", "OK", true] call BIS_fnc_guiMessage;
 		if (_result) then {
 			lmf_warmup = false;
-			publicvariable "lmf_warmup";
+			publicVariable "lmf_warmup";
 		};
 	};
 };

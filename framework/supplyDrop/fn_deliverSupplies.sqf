@@ -1,28 +1,28 @@
 /*
-    Supply delivery
-    Delivers a crate or vehicle by parachute using the configured aircraft.
-    Run scheduled on the server, which owns the aircraft and pilot group.
-    Landing restores damage and creates a fixed global marker when BFT permits it.
-    Author: Alex2k, G4rrus.
+	Supply delivery
+	Delivers a crate or vehicle by parachute using the configured aircraft.
+	Run scheduled on the server, which owns the aircraft and pilot group.
+	Landing restores damage and creates a fixed global marker when BFT permits it.
+	Author: Alex2k, G4rrus.
 
-    Arguments:
-        0: Spawn position <MARKER, OBJECT, LOCATION, GROUP, TASK or POSITION>
-        1: Drop position <MARKER, OBJECT, LOCATION, GROUP, TASK or POSITION>
-        2: Aircraft classname <STRING>
-        3: Crate <STRING>
+	Arguments:
+		0: Spawn position <MARKER, OBJECT, LOCATION, GROUP, TASK or POSITION>
+		1: Drop position <MARKER, OBJECT, LOCATION, GROUP, TASK or POSITION>
+		2: Aircraft classname <STRING>
+		3: Crate <STRING>
 
-    Example:
-        ["mrk_supplySpawn", "mrk_supplyDrop", "C_Plane_Civil_01_F", "B_supplyCrate_F"] spawn lmf_supplyDrop_fnc_deliverSupplies;
+	Example:
+		["mrk_supplySpawn", "mrk_supplyDrop", "C_Plane_Civil_01_F", "B_supplyCrate_F"] spawn lmf_supplyDrop_fnc_deliverSupplies;
 */
 
 if !(isServer) exitWith {};
 waitUntil {sleep 1; CBA_missionTime > 0};
 
 params [
-	["_spawnPos",objNull,[objNull,grpNull,"",locationNull,taskNull,[],123]],
-	["_dropPos",objNull,[objNull,grpNull,"",locationNull,taskNull,[],123]],
-	["_type","C_Plane_Civil_01_F",[""]],
-	["_crate","B_supplyCrate_F",[""]]
+	["_spawnPos", objNull, [objNull, grpNull, "", locationNull, taskNull, [], 123]],
+	["_dropPos", objNull, [objNull, grpNull, "", locationNull, taskNull, [], 123]],
+	["_type", "C_Plane_Civil_01_F", [""]],
+	["_crate", "B_supplyCrate_F", [""]]
 ];
 
 _spawnPos = _spawnPos call CBA_fnc_getPos;
@@ -33,8 +33,8 @@ private _dir = _spawnPos getDir _dropPos;
 sleep 5;
 
 // Prepare and spawn the vehicle
-private _veh = createVehicle [_type,_spawnPos,[],0,"FLY"];
-_veh setPos (_veh modelToWorld [0,0,200]);
+private _veh = createVehicle [_type, _spawnPos, [], 0, "FLY"];
+_veh setPos (_veh modelToWorld [0, 0, 200]);
 _veh setDir _dir;
 _veh setVelocityModelSpace [0, 150, 0];
 
@@ -49,22 +49,22 @@ if (_veh isKindOf "Plane") then {_markerType = "b_plane"};
 if (_veh isKindOf "Helicopter") then {_markerType = "b_air"};
 
 // Prep pilot
-private _grp = [_spawnPos,side (playableUnits + switchableUnits select 0),["B_Pilot_F"]] call BIS_fnc_spawnGroup;
+private _grp = [_spawnPos, side (playableUnits + switchableUnits select 0), ["B_Pilot_F"]] call BIS_fnc_spawnGroup;
 _grp deleteGroupWhenEmpty true;
 _grp setCombatMode "BLUE";
 _grp setBehaviourStrong "CARELESS";
 [_grp, "ATLAS"] call lmf_ai_fnc_assignCallsign;
 _grp addVehicle _veh;
-_grp setVariable ["lambs_danger_dangerAI","disabled"];
-{_x setVariable ["lambs_danger_disableAI",true]} count units _grp;
+_grp setVariable ["lambs_danger_dangerAI", "disabled"];
+{_x setVariable ["lambs_danger_disableAI", true]} count units _grp;
 _grp enableAttack false;
 
 if (var_bft) then {
-	[_grp,_markerType,groupId _grp] call lmf_bft_fnc_setCallsign;
+	[_grp, _markerType, groupId _grp] call lmf_bft_fnc_setCallsign;
 };
 
 private _pilot = units _grp select 0;
-_pilot setVariable ["acex_headless_blacklist",true];
+_pilot setVariable ["acex_headless_blacklist", true];
 _pilot call lmf_equipment_fnc_applyPilot;
 _pilot moveInAny _veh;
 _pilot disableAI "CHECKVISIBLE";
@@ -87,8 +87,8 @@ _exitWaypoint setWaypointType "MOVE";
 _exitWaypoint setWaypointCompletionRadius 500;
 
 // Load cargo
-[_veh,1000] call ace_cargo_fnc_setSpace;
-private _crate = createVehicle [_crate,[0,0,1000]];
+[_veh, 1000] call ace_cargo_fnc_setSpace;
+private _crate = createVehicle [_crate, [0, 0, 1000]];
 _crate allowDamage false;
 _crate setDamage 0;
 
@@ -102,7 +102,7 @@ if (_crate isKindOf "LandVehicle" || _crate isKindOf "Ship") then {
 
 private _cargoSize = [_crate] call ace_cargo_fnc_getSizeItem;
 [_crate, 1] call ace_cargo_fnc_setSize;
-[_crate,_veh,true] call ace_cargo_fnc_loadItem;
+[_crate, _veh, true] call ace_cargo_fnc_loadItem;
 
 // Allow time to slow down before passing the release point.
 waitUntil {sleep 0.5; (_veh distance2D _dropPos) < 1000 || {!alive _veh}};
@@ -112,7 +112,7 @@ waitUntil {sleep 0.5; (_veh distance2D _dropPos) < 50 || {!alive _veh}};
 
 // A destroyed transport loses the undelivered cargo; the reserved drop is not refunded.
 if (!alive _veh) exitWith {
-    deleteVehicle _crate;
+	deleteVehicle _crate;
 };
 
 // Release the route before dropping so the aircraft continues straight ahead.
@@ -124,50 +124,50 @@ _veh doMove _straightAhead;
 
 sleep 1;
 
-private _flare = createVehicle ["F_20mm_Yellow", _veh modelToWorld [0,0,1], [], 0, "CAN_COLLIDE"];
-_flare setVelocity [0,0,-0.1];
+private _flare = createVehicle ["F_20mm_Yellow", _veh modelToWorld [0, 0, 1], [], 0, "CAN_COLLIDE"];
+_flare setVelocity [0, 0, -0.1];
 
 // Finish landing independently of the aircraft's return.
 [_crate] spawn {
-    params ["_cargo"];
-    waitUntil {
-        sleep 0.1;
-        isNull _cargo || {
-            isNull attachedTo _cargo && {
-                isTouchingGround _cargo || {((getPos _cargo) # 2) < 0.5}
-            }
-        }
-    };
-    if (isNull _cargo) exitWith {};
-    sleep 1;
-    if (isNull _cargo) exitWith {};
+	params ["_cargo"];
+	waitUntil {
+		sleep 0.1;
+		isNull _cargo || {
+			isNull attachedTo _cargo && {
+				isTouchingGround _cargo || {((getPos _cargo) # 2) < 0.5}
+			}
+		}
+	};
+	if (isNull _cargo) exitWith {};
+	sleep 1;
+	if (isNull _cargo) exitWith {};
 
-    _cargo setDamage 0;
-    if (local _cargo) then {
-        _cargo allowDamage true;
-    } else {
-        [_cargo, true] remoteExecCall ["allowDamage", _cargo];
-    };
-    {deleteVehicle _x} forEachReversed (attachedObjects _cargo);
+	_cargo setDamage 0;
+	if (local _cargo) then {
+		_cargo allowDamage true;
+	} else {
+		[_cargo, true] remoteExecCall ["allowDamage", _cargo];
+	};
+	{deleteVehicle _x} forEachReversed (attachedObjects _cargo);
 
-    if (!var_bft || {var_oldSchoolMap}) exitWith {};
-    private _markerType = "loc_container";
-    if (_cargo isKindOf "LandVehicle") then {_markerType = "loc_car"};
-    if (_cargo isKindOf "Ship") then {_markerType = "loc_boat"};
+	if (!var_bft || {var_oldSchoolMap}) exitWith {};
+	private _markerType = "loc_container";
+	if (_cargo isKindOf "LandVehicle") then {_markerType = "loc_car"};
+	if (_cargo isKindOf "Ship") then {_markerType = "loc_boat"};
 
-    // Reserve a unique name and publish a fixed position; no object tracking or JIP script.
-    isNil {
-        lmf_supplyDrop_markerId = (missionNamespace getVariable ["lmf_supplyDrop_markerId", 0]) + 1;
-        private _marker = createMarker [format ["lmf_supplyDrop_landed_%1", lmf_supplyDrop_markerId], getPosATL _cargo];
-        _marker setMarkerColorLocal "ColorWEST";
-        _marker setMarkerSizeLocal [0.75, 0.75];
-        _marker setMarkerType _markerType;
-        _marker setMarkerShadow false;
-    };
+	// Reserve a unique name and publish a fixed position; no object tracking or JIP script.
+	isNil {
+		lmf_supplyDrop_markerId = (missionNamespace getVariable ["lmf_supplyDrop_markerId", 0]) + 1;
+		private _marker = createMarker [format ["lmf_supplyDrop_landed_%1", lmf_supplyDrop_markerId], getPosATL _cargo];
+		_marker setMarkerColorLocal "ColorWEST";
+		_marker setMarkerSizeLocal [0.75, 0.75];
+		_marker setMarkerType _markerType;
+		_marker setMarkerShadow false;
+	};
 };
 
 _veh limitSpeed 999;
-_veh doMove (_spawnPos getPos [(_spawnPos distance2D _dropPos) + 10000,_dir - 180]);
+_veh doMove (_spawnPos getPos [(_spawnPos distance2D _dropPos) + 10000, _dir - 180]);
 
 waitUntil {sleep 0.5; !alive _veh || {allPlayers findIf {_x distance2D _veh < 5000} == -1}};
 // Leave destroyed aircraft and their crew to Arma's normal cleanup.

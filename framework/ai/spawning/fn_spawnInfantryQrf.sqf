@@ -1,16 +1,16 @@
 /*
-    Spawn infantry QRF
-    Spawns an infantry QRF.
-    Author: nkenny. Contributors: Drgn V4karian, Alex2k.
-    Player proximity is checked before every spawn, including when only one ticket is configured.
+	Spawn infantry QRF
+	Spawns an infantry QRF.
+	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
+	Player proximity is checked before every spawn, including when only one ticket is configured.
 
-    Arguments:
-        0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
-        1: Group type or soldier count <STRING or NUMBER> (default: "TEAM"; "SQUAD", "TEAM", "SENTRY", "ATTEAM", "AATEAM" or "MGTEAM")
-        2: Spawn tickets <NUMBER> (default: 1)
+	Arguments:
+		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
+		1: Group type or soldier count <STRING or NUMBER> (default: "TEAM"; "SQUAD", "TEAM", "SENTRY", "ATTEAM", "AATEAM" or "MGTEAM")
+		2: Spawn tickets <NUMBER> (default: 1)
 
-    Example:
-        [spawn_1, "TEAM", 1] spawn lmf_ai_fnc_spawnInfantryQrf;
+	Example:
+		[spawn_1, "TEAM", 1] spawn lmf_ai_fnc_spawnInfantryQrf;
 */
 
 waitUntil {sleep 1; CBA_missionTime > 0};
@@ -19,7 +19,7 @@ if !(_spawner) exitWith {};
 
 #include "spawnDefinitions.sqf"
 
-params [["_spawnPos", [0,0,0]],["_grpType", "TEAM"],["_tickets", 1]];
+params [["_spawnPos", [0, 0, 0]], ["_grpType", "TEAM"], ["_tickets", 1]];
 private _dir = random 360;
 if !(_spawnPos isEqualType []) then {_dir = getDir _spawnPos;};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
@@ -30,23 +30,23 @@ private _initTickets = _tickets;
 
 while {_initTickets > 0} do {
 
-	if ([_spawnPos,_range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "airClose") then {
+	if ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "airClose") then {
 
-		waitUntil {sleep 10; ([_spawnPos,_range] call lmf_ai_fnc_getPlayerProximityState) in ["airDistance", "groundClose"]};
+		waitUntil {sleep 10; ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState) in ["airDistance", "groundClose"]};
 	};
 
-	if ([_spawnPos,_range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose") exitWith {};
+	if ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose") exitWith {};
 
 	// Spawn and configure the group.
 	private _type = [_grpType] call _typeMaker;
-	private _grp = [_spawnPos,var_enemySide,_type] call BIS_fnc_spawnGroup;
+	private _grp = [_spawnPos, var_enemySide, _type] call BIS_fnc_spawnGroup;
 	[_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
-	_grp setGroupIDGlobal [format ["Infantry QRF (%1)", groupId _grp]];
+	_grp setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _grp]];
 	_grp deleteGroupWhenEmpty true;
 	_grp setVariable ["lmf_ai_joinableGroup", true];
 	_grp setFormation "DIAMOND";
 	_grp setSpeedMode "FULL";
-    _grp setCombatMode "RED";
+	_grp setCombatMode "RED";
 
 	private _wp = _grp addWaypoint [getPosASL (vehicle (leader _grp)), -1];
 	_wp setWaypointType "GUARD";
@@ -81,7 +81,7 @@ while {_initTickets > 0} do {
 
 	if (_tickets > 1) then {
 
-		waitUntil {sleep 10; {alive _x} count units _grp < 1 || {[_spawnPos,_range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose"}};
+		waitUntil {sleep 10; {alive _x} count units _grp < 1 || {[_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose"}};
 	};
 
 	_initTickets = _initTickets - 1;

@@ -1,17 +1,17 @@
 /*
-    UAV attack
-    Tasks a UAV against a target.
-    Author: Alex2k.
+	UAV attack
+	Tasks a UAV against a target.
+	Author: Alex2k.
 
-    Arguments:
-        0: UAV <OBJECT>
-        1: Target <OBJECT>
+	Arguments:
+		0: UAV <OBJECT>
+		1: Target <OBJECT>
 
-    Example:
-        [uav_1, target_1] spawn lmf_ai_fnc_taskUavAttack;
+	Example:
+		[uav_1, target_1] spawn lmf_ai_fnc_taskUavAttack;
 */
 
-params ["_veh","_target"];
+params ["_veh", "_target"];
 if (!alive _veh) exitWith {};
 
 _grp = (group _veh);
@@ -29,13 +29,13 @@ _grp addEventHandler ["EnemyDetected", {
 }];
 
 while {alive _veh} do {
-	_veh flyInHeight [10 + (random 100),true];
+	_veh flyInHeight [10 + (random 100), true];
 	waitUntil {sleep 5; (_veh targets [true, 25]) isNotEqualTo [] || !alive _veh};
 	if (!alive _veh) exitWith {};
 
-	_veh flyInHeight [10 + (random 40),true];
+	_veh flyInHeight [10 + (random 40), true];
 
-	private _grenade = "GrenadeHand" createVehicle [0,0,random 9999];
+	private _grenade = "GrenadeHand" createVehicle [0, 0, random 9999];
 	_grenade attachTo [_veh, [0, 0, -0.15]];
 	detach _grenade;
 

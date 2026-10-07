@@ -1,16 +1,16 @@
 /*
-    Player proximity state
-    Returns the player-proximity state used by the AI spawners.
-    A nearby grounded player takes priority over a nearby airborne player.
+	Player proximity state
+	Returns the player-proximity state used by the AI spawners.
+	A nearby grounded player takes priority over a nearby airborne player.
 
-    Arguments:
-        0: Position to check <OBJECT or ARRAY>
-        1: Detection range in meters <NUMBER> (default: 500)
+	Arguments:
+		0: Position to check <OBJECT or ARRAY>
+		1: Detection range in meters <NUMBER> (default: 500)
 
-    Example:
-        [spawn_1, 500] call lmf_ai_fnc_getPlayerProximityState;
+	Example:
+		[spawn_1, 500] call lmf_ai_fnc_getPlayerProximityState;
 
-    Returns: Proximity state: "groundClose", "airClose" or "airDistance" <STRING>
+	Returns: Proximity state: "groundClose", "airClose" or "airDistance" <STRING>
 */
 
 params ["_pos", ["_range", 500]];

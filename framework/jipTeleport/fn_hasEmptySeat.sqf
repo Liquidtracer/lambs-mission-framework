@@ -1,14 +1,14 @@
 /*
-    Teleport seat availability
-    Accepts a player or vehicle; moveInAny reports whether the move succeeds at use.
+	Teleport seat availability
+	Accepts a player or vehicle; moveInAny reports whether the move succeeds at use.
 
-    Arguments:
-        0: Player or vehicle <OBJECT>
+	Arguments:
+		0: Player or vehicle <OBJECT>
 
-    Example:
-        [transport_1] call lmf_jipTeleport_fnc_hasEmptySeat;
+	Example:
+		[transport_1] call lmf_jipTeleport_fnc_hasEmptySeat;
 
-    Returns: Whether an eligible vehicle has an empty seat <BOOLEAN>
+	Returns: Whether an eligible vehicle has an empty seat <BOOLEAN>
 */
 
 params [["_target", objNull, [objNull]]];

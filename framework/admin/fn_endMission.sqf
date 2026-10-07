@@ -1,16 +1,16 @@
 /*
-    End mission
-    Ends the mission with the selected outcome.
+	End mission
+	Ends the mission with the selected outcome.
 
-    Arguments:
-        0: Requesting admin <OBJECT>
-        1: Victory <BOOLEAN> (default: true; false = defeat)
+	Arguments:
+		0: Requesting admin <OBJECT>
+		1: Victory <BOOLEAN> (default: true; false = defeat)
 
-    Example:
-        [player, true] call lmf_admin_fnc_endMission;
+	Example:
+		[player, true] call lmf_admin_fnc_endMission;
 */
 
-params ["_unit",["_state",true]];
+params ["_unit", ["_state", true]];
 
 #include "checkAdminAccess.sqf"
 

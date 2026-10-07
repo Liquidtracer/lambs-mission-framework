@@ -1,7 +1,7 @@
 /*
-    Platoon sergeant loadout
-    Applies the Platoon Sergeant loadout to the supplied local unit.
-    Author: Alex2k.
+	Platoon sergeant loadout
+	Applies the Platoon Sergeant loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

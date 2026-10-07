@@ -1,7 +1,7 @@
 /*
-    Vehicle platoon leader loadout
-    Applies the Vehicle Platoon Leader loadout to the supplied local unit.
-    Author: Alex2k.
+	Vehicle platoon leader loadout
+	Applies the Vehicle Platoon Leader loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

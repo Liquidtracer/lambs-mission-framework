@@ -1,7 +1,7 @@
 /*
-    Vehicle commander loadout
-    Applies the Vehicle Commander loadout to the supplied local unit.
-    Author: Alex2k.
+	Vehicle commander loadout
+	Applies the Vehicle Commander loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

@@ -1,7 +1,7 @@
 /*
-    JTAC loadout
-    Applies the JTAC loadout to the supplied local unit.
-    Author: Alex2k.
+	JTAC loadout
+	Applies the JTAC loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

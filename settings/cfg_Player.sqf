@@ -1,8 +1,8 @@
 /*
-    Player equipment settings
-    Defines player equipment, also used in configured vehicles and supply crates.
+	Player equipment settings
+	Defines player equipment, also used in configured vehicles and supply crates.
 
-    Only required when custom player gear is enabled.
+	Only required when custom player gear is enabled.
 */
 
 // Radios
@@ -10,10 +10,10 @@ private _radioB = "ACRE_PRC148";
 private _radioL = "ACRE_PRC148";
 private _radioR = "ACRE_PRC343";
 
-// Optics available during warmup (ACE self-interaction)
-private _availableOptics = ["JCA_optic_MRCS_black"];
+private _availableOptics = ["JCA_optic_MRCS_black"]; // Available during warmup (ACE self-interaction)
 
-// Infantry roles (Clothing arrays set to [""] inherit the rifleman configuration.) ---------------¨
+// --- Infantry roles ---------------------------------------------------------------------------
+// Clothing arrays set to [""] inherit the rifleman configuration.
 
 // 0: Flare gun
 // 1: Pistol
@@ -30,7 +30,7 @@ private _availableOptics = ["JCA_optic_MRCS_black"];
 // Rifleman
 private _rUniform = ["LAMBS_U_CombatUniformB_full"];
 private _rVest = ["LAMBS_CarrierRigKBT_01_light_Brown_F"];
-private _rHeadgear = ["CUP_H_OpsCore_Black","CUP_H_OpsCore_Black_NoHS","CUP_H_OpsCore_Black_SF","CUP_H_OpsCore_Grey","CUP_H_OpsCore_Grey_NoHS","CUP_H_OpsCore_Grey_SF"];
+private _rHeadgear = ["CUP_H_OpsCore_Black", "CUP_H_OpsCore_Black_NoHS", "CUP_H_OpsCore_Black_SF", "CUP_H_OpsCore_Grey", "CUP_H_OpsCore_Grey_NoHS", "CUP_H_OpsCore_Grey_SF"];
 private _rGoggles = ["G_Balaclava_TI_blk_F"];
 private _rBackpack = ["B_AssaultPack_blk"];
 private _rWeapon = 4;
@@ -139,7 +139,7 @@ private _jtacGoggles = [""];
 private _jtacBackpack = ["B_RadioBag_01_black_F"];
 private _jtacWeapon = 5;
 
-// Aircrew roles ----------------------------------------------------------------------------------
+// --- Aircrew roles ----------------------------------------------------------------------------------
 // Helicopter pilot
 private _hpUniform = ["U_I_HeliPilotCoveralls"];
 private _hpVest = ["V_TacVest_oli"];
@@ -164,7 +164,7 @@ private _pGoggles = [""];
 private _pBackpack = [""];
 private _pWeapon = 2;
 
-// Ground vehicle roles ---------------------------------------------------------------------------
+// --- Ground vehicle roles ---------------------------------------------------------------------------
 // Vehicle platoon leader
 private _vplUniform = [""];
 private _vplVest = ["V_BandollierB_oli"];
@@ -189,14 +189,14 @@ private _vcGoggles = [""];
 private _vcBackpack = [""];
 private _vcWeapon = 2;
 
-// Weapons ----------------------------------------------------------------------------------------
+// --- Weapons ----------------------------------------------------------------------------------------
 // Flare gun (weapon 0)
 private _flareGun = "CUP_hgun_FlareGun";
 private _flareGunAmmo = "";
 
 // Pistol (weapon 1)
 private _pistol = ["CUP_hgun_FlareGun"];
-private _pistolAmmo = ["CUP_IllumFlareRed_265_M","CUP_IllumFlareGreen_265_M"];
+private _pistolAmmo = ["CUP_IllumFlareRed_265_M", "CUP_IllumFlareGreen_265_M"];
 private _pistolAttach1 = [""];
 private _pistolAttach2 = [""];
 
@@ -218,7 +218,7 @@ private _carbineAttach2 = [""];
 private _carbineBipod = [""];
 
 // Rifle (weapon 4)
-private _rifle = ["CUP_arifle_Mk17_CQC_Black","CUP_arifle_Mk17_CQC_AFG_black","CUP_arifle_Mk17_CQC_FG_black"];
+private _rifle = ["CUP_arifle_Mk17_CQC_Black", "CUP_arifle_Mk17_CQC_AFG_black", "CUP_arifle_Mk17_CQC_FG_black"];
 private _rifleAmmo = ["CUP_30Rnd_762x51_2_B_SCAR"];
 private _rifleAmmoT = ["CUP_30Rnd_TE1_Red_Tracer_762x51_1_SCAR"];
 private _rifleOptic = _availableOptics;
@@ -283,7 +283,7 @@ private _binocular = "ACE_Vector";
 private _nvg = "ACE_NVG_Gen4_Black";
 private _nvgPilot = "ACE_NVG_Gen4_Green";
 
-// Role definitions (do not use the same classname twice) -----------------------------------------
+// --- Role definitions (do not use the same classname twice) -----------------------------------------
 private _antiTankGunner = ["B_Soldier_AT_F", "AT Specialist", "CORPORAL"];
 private _antiTankAssistant = ["B_Soldier_AAT_F", "AT Assistant", "PRIVATE"];
 private _autorifleman = ["B_Soldier_AR_F", "Automatic Rifleman", "CORPORAL"];

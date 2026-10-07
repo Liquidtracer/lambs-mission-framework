@@ -1,30 +1,30 @@
 /*
-    Assign callsign
-    Assigns a sequential callsign to an AI group.
-    Must be executed on the server.
-    Prefixes used here are treated as reserved LMF prefixes.
-    Author: Alex2k.
+	Assign callsign
+	Assigns a sequential callsign to an AI group.
+	Must be executed on the server.
+	Prefixes used here are treated as reserved LMF prefixes.
+	Author: Alex2k.
 
-    Arguments:
-        0: Group <GROUP>
-        1: Prefix <STRING>
+	Arguments:
+		0: Group <GROUP>
+		1: Prefix <STRING>
 
-    Example:
-        [grp1, "ATLAS"] call lmf_ai_fnc_assignCallsign;
+	Example:
+		[grp1, "ATLAS"] call lmf_ai_fnc_assignCallsign;
 
-    Returns: Assigned callsign, or an empty string on failure <STRING>
+	Returns: Assigned callsign, or an empty string on failure <STRING>
 */
 
 params [
-    ["_group", grpNull, [grpNull]],
-    ["_prefix", "", [""]]
+	["_group", grpNull, [grpNull]],
+	["_prefix", "", [""]]
 ];
 
 if (!isServer) exitWith {""};
 if (isNull _group || {_prefix isEqualTo ""}) exitWith {""};
 
 if (isNil "lmf_ai_callsignCounters") then {
-    lmf_ai_callsignCounters = createHashMap;
+	lmf_ai_callsignCounters = createHashMap;
 };
 
 private _number = (lmf_ai_callsignCounters getOrDefault [_prefix, 0]) + 1;

@@ -1,19 +1,19 @@
 /*
-    Give weapon
-    Give weapon according to weapon type number.
-    Run where the unit is local.
-    Author: G4rrus. Contributor: Alex2k.
+	Give weapon
+	Give weapon according to weapon type number.
+	Run where the unit is local.
+	Author: G4rrus. Contributor: Alex2k.
 
-    Arguments:
-        0: Unit <OBJECT>
-        1: Weapon type <NUMBER> (0-10, see cfg_Player for weapon type definitions)
+	Arguments:
+		0: Unit <OBJECT>
+		1: Weapon type <NUMBER> (0-10, see cfg_Player for weapon type definitions)
 
-    Examples:
-        [player, 4] call lmf_equipment_fnc_giveWeapon;  // Rifle
-        [player, 1] call lmf_equipment_fnc_giveWeapon;  // Pistol
+	Examples:
+		[player, 4] call lmf_equipment_fnc_giveWeapon;  // Rifle
+		[player, 1] call lmf_equipment_fnc_giveWeapon;  // Pistol
 */
 
-params [["_unit",objNull,[objNull]],["_weapon",3,[123]]];
+params [["_unit", objNull, [objNull]], ["_weapon", 3, [123]]];
 
 if (isNull _unit || {!local _unit}) exitWith {false};
 

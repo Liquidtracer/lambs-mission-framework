@@ -1,12 +1,12 @@
 /*
-    AI death handling
-    Handles AI death.
+	AI death handling
+	Handles AI death.
 
-    Arguments:
-        0: Affected unit <OBJECT>
+	Arguments:
+		0: Affected unit <OBJECT>
 
-    Example:
-        [soldier_1] call lmf_ai_fnc_onKilled;
+	Example:
+		[soldier_1] call lmf_ai_fnc_onKilled;
 */
 
 params ["_unit"];

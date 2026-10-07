@@ -1,19 +1,19 @@
 /*
-    Player death handling
-    Handles player death, respawn timing and spectator startup.
+	Player death handling
+	Handles player death, respawn timing and spectator startup.
 
-    Arguments:
-        0: Affected unit <OBJECT>
+	Arguments:
+		0: Affected unit <OBJECT>
 
-    Example:
-        [player] spawn lmf_respawn_fnc_onKilled;
+	Example:
+		[player] spawn lmf_respawn_fnc_onKilled;
 */
 
 params ["_unit"];
 if (isNull _unit || {alive player} || {_unit isNotEqualTo player}) exitWith {};
 
 // Black out
-cutText ["","BLACK OUT",0.001,true];
+cutText ["", "BLACK OUT", 0.001, true];
 
 // Calculate the respawn time.
 if (var_respawnType isEqualType "") then {
@@ -99,20 +99,20 @@ if (_oldEntityKilledEh >= 0) then {
 };
 
 lmf_entityKilledEh = addMissionEventHandler ["EntityKilled", {
-    params ["_unit", "_killer", "_instigator", "_useEffects"];
+	params ["_unit", "_killer", "_instigator", "_useEffects"];
 	if (_unit isEqualTo player || {!isPlayer [_unit]}) exitWith {};
 
-    if (!alive player) then {
-        private _txt = parseText format [
-            "<t font='PuristaBold' size='0.5' shadow='2' color='%3'>%1<t color='%4'>%2",
-            name _unit,
-            selectRandom lmf_msgPool,
-            LMF_MAIN_COLOR,
-            LMF_TEXT_COLOR
-        ];
+	if (!alive player) then {
+		private _txt = parseText format [
+			"<t font='PuristaBold' size='0.5' shadow='2' color='%3'>%1<t color='%4'>%2",
+			name _unit,
+			selectRandom lmf_msgPool,
+			LMF_MAIN_COLOR,
+			LMF_TEXT_COLOR
+		];
 
-        [_txt,0,0.75,10,0,1,random 999999] spawn BIS_fnc_dynamicText;
-    };
+		[_txt, 0, 0.75, 10, 0, 1, random 999999] spawn BIS_fnc_dynamicText;
+	};
 }];
 
 sleep 9;
@@ -122,7 +122,7 @@ if (alive player || {_unit isNotEqualTo player}) exitWith {};
 
 // ACE spectator interface
 [true] call ace_spectator_fnc_setSpectator;
-[[0,1,2],[]] call ace_spectator_fnc_updateCameraModes;
+[[0, 1, 2], []] call ace_spectator_fnc_updateCameraModes;
 // [[2,3],[0,1]] call ace_spectator_fnc_updateVisionModes;
 [0, objNull] call ace_spectator_fnc_setCameraAttributes;
 
@@ -135,4 +135,4 @@ if (alive player || {_unit isNotEqualTo player}) exitWith {};
 5 enableChannel false;
 
 // Fade in
-cutText ["","BLACK IN",4,true];
+cutText ["", "BLACK IN", 4, true];

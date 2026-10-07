@@ -1,7 +1,7 @@
 /*
-    Medic loadout
-    Applies the Medic loadout to the supplied local unit.
-    Author: Alex2k.
+	Medic loadout
+	Applies the Medic loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

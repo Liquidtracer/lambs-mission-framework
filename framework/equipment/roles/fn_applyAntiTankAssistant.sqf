@@ -1,7 +1,7 @@
 /*
-    Anti-tank assistant loadout
-    Applies the AT Assistant loadout to the supplied local unit.
-    Author: Alex2k.
+	Anti-tank assistant loadout
+	Applies the AT Assistant loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

@@ -1,8 +1,8 @@
 /*
-    Personal arsenal
-    Provides personal arsenal and available-optics actions during warmup.
-    Uses the starting slot's headgear and goggles, with the same Rifleman fallback as applyBaseLoadout.
-    Author: Alex2k. Contributor: Drgn V4karian.
+	Personal arsenal
+	Provides personal arsenal and available-optics actions during warmup.
+	Uses the starting slot's headgear and goggles, with the same Rifleman fallback as applyBaseLoadout.
+	Author: Alex2k. Contributor: Drgn V4karian.
 */
 
 if (!var_playerGear || {!var_personalArsenal} || {!var_warmup}) exitWith {};
@@ -259,14 +259,14 @@ if (_role == _crew#0) then {
 };
 
 // Remove ability to randomize/save/load/export/import loadouts
-[ missionNamespace, "arsenalOpened", {
-    disableSerialization;
-    private _display = _this select 0;
-    {
-		( _display displayCtrl _x ) ctrlSetTextColor [ 1, 0, 0, 0.3 ];
-        ( _display displayCtrl _x ) ctrlRemoveAllEventHandlers "buttonclick";
-		( _display displayCtrl _x ) ctrlEnable false;
-    } forEach [
+[missionNamespace, "arsenalOpened", {
+	disableSerialization;
+	private _display = _this select 0;
+	{
+		(_display displayCtrl _x) ctrlSetTextColor [1, 0, 0, 0.3];
+		(_display displayCtrl _x) ctrlRemoveAllEventHandlers "buttonclick";
+		(_display displayCtrl _x) ctrlEnable false;
+	} forEach [
 		44150, // Random loadout
 		44146, // Save loadout
 		44147, // Load loadout
@@ -297,7 +297,7 @@ if (_role == _crew#0) then {
 		909 // Binoculars on character
 	];
 	_display displayAddEventHandler ["KeyDown", "true"];
-} ] call BIS_fnc_addScriptedEventHandler;
+}] call BIS_fnc_addScriptedEventHandler;
 
 // On arsenal opened
 [missionNamespace, "arsenalOpened", {
@@ -306,14 +306,14 @@ if (_role == _crew#0) then {
 		lmf_arsenalLight1 setLightBrightness 1;
 		lmf_arsenalLight1 setLightAmbient [0.0, 0.0, 0.0];
 		lmf_arsenalLight1 setLightColor [1.0, 1.0, 1.0];
-		lmf_arsenalLight1 lightAttachObject [player, [0,3,5]];
+		lmf_arsenalLight1 lightAttachObject [player, [0, 3, 5]];
 
 		// Light behind player
 		lmf_arsenalLight2 = "#lightpoint" createVehicleLocal position player;
 		lmf_arsenalLight2 setLightBrightness 1;
 		lmf_arsenalLight2 setLightAmbient [0.0, 0.0, 0.0];
 		lmf_arsenalLight2 setLightColor [1.0, 1.0, 1.0];
-		lmf_arsenalLight2 lightAttachObject [player, [0,-3,5]];
+		lmf_arsenalLight2 lightAttachObject [player, [0, -3, 5]];
 }] call BIS_fnc_addScriptedEventHandler;
 
 // On arsenal closed
@@ -323,8 +323,7 @@ if (_role == _crew#0) then {
 }] call BIS_fnc_addScriptedEventHandler;
 
 // Add actions
-// _text = format ["<t shadow='2' color='#FFBA26'>Personal Arsenal</t>"];
-private _personalArsenal = ["personalArsenal","Personal Arsenal",["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa",LMF_MAIN_COLOR],{["Open",[false,player, player]] spawn bis_fnc_arsenal; player action ["SwitchWeapon", player, player, 100];},{lmf_warmup}] call ace_interact_menu_fnc_createAction;
+private _personalArsenal = ["personalArsenal", "Personal Arsenal", ["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa", LMF_MAIN_COLOR], {["Open", [false, player, player]] spawn bis_fnc_arsenal; player action ["SwitchWeapon", player, player, 100];}, {lmf_warmup}] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions", "ACE_Equipment"], _personalArsenal] call ace_interact_menu_fnc_addActionToObject;
 
 private _specialRoles = [_crew#0, _heloPilot#0, _heloCrew#0, _pilot#0, _crewLeader#0, _crewSgt#0];
@@ -336,38 +335,35 @@ if (_availableOptics isEqualTo [""]) exitWith {};
 lmf_player_availableOptics = _availableOptics;
 
 _condition = {
-    lmf_warmup
+	lmf_warmup
 };
 _statement = {
-    params ["_target", "_player", "_params"];
-    // diag_log format ["_statement [%1, %2, %3]", _target, _player, _params];
-    // Run on hover:
-    // ["ace_common_displayTextStructured", ["someone is thinking of giving you items", 1.5, _target], [_target]] call CBA_fnc_targetEvent;
+	params ["_target", "_player", "_params"];
+	// Run on hover:
+	// ["ace_common_displayTextStructured", ["someone is thinking of giving you items", 1.5, _target], [_target]] call CBA_fnc_targetEvent;
 };
 _insertChildren = {
-    params ["_target", "_player", "_params"];
-    // diag_log format ["_insertChildren [%1, %2, %3]", _target, _player, _params];
-    // Add children to this action
-    private _actions = [];
-    {
-        private _childStatement = {
+	params ["_target", "_player", "_params"];
+	// Add children to this action
+	private _actions = [];
+	{
+		private _childStatement = {
 			_target addPrimaryWeaponItem (_this select 2);
 			{
 				if (_x in (items _target)) then {_target removeItem _x};
 			} forEach lmf_player_availableOptics;
 		};
 		_displayName = [configFile >> "CfgWeapons" >> _x] call BIS_fnc_displayName;
-        private _action = [format ["item:%1",_x], _displayName, "", _childStatement, {true}, {}, _x] call ace_interact_menu_fnc_createAction;
-        _actions pushBack [_action, [], _target]; // New action, it's children, and the action's target
-    } forEach lmf_player_availableOptics;
+		private _action = [format ["item:%1", _x], _displayName, "", _childStatement, {true}, {}, _x] call ace_interact_menu_fnc_createAction;
+		_actions pushBack [_action, [], _target]; // New action, it's children, and the action's target
+	} forEach lmf_player_availableOptics;
 
-    _actions
+	_actions
 };
 _modifierFunc = {
-    params ["_target", "_player", "_params", "_actionData"];
-    // diag_log format ["_modifierFunc [%1, %2, %3]", _target, _player, _params];
-    // Modify the action - index 1 is the display name, 2 is the icon...
-    // _actionData set [1, format ["Available Optics: %1", count lmf_player_availableOptics]];
+	params ["_target", "_player", "_params", "_actionData"];
+	// Modify the action - index 1 is the display name, 2 is the icon...
+	// _actionData set [1, format ["Available Optics: %1", count lmf_player_availableOptics]];
 };
-_action = ["availableOptics", "Available Optics",["\A3\ui_f_curator\data\rsccommon\rscattributeinventory\filter_7_ca.paa",LMF_MAIN_COLOR],_statement,_condition,_insertChildren,[123],"",4,[false, false, false, true, false], _modifierFunc] call ace_interact_menu_fnc_createAction;
+_action = ["availableOptics", "Available Optics", ["\A3\ui_f_curator\data\rsccommon\rscattributeinventory\filter_7_ca.paa", LMF_MAIN_COLOR], _statement, _condition, _insertChildren, [123], "", 4, [false, false, false, true, false], _modifierFunc] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions", "ACE_Equipment"], _action] call ace_interact_menu_fnc_addActionToObject;

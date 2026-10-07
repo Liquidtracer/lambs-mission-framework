@@ -1,7 +1,7 @@
 /*
-    Vehicle crew loadout
-    Applies the Vehicle Crew loadout to the supplied local unit.
-    Author: Alex2k.
+	Vehicle crew loadout
+	Applies the Vehicle Crew loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

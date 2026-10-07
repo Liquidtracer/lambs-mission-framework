@@ -1,15 +1,15 @@
 /*
-    Aircraft initialization
-    Initializes cargo for configured player aircraft.
+	Aircraft initialization
+	Initializes cargo for configured player aircraft.
 
-    Arguments:
-        0: Aircraft <OBJECT>
+	Arguments:
+		0: Aircraft <OBJECT>
 
-    Example:
-        [plane_1] call lmf_playerVehicles_fnc_initAirVehicle;
+	Example:
+		[plane_1] call lmf_playerVehicles_fnc_initAirVehicle;
 */
 
-params [["_air",objNull,[objNull]]];
+params [["_air", objNull, [objNull]]];
 if (isNull _air) exitWith {};
 
 // Apply loadout
@@ -18,4 +18,4 @@ clearMagazineCargoGlobal _air;
 clearItemCargoGlobal _air;
 clearBackpackCargoGlobal _air;
 
-_air addItemCargoGlobal ["Toolkit",1];
+_air addItemCargoGlobal ["Toolkit", 1];

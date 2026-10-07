@@ -1,7 +1,7 @@
 /*
-    Team leader loadout
-    Applies the Team Leader loadout to the supplied local unit.
-    Author: Alex2k.
+	Team leader loadout
+	Applies the Team Leader loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

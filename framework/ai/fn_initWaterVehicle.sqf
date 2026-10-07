@@ -1,19 +1,19 @@
 /*
-    Boat initialization
-    Applies the configured AI boat settings.
+	Boat initialization
+	Applies the configured AI boat settings.
 
-    Arguments:
-        0: Ship <OBJECT>
+	Arguments:
+		0: Ship <OBJECT>
 
-    Example:
-        [boat_1] call lmf_ai_fnc_initWaterVehicle;
+	Example:
+		[boat_1] call lmf_ai_fnc_initWaterVehicle;
 */
 
-params [["_ship",objNull,[objNull]]];
+params [["_ship", objNull, [objNull]]];
 if (isNull _ship) exitWith {};
 
 private _camos = lmf_ai_config get "CAMOS";
-private _vehicleKey = (lmf_ai_config get "VEHICLE_BY_CLASS") getOrDefault [toLower (typeOf _ship),""];
+private _vehicleKey = (lmf_ai_config get "VEHICLE_BY_CLASS") getOrDefault [toLower (typeOf _ship), ""];
 private _ammoBlacklist = lmf_ai_config get "AMMO_BLACKLIST";
 
 // Apply general settings
@@ -27,7 +27,7 @@ clearBackpackCargoGlobal _ship;
 // Apply vehicle-specific settings.
 if (_vehicleKey == "BOAT") then {
 	private _validCamos = (_camos get "BOAT") select {_x isNotEqualTo ""};
-	if !(_validCamos isEqualTo []) then {[_ship,[selectRandom _validCamos,1]] call BIS_fnc_initVehicle};
+	if !(_validCamos isEqualTo []) then {[_ship, [selectRandom _validCamos, 1]] call BIS_fnc_initVehicle};
 };
 
 // Vehicle lights

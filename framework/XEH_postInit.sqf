@@ -1,7 +1,7 @@
 /*
-    Framework postInit
-    Initializes framework systems for all machines, the server and player clients.
-    Contributors: diwako, G4rrus, Alex2k.
+	Framework postInit
+	Initializes framework systems for all machines, the server and player clients.
+	Contributors: diwako, G4rrus, Alex2k.
 */
 
 // --- All machines --------------------------------------------------------------------------------
@@ -15,35 +15,35 @@ enableSaving [false, false];
 #include "medical\initUnconsciousEvent.sqf"
 
 if (var_supplyDropLimit > 0) then {
-    [] execVM "framework\supplyDrop\initSupplyDrop.sqf";
+	[] execVM "framework\supplyDrop\initSupplyDrop.sqf";
 };
 
 if (var_forwardDeploy) then {
-    [] execVM "framework\forwardDeploy\initForwardDeploy.sqf";
+	[] execVM "framework\forwardDeploy\initForwardDeploy.sqf";
 };
 
 [] spawn lmf_ai_fnc_manageNvg;
 
 // --- Server --------------------------------------------------------------------------------------
 if (isServer) then {
-    #include "warmup\initWarmupState.sqf"
+	#include "warmup\initWarmupState.sqf"
 
-    [] execVM "framework\markers\createMissionMarkers.sqf";
+	[] execVM "framework\markers\createMissionMarkers.sqf";
 
-    #include "chat\createChatChannel.sqf"
+	#include "chat\createChatChannel.sqf"
 
-    // Apply player loadouts to friendly AI during non-dedicated testing.
-    if !(isDedicated) then {
-        if (var_playerGear) then {
-            {
-                [_x] call lmf_equipment_fnc_applyRoleFromClass;
-            } forEach (playableUnits + switchableUnits) - [player];
-        };
-    };
+	// Apply player loadouts to friendly AI during non-dedicated testing.
+	if !(isDedicated) then {
+		if (var_playerGear) then {
+			{
+				[_x] call lmf_equipment_fnc_applyRoleFromClass;
+			} forEach (playableUnits + switchableUnits) - [player];
+		};
+	};
 
-    [] execVM "framework\tripFlare\initTripFlareEvent.sqf";
+	[] execVM "framework\tripFlare\initTripFlareEvent.sqf";
 
-    [] execVM "framework\warmup\monitorWarmupDeadline.sqf";
+	[] execVM "framework\warmup\monitorWarmupDeadline.sqf";
 
 };
 
@@ -51,7 +51,7 @@ if (isServer) then {
 if !(hasInterface) exitWith {};
 waitUntil {!isNull player};
 
-setMissionOptions createHashMapFromArray [ ["AIThinkOnlyLocal", true] ];
+setMissionOptions createHashMapFromArray [["AIThinkOnlyLocal", true]];
 
 call compile preprocessFileLineNumbers "framework\groupNotifications\initGroupNotifications.sqf";
 
@@ -59,8 +59,8 @@ call compile preprocessFileLineNumbers "framework\groupNotifications\initGroupNo
 #include "spectator\initSpectatorEvents.sqf"
 
 if (var_bft) then {
-    [] execVM "framework\bft\initGroupTracking.sqf";
-    [] execVM "framework\bft\initUnitTracking.sqf";
+	[] execVM "framework\bft\initGroupTracking.sqf";
+	[] execVM "framework\bft\initUnitTracking.sqf";
 };
 
 [] execVM "framework\teamColors\assignTeamColor.sqf";
@@ -69,24 +69,24 @@ if (var_bft) then {
 player addEventHandler ["HandleRating", {0}];
 
 player addEventHandler ["Hit", {
-    _this spawn lmf_hitEffects_fnc_onHit;
+	_this spawn lmf_hitEffects_fnc_onHit;
 }];
 
 player addEventHandler ["Killed", {
-    _this spawn lmf_respawn_fnc_onKilled;
+	_this spawn lmf_respawn_fnc_onKilled;
 }];
 
 #include "respawn\initDeathFeedback.sqf"
 
 player addEventHandler ["Respawn", {
-    _this spawn lmf_respawn_fnc_onRespawn;
+	_this spawn lmf_respawn_fnc_onRespawn;
 }];
 
 if (var_playerGear) then {
-    [player] call lmf_equipment_fnc_applyRoleFromClass;
+	[player] call lmf_equipment_fnc_applyRoleFromClass;
 } else {
-    // Keep the starting Eden equipment across player-object replacement.
-    lmf_player_startLoadout = getUnitLoadout player;
+	// Keep the starting Eden equipment across player-object replacement.
+	lmf_player_startLoadout = getUnitLoadout player;
 };
 
 // Start briefing and deferred player setup.
@@ -96,49 +96,49 @@ if (var_playerGear) then {
 
 // Initialize spawner and role actions after the intro signal.
 [] spawn {
-    waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
-    #include "assetSpawner\initSpawnerActions.sqf"
-    #include "equipment\initRoleSelector.sqf"
+	waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
+	#include "assetSpawner\initSpawnerActions.sqf"
+	#include "equipment\initRoleSelector.sqf"
 };
 
 // Start arsenal, JIP teleport and the intro/warmup sequence.
 if (var_playerGear && {var_personalArsenal}) then {
-    lmf_player_arsenalInit = [] execVM "framework\equipment\initPersonalArsenal.sqf";
+	lmf_player_arsenalInit = [] execVM "framework\equipment\initPersonalArsenal.sqf";
 };
 
 if (var_jipTp && {didJIP}) then {
-    lmf_jipTeleport_init = [] execVM "framework\jipTeleport\initJipTeleport.sqf";
+	lmf_jipTeleport_init = [] execVM "framework\jipTeleport\initJipTeleport.sqf";
 };
 
 // Register LMF self-actions on client.
 lmf_player_menuInit = [] spawn {
-    waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
+	waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
 
-    if (var_bft) then {
-        waitUntil {uiSleep 0.2; !isNil "lmf_bft_fnc_registerMenu"};
-        [] call lmf_bft_fnc_registerMenu;
-    };
-    if (var_supplyDropLimit > 0) then {
-        waitUntil {uiSleep 0.2; !isNil "lmf_supplyDrop_fnc_registerMenu" && {!isNil "lmf_remainingSuppDrops"} && {!isNil "lmf_supplyDrop_nextRequest"}};
-        [] call lmf_supplyDrop_fnc_registerMenu;
-    };
-    if (var_jipTp && {didJIP}) then {
-        waitUntil {uiSleep 0.2; !isNil "lmf_jipTeleport_fnc_registerMenu" || {scriptDone lmf_jipTeleport_init}};
-        if (!isNil "lmf_jipTeleport_fnc_registerMenu") then {
-            [] call lmf_jipTeleport_fnc_registerMenu;
-        };
-    };
-    if (var_forwardDeploy) then {
-        waitUntil {uiSleep 0.2; !isNil "lmf_forwardDeploy_fnc_registerMenu"};
-        [] call lmf_forwardDeploy_fnc_registerMenu;
-    };
+	if (var_bft) then {
+		waitUntil {uiSleep 0.2; !isNil "lmf_bft_fnc_registerMenu"};
+		[] call lmf_bft_fnc_registerMenu;
+	};
+	if (var_supplyDropLimit > 0) then {
+		waitUntil {uiSleep 0.2; !isNil "lmf_supplyDrop_fnc_registerMenu" && {!isNil "lmf_remainingSuppDrops"} && {!isNil "lmf_supplyDrop_nextRequest"}};
+		[] call lmf_supplyDrop_fnc_registerMenu;
+	};
+	if (var_jipTp && {didJIP}) then {
+		waitUntil {uiSleep 0.2; !isNil "lmf_jipTeleport_fnc_registerMenu" || {scriptDone lmf_jipTeleport_init}};
+		if (!isNil "lmf_jipTeleport_fnc_registerMenu") then {
+			[] call lmf_jipTeleport_fnc_registerMenu;
+		};
+	};
+	if (var_forwardDeploy) then {
+		waitUntil {uiSleep 0.2; !isNil "lmf_forwardDeploy_fnc_registerMenu"};
+		[] call lmf_forwardDeploy_fnc_registerMenu;
+	};
 };
 
 [] execVM "framework\warmup\runIntroAndWarmup.sqf";
 
 // Initialize integrations, feedback and client utilities.
 if !(isNil "zen_custom_modules_fnc_register") then {
-    [] execVM "framework\zen\registerModules.sqf";
+	[] execVM "framework\zen\registerModules.sqf";
 };
 
 [] execVM "framework\medical\initTreatmentFeedback.sqf";

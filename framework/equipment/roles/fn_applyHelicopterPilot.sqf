@@ -1,7 +1,7 @@
 /*
-    Helicopter pilot loadout
-    Applies the Helicopter Pilot loadout to the supplied local unit.
-    Author: Alex2k.
+	Helicopter pilot loadout
+	Applies the Helicopter Pilot loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

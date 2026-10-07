@@ -1,15 +1,15 @@
 /*
-    Supply crate equipment
-    Fills configured supply crates with player equipment.
+	Supply crate equipment
+	Fills configured supply crates with player equipment.
 
-    Arguments:
-        0: Supply crate <OBJECT>
+	Arguments:
+		0: Supply crate <OBJECT>
 
-    Example:
-        [crate_1] call lmf_supplyCrates_fnc_initSupplyCrate;
+	Example:
+		[crate_1] call lmf_supplyCrates_fnc_initSupplyCrate;
 */
 
-params [["_supp",objNull,[objNull]]];
+params [["_supp", objNull, [objNull]]];
 if (isNull _supp) exitWith {};
 
 #include "..\..\settings\cfg_Player.sqf"
@@ -23,16 +23,16 @@ clearBackpackCargoGlobal _supp;
 if (typeOf _supp == var_supVehicle) exitWith {
 	[_supp, 20] call ace_cargo_fnc_setSpace;
 	for "_i" from 1 to 3 do {
-		["ACE_Track",_supp,true] call ace_cargo_fnc_loadItem;
-		["ACE_Wheel",_supp,true] call ace_cargo_fnc_loadItem;
-		["Land_CanisterFuel_F",_supp,true] call ace_cargo_fnc_loadItem;
+		["ACE_Track", _supp, true] call ace_cargo_fnc_loadItem;
+		["ACE_Wheel", _supp, true] call ace_cargo_fnc_loadItem;
+		["Land_CanisterFuel_F", _supp, true] call ace_cargo_fnc_loadItem;
 	};
-	_supp addItemCargoGlobal ["Toolkit",3];
+	_supp addItemCargoGlobal ["Toolkit", 3];
 };
 
 if (typeOf _supp == var_supSquad) exitWith {
-	_supp addItemCargoGlobal ["ACE_CableTie",10];
-	_supp addItemCargoGlobal ["ACE_Wirecutter",1];
+	_supp addItemCargoGlobal ["ACE_CableTie", 10];
+	_supp addItemCargoGlobal ["ACE_Wirecutter", 1];
 	if (_lat#0 != "") then {_supp addWeaponCargoGlobal [_lat#0, 2];};
 	if (_lmgAmmo#0 != "") then {_supp addMagazineCargoGlobal [_lmgAmmo#0, 5];};
 	if (_mmgAmmo#0 != "") then {_supp addMagazineCargoGlobal [_mmgAmmo#0, 5];};
@@ -48,7 +48,7 @@ if (typeOf _supp == var_supSquad) exitWith {
 };
 
 if (typeOf _supp == var_supLarge) exitWith {
-	_supp addItemCargoGlobal ["ACE_CableTie",20];
+	_supp addItemCargoGlobal ["ACE_CableTie", 20];
 	if (_carbineAmmo#0 != "") then {_supp addMagazineCargoGlobal [_carbineAmmo#0, 40];};
 	if (_rifleAmmo#0 != "") then {_supp addMagazineCargoGlobal [_rifleAmmo#0, 40];};
 	if (_rifleGlAmmo#0 != "") then {_supp addMagazineCargoGlobal [_rifleGlAmmo#0, 40];};
@@ -64,24 +64,24 @@ if (typeOf _supp == var_supLarge) exitWith {
 	if (_grenadeSmoke#0 != "") then {_supp addMagazineCargoGlobal [_grenadeSmoke#0, 10];};
 	if (_grenadeSmokeClr#0 != "") then {_supp addMagazineCargoGlobal [_grenadeSmokeClr#0, 10];};
 	if (_lat#0 != "") then {_supp addWeaponCargoGlobal [_lat#0, 6];};
-	_supp addItemCargoGlobal ["ACE_Wirecutter",3];
+	_supp addItemCargoGlobal ["ACE_Wirecutter", 3];
 	// _supp addItemCargoGlobal ["ACE_IR_Strobe_Item",30];
 };
 
 if (typeOf _supp == var_supMedical) exitWith {
-	_supp addItemCargoGlobal ["ACE_morphine",15];
-	_supp addItemCargoGlobal ["ACE_epinephrine",15];
-	_supp addItemCargoGlobal ["ACE_tourniquet",10];
+	_supp addItemCargoGlobal ["ACE_morphine", 15];
+	_supp addItemCargoGlobal ["ACE_epinephrine", 15];
+	_supp addItemCargoGlobal ["ACE_tourniquet", 10];
 	// _supp addItemCargoGlobal ["ACE_splint",10];
-	_supp addItemCargoGlobal ["ACE_bloodIV",15];
-	_supp addItemCargoGlobal ["ACE_fieldDressing",50];
-	_supp addItemCargoGlobal ["ACE_bodyBag",10];
+	_supp addItemCargoGlobal ["ACE_bloodIV", 15];
+	_supp addItemCargoGlobal ["ACE_fieldDressing", 50];
+	_supp addItemCargoGlobal ["ACE_bodyBag", 10];
 };
 
 if (typeOf _supp == var_supExplosives) exitWith {
 	_supp addItemCargoGlobal ["DemoCharge_Remote_Mag", 10];
 	_supp addItemCargoGlobal ["SatchelCharge_Remote_Mag", 5];
-	_supp addItemCargoGlobal ["ACE_M26_Clacker",2];
+	_supp addItemCargoGlobal ["ACE_M26_Clacker", 2];
 
 	// if ((_backpackLight#0) != "") then {_supp addBackpackCargoGlobal [(selectRandom _backpackLight), 2];};
 };

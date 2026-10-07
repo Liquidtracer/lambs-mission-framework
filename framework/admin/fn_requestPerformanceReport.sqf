@@ -1,12 +1,12 @@
 /*
-    Request performance report
-    Checks admin access and requests a performance report.
+	Request performance report
+	Checks admin access and requests a performance report.
 
-    Arguments:
-        0: Requesting admin <OBJECT>
+	Arguments:
+		0: Requesting admin <OBJECT>
 
-    Example:
-        [player] call lmf_admin_fnc_requestPerformanceReport;
+	Example:
+		[player] call lmf_admin_fnc_requestPerformanceReport;
 */
 
 params ["_unit"];
@@ -14,4 +14,4 @@ params ["_unit"];
 #include "checkAdminAccess.sqf"
 
 // Call performance check globally
-[_unit] remoteExec ["lmf_admin_fnc_reportPerformance",0];
+[_unit] remoteExec ["lmf_admin_fnc_reportPerformance", 0];

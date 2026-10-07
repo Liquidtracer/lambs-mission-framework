@@ -1,9 +1,9 @@
 /*
-    Player respawn
-    Restores player equipment and presentation after respawn.
+	Player respawn
+	Restores player equipment and presentation after respawn.
 
-    Example:
-        [] spawn lmf_respawn_fnc_onRespawn;
+	Example:
+		[] spawn lmf_respawn_fnc_onRespawn;
 */
 
 // Black fade
@@ -48,7 +48,7 @@ player action ["SwitchWeapon", player, player, -1];
 // Fade in, set the channel back to group and restore camouflage
 sleep 5;
 setCurrentChannel 3;
-player setUnitTrait ["camouflageCoef",var_camoCoef];
+player setUnitTrait ["camouflageCoef", var_camoCoef];
 cutText  ["", "BLACK IN", 5, true];
 
 if (var_respawnType isEqualType "" && {var_respawnType == "TICKETS"}) then {

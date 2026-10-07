@@ -1,6 +1,6 @@
 /*
-    Manage time and weather
-    Restores the initial time and weather after warmup.
+	Manage time and weather
+	Restores the initial time and weather after warmup.
 */
 
 if (!isServer) exitWith {};

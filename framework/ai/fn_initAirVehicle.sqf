@@ -1,19 +1,19 @@
 /*
-    Aircraft initialization
-    Applies the configured AI aircraft settings.
+	Aircraft initialization
+	Applies the configured AI aircraft settings.
 
-    Arguments:
-        0: Aircraft <OBJECT>
+	Arguments:
+		0: Aircraft <OBJECT>
 
-    Example:
-        [plane_1] call lmf_ai_fnc_initAirVehicle;
+	Example:
+		[plane_1] call lmf_ai_fnc_initAirVehicle;
 */
 
-params [["_air",objNull,[objNull]]];
+params [["_air", objNull, [objNull]]];
 if (isNull _air) exitWith {};
 
 private _camos = lmf_ai_config get "CAMOS";
-private _vehicleKey = (lmf_ai_config get "VEHICLE_BY_CLASS") getOrDefault [toLower (typeOf _air),""];
+private _vehicleKey = (lmf_ai_config get "VEHICLE_BY_CLASS") getOrDefault [toLower (typeOf _air), ""];
 private _ammoBlacklist = lmf_ai_config get "AMMO_BLACKLIST";
 
 // Apply general settings
@@ -27,7 +27,7 @@ clearBackpackCargoGlobal _air;
 // Apply vehicle-specific settings.
 if (_vehicleKey isNotEqualTo "") then {
 	private _validCamos = (_camos get _vehicleKey) select {_x isNotEqualTo ""};
-	if !(_validCamos isEqualTo []) then {[_air,[selectRandom _validCamos,1]] call BIS_fnc_initVehicle};
+	if !(_validCamos isEqualTo []) then {[_air, [selectRandom _validCamos, 1]] call BIS_fnc_initVehicle};
 	_air setVehicleLock "LOCKEDPLAYER";
 };
 

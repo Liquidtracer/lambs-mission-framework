@@ -1,7 +1,7 @@
 /*
-    Autorifleman loadout
-    Applies the Autorifleman loadout to the supplied local unit.
-    Author: Alex2k.
+	Autorifleman loadout
+	Applies the Autorifleman loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

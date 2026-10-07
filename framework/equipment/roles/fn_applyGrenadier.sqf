@@ -1,7 +1,7 @@
 /*
-    Grenadier loadout
-    Applies the Grenadier loadout to the supplied local unit.
-    Author: Alex2k.
+	Grenadier loadout
+	Applies the Grenadier loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

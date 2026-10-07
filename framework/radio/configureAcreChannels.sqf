@@ -1,9 +1,9 @@
 /*
-    ACRE channel labels
-    Sets channel labels for supported ACRE long-range radios.
+	ACRE channel labels
+	Sets channel labels for supported ACRE long-range radios.
 */
 
-private _radios = ["ACRE_PRC148","ACRE_PRC152","ACRE_PRC117F"];
+private _radios = ["ACRE_PRC148", "ACRE_PRC152", "ACRE_PRC117F"];
 
 {
 	[_x, "default", 1, "label", "1PLT NET"] call acre_api_fnc_setPresetChannelField;

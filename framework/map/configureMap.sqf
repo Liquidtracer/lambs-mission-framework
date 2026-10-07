@@ -1,8 +1,8 @@
 /*
-    Map configuration
-    Auto activates map textures.
-    Adds "Oldschool map system" that deletes markers that aren't local to the player.
-    Author: Alex2k.
+	Map configuration
+	Auto activates map textures.
+	Adds "Oldschool map system" that deletes markers that aren't local to the player.
+	Author: Alex2k.
 */
 
 if !(hasInterface) exitWith {};
@@ -18,7 +18,7 @@ if !(hasInterface) exitWith {};
 			_display = uiNamespace getVariable "RSCDiary";
 			_ctrl = _display displayCtrl 1201;
 			_ctrl ctrlEnable false;
-			_ctrl ctrlsettextcolor [0,0,0,0];
+			_ctrl ctrlSetTextColor [0, 0, 0, 0];
 			_ctrl ctrlSetTooltip "";
 			_ctrl ctrlCommit 0;
 		};

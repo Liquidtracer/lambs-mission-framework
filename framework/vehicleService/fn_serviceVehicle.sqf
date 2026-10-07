@@ -1,30 +1,30 @@
 /*
-    Vehicle service
-    Rearms, repairs and refuels the vehicle.
-    Author: nkenny. Source: Xeno. Contributors: Diwako, Drgn V4karian.
+	Vehicle service
+	Rearms, repairs and refuels the vehicle.
+	Author: nkenny. Source: Xeno. Contributors: Diwako, Drgn V4karian.
 
-    Arguments:
-        0: Vehicle <OBJECT>
-        1: Service step delay in seconds <NUMBER> (default: 4)
+	Arguments:
+		0: Vehicle <OBJECT>
+		1: Service step delay in seconds <NUMBER> (default: 4)
 
-    Example:
-        [heli_1, 4] spawn lmf_vehicleService_fnc_serviceVehicle;
+	Example:
+		[heli_1, 4] spawn lmf_vehicleService_fnc_serviceVehicle;
 
-    Trigger setup:
-        1. Create a trigger large enough to fit the vehicle.
-        2. Set activation to Anybody, Present and Repeatable.
-        3. Condition: ("Air" countType thislist > 0) && {((getpos (thislist select 0)) select 2 < 1)}
-        4. On activation: [(thislist select 0)] spawn lmf_vehicleService_fnc_serviceVehicle;
-        Replace "Air" with another vehicle type to service ground vehicles, for example.
+	Trigger setup:
+		1. Create a trigger large enough to fit the vehicle.
+		2. Set activation to Anybody, Present and Repeatable.
+		3. Condition: ("Air" countType thislist > 0) && {((getpos (thislist select 0)) select 2 < 1)}
+		4. On activation: [(thislist select 0)] spawn lmf_vehicleService_fnc_serviceVehicle;
+		Replace "Air" with another vehicle type to service ground vehicles, for example.
 */
 
 if (time <= 30) then {
-    waitUntil {sleep 0.25; time > 30};
+	waitUntil {sleep 0.25; time > 30};
 };
-params [["_object",objNull,[objNull]],["_sleep",4,[1]]];
+params [["_object", objNull, [objNull]], ["_sleep", 4, [1]]];
 if (!local _object || {!alive _object}) exitWith {};
 
-private _type = typeof _object;
+private _type = typeOf _object;
 private _typeName = getText (configFile >> "CfgVehicles" >> typeOf _object >> "displayName");
 if (_object isKindOf "ParachuteBase") exitWith {};
 

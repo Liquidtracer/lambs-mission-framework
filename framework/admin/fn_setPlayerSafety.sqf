@@ -1,12 +1,12 @@
 /*
-    Set player safety
-    Controls player damage and weapon safety during warmup.
+	Set player safety
+	Controls player damage and weapon safety during warmup.
 
-    Arguments:
-        0: Enable safety <BOOLEAN> (default: false)
+	Arguments:
+		0: Enable safety <BOOLEAN> (default: false)
 
-    Example:
-        [true] call lmf_admin_fnc_setPlayerSafety;
+	Example:
+		[true] call lmf_admin_fnc_setPlayerSafety;
 */
 
 if !(hasInterface) exitWith {};

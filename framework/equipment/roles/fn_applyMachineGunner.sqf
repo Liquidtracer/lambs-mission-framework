@@ -1,7 +1,7 @@
 /*
-    Machine gunner loadout
-    Applies the Machine Gunner loadout to the supplied local unit.
-    Author: Alex2k.
+	Machine gunner loadout
+	Applies the Machine Gunner loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

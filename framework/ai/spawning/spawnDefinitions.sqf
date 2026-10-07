@@ -1,7 +1,7 @@
 /*
-    AI spawn definitions
-    Defines vehicles, roles and group compositions used by the AI spawners.
-    Includes the private group-type selection helper used by infantry spawners.
+	AI spawn definitions
+	Defines vehicles, roles and group compositions used by the AI spawners.
+	Includes the private group-type selection helper used by infantry spawners.
 */
 
 private _vehicles = lmf_ai_config get "VEHICLES";
@@ -51,45 +51,45 @@ _soldier = [
 
 // Groups
 _squad = [
-	[_autorifleman,_squadLeader,_riflemanAt,_grenadier,_rifleman,_rifleman,_rifleman,_riflemanAt],
-	[_grenadier,_rifleman,_squadLeader,_riflemanAt,_autorifleman,_rifleman,_riflemanAt,_marksman],
-	[_riflemanAt,_rifleman,_rifleman,_squadLeader,_rifleman,_grenadier,_autorifleman,_medic]
+	[_autorifleman, _squadLeader, _riflemanAt, _grenadier, _rifleman, _rifleman, _rifleman, _riflemanAt],
+	[_grenadier, _rifleman, _squadLeader, _riflemanAt, _autorifleman, _rifleman, _riflemanAt, _marksman],
+	[_riflemanAt, _rifleman, _rifleman, _squadLeader, _rifleman, _grenadier, _autorifleman, _medic]
 	];
 
 _team =	[
-	[_grenadier,_rifleman,_riflemanAt,_rifleman],
-	[_squadLeader,_rifleman,_riflemanAt,_marksman],
-	[_autorifleman,_squadLeader,_grenadier,_rifleman],
-	[_squadLeader,_rifleman,_riflemanAt,_riflemanAt],
-	[_autorifleman,_squadLeader,_grenadier,_medic]
+	[_grenadier, _rifleman, _riflemanAt, _rifleman],
+	[_squadLeader, _rifleman, _riflemanAt, _marksman],
+	[_autorifleman, _squadLeader, _grenadier, _rifleman],
+	[_squadLeader, _rifleman, _riflemanAt, _riflemanAt],
+	[_autorifleman, _squadLeader, _grenadier, _medic]
 ];
 
 _sentry =	[
-	[_grenadier,_rifleman],
-	[_marksman,_rifleman]
+	[_grenadier, _rifleman],
+	[_marksman, _rifleman]
 ];
 
 _atTeam =	[
-	[_matGunner,_grenadier,_riflemanAt,_rifleman],
-	[_rifleman,_riflemanAt,_grenadier,_matGunner]
+	[_matGunner, _grenadier, _riflemanAt, _rifleman],
+	[_rifleman, _riflemanAt, _grenadier, _matGunner]
 ];
 
 _aaTeam =	[
-	[_aaGunner,_grenadier,_riflemanAt],
-	[_riflemanAt,_grenadier,_aaGunner]
+	[_aaGunner, _grenadier, _riflemanAt],
+	[_riflemanAt, _grenadier, _aaGunner]
 ];
 
 _mgTeam =	[
-	[_mmgGunner,_grenadier,_riflemanAt,_rifleman],
-	[_rifleman,_riflemanAt,_grenadier,_mmgGunner]
+	[_mmgGunner, _grenadier, _riflemanAt, _rifleman],
+	[_rifleman, _riflemanAt, _grenadier, _mmgGunner]
 ];
 
 _static =	[
-	[_rifleman,_rifleman]
+	[_rifleman, _rifleman]
 ];
 
-_vehicleCrew = [_crew,_crew,_crew];
-_heliCrew = [_pilot,_pilot];
+_vehicleCrew = [_crew, _crew, _crew];
+_heliCrew = [_pilot, _pilot];
 
 // Group selection
 private _typeMaker = {
@@ -97,7 +97,7 @@ private _typeMaker = {
 	private _selection = [];
 	if (_type isEqualType 0) then {
 		for "_i" from 1 to (floor (_type)) do {
-			_selection pushback (selectRandom _soldier);
+			_selection pushBack (selectRandom _soldier);
 		};
 	}
 	else {

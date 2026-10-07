@@ -1,12 +1,12 @@
 /*
-    Trigger respawn wave
-    Prompts the admin to start a respawn wave.
+	Trigger respawn wave
+	Prompts the admin to start a respawn wave.
 
-    Arguments:
-        0: Requesting admin <OBJECT>
+	Arguments:
+		0: Requesting admin <OBJECT>
 
-    Example:
-        [player] call lmf_admin_fnc_triggerRespawnWave;
+	Example:
+		[player] call lmf_admin_fnc_triggerRespawnWave;
 */
 
 params ["_unit"];

@@ -1,6 +1,6 @@
 /*
-    Apply spawner textures
-    Applies asset-spawner laptop textures on the client.
+	Apply spawner textures
+	Applies asset-spawner laptop textures on the client.
 */
 
 if !(isNil "ammoSpawner") then {ammoSpawner setObjectTexture [0, "framework\images\supplies.jpg"];};

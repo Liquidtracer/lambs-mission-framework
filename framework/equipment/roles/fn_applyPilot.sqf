@@ -1,7 +1,7 @@
 /*
-    Pilot loadout
-    Applies the Pilot loadout to the supplied local unit.
-    Author: Alex2k.
+	Pilot loadout
+	Applies the Pilot loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

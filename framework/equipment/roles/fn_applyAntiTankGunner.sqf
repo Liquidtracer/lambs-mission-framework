@@ -1,7 +1,7 @@
 /*
-    Anti-tank gunner loadout
-    Applies the AT Specialist loadout to the supplied local unit.
-    Author: Alex2k.
+	Anti-tank gunner loadout
+	Applies the AT Specialist loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

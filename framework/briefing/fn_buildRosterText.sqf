@@ -1,10 +1,10 @@
 /*
-    Build roster text
-    Builds formatted text describing player group composition.
-    Author: nkenny. Contributors: G4rrus, Alex2k.
+	Build roster text
+	Builds formatted text describing player group composition.
+	Author: nkenny. Contributors: G4rrus, Alex2k.
 
-    Example:
-        [] call lmf_briefing_fnc_buildRosterText;
+	Example:
+		[] call lmf_briefing_fnc_buildRosterText;
 */
 
 private _grp2 = grpNull;
@@ -13,14 +13,14 @@ private _allUniqueGroups = [];
 
 {
 
-    _allUniqueGroups pushBackUnique [(groupId (group _x)),(group _x)];
-} forEach ((playableunits + switchableunits - entities "HeadlessClient_F") select {side _x == side player});
+	_allUniqueGroups pushBackUnique [(groupId (group _x)), (group _x)];
+} forEach ((playableUnits + switchableUnits - entities "HeadlessClient_F") select {side _x == side player});
 _allUniqueGroups sort true;
 
 {
 
 	private _grp = _x select 1;
-	private _id = groupID _grp;
+	private _id = groupId _grp;
 
 	if (_grp != _grp2) then {
 		if (_grp == (group player)) then {
@@ -45,13 +45,13 @@ _allUniqueGroups sort true;
 	_grp2 = _grp;
 } forEach _allUniqueGroups;
 
-_brfPlatoon = _brfPlatoon select [0,count _brfPlatoon - 5];
+_brfPlatoon = _brfPlatoon select [0, count _brfPlatoon - 5];
 
 private _text = format ["
 <font color='%3' size='11'><execute expression='[player] call lmf_briefing_fnc_refreshRoster'>[REFRESH PAGE]</execute></font><br/>
 <font face='PuristaBold' color='%2' size='16'>TABLE OF ORGANIZATION AND EQUIPMENT</font><br/>
 Overview of player call signs and roles.<br/>
 %1
-",_brfPlatoon, LMF_MAIN_COLOR, LMF_LINK_COLOR];
+", _brfPlatoon, LMF_MAIN_COLOR, LMF_LINK_COLOR];
 
 _text

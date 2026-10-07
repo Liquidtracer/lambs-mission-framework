@@ -1,18 +1,18 @@
 /*
-    AI hunting
-    Directs AI towards player positions without requiring prior detection.
-    Run scheduled where the group is local. Boat groups use the shared landing helper.
-    Author: nkenny. Contributors: Alex2k, Diwako, Drgn V4karian.
+	AI hunting
+	Directs AI towards player positions without requiring prior detection.
+	Run scheduled where the group is local. Boat groups use the shared landing helper.
+	Author: nkenny. Contributors: Alex2k, Diwako, Drgn V4karian.
 
-    Arguments:
-        0: Group <GROUP>
-        1: Hunting radius in meters <NUMBER> (default: 500)
+	Arguments:
+		0: Group <GROUP>
+		1: Hunting radius in meters <NUMBER> (default: 500)
 
-    Example:
-        [grp1, 500] spawn lmf_ai_fnc_taskHunt;
+	Example:
+		[grp1, 500] spawn lmf_ai_fnc_taskHunt;
 */
 
-params [["_grp",grpNull,[grpNull]],["_radius",500,[0]]];
+params [["_grp", grpNull, [grpNull]], ["_radius", 500, [0]]];
 private _cycle = 30;
 private _wasInBoat = vehicle leader _grp isKindOf "Ship";
 private _hasLanded = false;
@@ -57,7 +57,7 @@ while {{alive _x} count (units _grp) > 1} do {
 
 			_grp setBehaviour "AWARE";
 			{
-				private _targetPos = getposATL _nearest;
+				private _targetPos = getPosATL _nearest;
 				_x doMove _targetPos;
 			} forEach (units _grp);
 		} else {

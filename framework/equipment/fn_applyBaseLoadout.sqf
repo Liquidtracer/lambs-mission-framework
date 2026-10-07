@@ -1,21 +1,21 @@
 /*
-    Apply base loadout
-    Applies base loadout to unit (clothing, radio, linked items, medical).
-    Inherits from rifleman configuration when a role-specific array is [""].
-    Author: Alex2k.
+	Apply base loadout
+	Applies base loadout to unit (clothing, radio, linked items, medical).
+	Inherits from rifleman configuration when a role-specific array is [""].
+	Author: Alex2k.
 
-    Arguments:
-        0: Unit <OBJECT>
-        1: Uniform options <ARRAY> ([""] uses rifleman default)
-        2: Vest options <ARRAY> ([""] uses rifleman default)
-        3: Headgear options <ARRAY> ([""] uses rifleman default)
-        4: Goggles options <ARRAY> ([""] uses rifleman default)
-        5: Backpack options <ARRAY> ([""] uses rifleman default)
+	Arguments:
+		0: Unit <OBJECT>
+		1: Uniform options <ARRAY> ([""] uses rifleman default)
+		2: Vest options <ARRAY> ([""] uses rifleman default)
+		3: Headgear options <ARRAY> ([""] uses rifleman default)
+		4: Goggles options <ARRAY> ([""] uses rifleman default)
+		5: Backpack options <ARRAY> ([""] uses rifleman default)
 
-    Example:
-        [player] call lmf_equipment_fnc_applyBaseLoadout;
+	Example:
+		[player] call lmf_equipment_fnc_applyBaseLoadout;
 
-    Returns: true if loadout was applied, false if unit is null or not local <BOOLEAN>
+	Returns: true if loadout was applied, false if unit is null or not local <BOOLEAN>
 */
 
 params [

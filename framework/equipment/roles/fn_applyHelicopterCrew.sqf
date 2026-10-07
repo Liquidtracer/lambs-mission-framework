@@ -1,7 +1,7 @@
 /*
-    Helicopter crew loadout
-    Applies the Helicopter Crew loadout to the supplied local unit.
-    Author: Alex2k.
+	Helicopter crew loadout
+	Applies the Helicopter Crew loadout to the supplied local unit.
+	Author: Alex2k.
 */
 
 params [["_unit", objNull, [objNull]]];

@@ -1,15 +1,15 @@
 /*
-    Spawn boat for group
-    Converts an infantry group spawned over water into a boat assault group.
-    Does nothing when the spawn position is not over water.
+	Spawn boat for group
+	Converts an infantry group spawned over water into a boat assault group.
+	Does nothing when the spawn position is not over water.
 
-    Arguments:
-        0: Spawn position <ARRAY>
-        1: Infantry group <GROUP>
-        2: Boat classname <STRING>
+	Arguments:
+		0: Spawn position <ARRAY>
+		1: Infantry group <GROUP>
+		2: Boat classname <STRING>
 
-    Example:
-        [[1200, 2400, 0], grp1, "O_Boat_Armed_01_hmg_F"] call lmf_ai_fnc_spawnBoatForGroup;
+	Example:
+		[[1200, 2400, 0], grp1, "O_Boat_Armed_01_hmg_F"] call lmf_ai_fnc_spawnBoatForGroup;
 */
 
 params ["_spawnPos", "_grp", "_typeOfVehicle"];
@@ -26,7 +26,7 @@ _veh setUnloadInCombat [false, false];
 
 {deleteVehicle _x} forEach ((units _grp) select {isNull objectParent _x});
 
-_grp setGroupIDGlobal [format ["Boat %1", groupId _grp]];
+_grp setGroupIdGlobal [format ["Boat %1", groupId _grp]];
 _grp setBehaviourStrong "CARELESS";
 _grp setSpeedMode "FULL";
 

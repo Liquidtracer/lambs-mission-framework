@@ -1,15 +1,15 @@
 /*
-    Ground vehicle initialization
-    Initializes cargo for configured player ground vehicles.
+	Ground vehicle initialization
+	Initializes cargo for configured player ground vehicles.
 
-    Arguments:
-        0: Ground vehicle <OBJECT>
+	Arguments:
+		0: Ground vehicle <OBJECT>
 
-    Example:
-        [truck_1] call lmf_playerVehicles_fnc_initGroundVehicle;
+	Example:
+		[truck_1] call lmf_playerVehicles_fnc_initGroundVehicle;
 */
 
-params [["_vic",objNull,[objNull]]];
+params [["_vic", objNull, [objNull]]];
 if (isNull _vic) exitWith {};
 
 // Apply loadout
@@ -18,4 +18,4 @@ clearMagazineCargoGlobal _vic;
 clearItemCargoGlobal _vic;
 clearBackpackCargoGlobal _vic;
 
-_vic addItemCargoGlobal ["Toolkit",1];
+_vic addItemCargoGlobal ["Toolkit", 1];

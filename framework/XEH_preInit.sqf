@@ -1,6 +1,6 @@
 /*
-    Framework preInit
-    Loads settings, constants, fixed admin UIDs and BFT helpers during preInit.
+	Framework preInit
+	Loads settings, constants, fixed admin UIDs and BFT helpers during preInit.
 */
 
 #include "..\settings\cfg_Mission.sqf"
@@ -19,9 +19,9 @@ LMF_LOGO = "framework\images\lambs.paa";
 
 // These accounts can use LMF admin tools without a server admin login.
 lmf_admin_uids = [
-    "76561197968829665", // Alex2k
-    "76561197962792796", // nkenny
-    "76561197972498138"  // Liquid Tracer
+	"76561197968829665", // Alex2k
+	"76561197962792796", // nkenny
+	"76561197972498138"  // Liquid Tracer
 ];
 
 // Load AI settings into the internal configuration registry.

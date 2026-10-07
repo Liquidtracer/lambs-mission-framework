@@ -1,21 +1,21 @@
 /*
-    AI settings
-    Defines enemy AI equipment, vehicles and infantry classes used throughout LMF.
-    Add several classnames to a pool to randomize the selection.
-    Leave an ammo pool empty to let LMF select a compatible magazine automatically.
-    Weapon variants with built-in attachments are supported.
-    Vehicle identifiers correspond to the type names used by LMF spawning functions.
-    If _enemyGear is false, only the vehicle and unit classname sections need to be configured.
+	AI settings
+	Defines enemy AI equipment, vehicles and infantry classes used throughout LMF.
+	Add several classnames to a pool to randomize the selection.
+	Leave an ammo pool empty to let LMF select a compatible magazine automatically.
+	Weapon variants with built-in attachments are supported.
+	Vehicle identifiers correspond to the type names used by LMF spawning functions.
+	If _enemyGear is false, only the vehicle and unit classname sections need to be configured.
 */
 
 // General settings
-private _enemyGear = true; // Applies custom AI gear. Default: true.
-private _enemySkill = 1; // Skill preset: 0 = untrained, 1 = regular, 2 = elite. Default: 1.
+private _enemyGear = true; // Applies custom AI gear.
+private _enemySkill = 1; // Skill preset: 0 = untrained, 1 = regular, 2 = elite.
 
 // Clothing
 private _uniform = ["U_O_V_Soldier_Viper_F"];
-private _vest = ["V_HarnessO_ghex_F","V_HarnessOGL_ghex_F"];
-private _headgear = ["rhs_altyn_novisor","rhs_altyn_novisor_bala","rhs_altyn_novisor_ess","rhs_altyn_novisor_ess_bala"];
+private _vest = ["V_HarnessO_ghex_F", "V_HarnessOGL_ghex_F"];
+private _headgear = ["rhs_altyn_novisor", "rhs_altyn_novisor_bala", "rhs_altyn_novisor_ess", "rhs_altyn_novisor_ess_bala"];
 private _goggles = [];
 
 private _backpackLight = ["B_FieldPack_ghex_F"];
@@ -47,7 +47,7 @@ private _rifleAmmo = [];
 private _rifleGl = ["rhs_weap_ak74m_gp25"];
 private _rifleGlOptic = ["rhs_acc_pkas"];
 private _rifleGlAmmo = [];
-private _rifleGlUgl = ["CUP_IlumFlareGreen_GP25_M","CUP_1Rnd_HE_GP25_M"]; // Required for UGL ammunition
+private _rifleGlUgl = ["CUP_IlumFlareGreen_GP25_M", "CUP_1Rnd_HE_GP25_M"]; // Required for UGL ammunition
 
 private _dmr = ["rhs_weap_ak74m"];
 private _dmrOptic = ["rhs_acc_pkas"];
@@ -71,7 +71,7 @@ private _aa = ["rhs_weap_rpg7"];
 private _aaAmmo = ["CUP_PG7V_M"];
 
 private _grenade = ["MiniGrenade"];
-private _grenadeSmoke = ["SmokeShell","SmokeShellOrange"];
+private _grenadeSmoke = ["SmokeShell", "SmokeShellOrange"];
 private _attach = ["rhs_acc_perst1ik"];
 private _nvg = ["NVGoggles_OPFOR"];
 
@@ -81,7 +81,7 @@ private _car = ["CUP_O_Tigr_M_233114_CSAT_T"];
 private _carCamo = [];
 
 // Armed car
-private _carArmed = ["CUP_O_Tigr_M_233114_PK_CSAT_T","CUP_O_Tigr_M_233114_PK_CSAT_T","CUP_O_Tigr_M_233114_PK_CSAT_T","CUP_O_Tigr_M_233114_KORD_CSAT_T"];
+private _carArmed = ["CUP_O_Tigr_M_233114_PK_CSAT_T", "CUP_O_Tigr_M_233114_PK_CSAT_T", "CUP_O_Tigr_M_233114_PK_CSAT_T", "CUP_O_Tigr_M_233114_KORD_CSAT_T"];
 private _carArmedCamo = [];
 
 // Truck
@@ -93,7 +93,7 @@ private _apc = ["CUP_O_BTR80_CSAT_T"];
 private _apcCamo = [];
 
 // Tank
-private _tank = ["CUP_O_BMP1P_CSAT_T","CUP_O_T72_CSAT_T"];
+private _tank = ["CUP_O_BMP1P_CSAT_T", "CUP_O_T72_CSAT_T"];
 private _tankCamo = [];
 
 // Transport helicopter
@@ -104,8 +104,7 @@ private _heliTransportCamo = [];
 private _heliAttack = ["CUP_O_Mi24_Mk3_CSAT_T"];
 private _heliAttackCamo = [];
 
-// Aircraft used by spawnParadropQrf.
-private _paraVehicle = ["CUP_O_C130J_TKA"];
+private _paraVehicle = ["CUP_O_C130J_TKA"]; // Aircraft used by spawnParadropQrf
 
 // Boat
 private _boat = ["O_T_Boat_Armed_01_hmg_F"];
