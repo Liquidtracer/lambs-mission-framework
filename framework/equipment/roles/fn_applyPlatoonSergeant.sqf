@@ -19,18 +19,18 @@ _unit setRank _platoonSgt#2;
 
 _unit addWeapon _binocular;
 
-if (var_playerMaps == 1) then {
+if (lmf_playerMaps == 1) then {
 	_unit linkItem "ItemMap";
 	_unit linkItem "ItemCompass";
 };
-if (var_playerGps == 1) then {_unit linkItem "ItemGPS"};
+if (lmf_playerGps == 1) then {_unit linkItem "ItemGPS"};
 
 for "_i" from 1 to 2 do {
 	[_unit, (selectRandom _grenadeSmoke), false] call lmf_equipment_fnc_addItem;
 	[_unit, (selectRandom _grenadeSmokeClr), false] call lmf_equipment_fnc_addItem;
 };
 
-if (!var_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
+if (!lmf_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
 [_unit, _psgWeapon] call lmf_equipment_fnc_giveWeapon;
 
 if (time > 10) then {[_unit getVariable "lmf_currentRole"] call lmf_equipment_fnc_showRoleChangeMessage};

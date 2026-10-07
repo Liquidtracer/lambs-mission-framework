@@ -166,7 +166,7 @@ Creates a transport, pilot and payload, delivers it by parachute, then sends the
 
 **Example**
 
-var\_supplyDropAircraft configures the aircraft used by player requests. Both plane and helicopter classnames use the same fly-over-and-parachute-drop behavior. Direct calls select the aircraft through argument 2.
+lmf\_supplyDropAircraft configures the aircraft used by player requests. Both plane and helicopter classnames use the same fly-over-and-parachute-drop behavior. Direct calls select the aircraft through argument 2.
 
 \["mrk\_supplySpawn", "mrk\_supplyDrop", "C\_Plane\_Civil\_01\_F", "B\_supplyCrate\_F"] spawn lmf\_supplyDrop\_fnc\_deliverSupplies;
 
@@ -207,7 +207,7 @@ For existing AI groups. Run on the server for server-owned AI; the task function
 
 ### Converge task
 
-Sends selected groups on var\_enemySide towards a target. Replaces waypoints, releases infantry garrisons and assigns shoreline tasks to boats. Skips ineligible groups, including static weapons and busy transport helicopters.
+Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, releases infantry garrisons and assigns shoreline tasks to boats. Skips ineligible groups, including static weapons and busy transport helicopters.
 
 **Run on:** Server for server-owned AI · **Use:** call
 
@@ -278,7 +278,7 @@ Normal cooldown: **10 seconds** after artillery firing ends, or **60 seconds** a
 
 ## Blue Force Tracking
 
-Requires var\_bft = true. Use server calls for mission setup. Group state and distributed object tracking support JIP.
+Requires lmf\_bft = true. Use server calls for mission setup. Group state and distributed object tracking support JIP.
 
 
 

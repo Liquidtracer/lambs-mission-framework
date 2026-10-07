@@ -3,12 +3,12 @@
 	Initializes warmup state; included in the server section of XEH_postInit.sqf.
 */
 
-if (var_warmup) then {
-	lmf_warmup = true;
-	publicVariable "lmf_warmup";
+if (lmf_warmup) then {
+	lmf_warmup_isActive = true;
+	publicVariable "lmf_warmup_isActive";
 	[] execVM "framework\warmup\manageTimeAndWeather.sqf";
 } else {
-	lmf_warmup = false;
-	publicVariable "lmf_warmup";
+	lmf_warmup_isActive = false;
+	publicVariable "lmf_warmup_isActive";
 };
 

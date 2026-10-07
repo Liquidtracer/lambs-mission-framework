@@ -12,10 +12,10 @@
 private _supp = _this select 0;
 
 if !(local _supp) exitWith {};
-if !(var_playerGear) exitWith {};
+if !(lmf_playerGear) exitWith {};
 
 private _type = typeOf _supp;
-private _allSupplies = [var_supSquad, var_supLarge, var_supExplosives, var_supMedical, var_supVehicle];
+private _allSupplies = [lmf_supSquad, lmf_supLarge, lmf_supExplosives, lmf_supMedical, lmf_supVehicle];
 if (_allSupplies findIf {_type == _x} == -1) exitWith {};
 
 [_supp] call lmf_supplyCrates_fnc_initSupplyCrate;

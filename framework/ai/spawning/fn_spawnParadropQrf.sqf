@@ -65,7 +65,7 @@ while {_initTickets > 0} do {
 	};
 
 	// Crew
-	private _grp = [_spawnPos, var_enemySide, _heliCrew] call BIS_fnc_spawnGroup;
+	private _grp = [_spawnPos, lmf_enemySide, _heliCrew] call BIS_fnc_spawnGroup;
 	_grp deleteGroupWhenEmpty true;
 	_grp addVehicle _veh;
 	{_x moveInAny _veh} forEach units _grp;
@@ -77,7 +77,7 @@ while {_initTickets > 0} do {
 	private _cargoSize = 0;
 
 	if (!_isVehicleDrop) then {
-		_grp2 = [_spawnPos, var_enemySide, (selectRandom _mgTeam) + (selectRandom _atTeam)] call BIS_fnc_spawnGroup;
+		_grp2 = [_spawnPos, lmf_enemySide, (selectRandom _mgTeam) + (selectRandom _atTeam)] call BIS_fnc_spawnGroup;
 		_grp2 deleteGroupWhenEmpty true;
 		{
 			_x assignAsCargo _veh;
@@ -148,7 +148,7 @@ while {_initTickets > 0} do {
 
 			_veh allowDamage true;
 
-			[_droppedObj, _crewType, var_enemySide] spawn {
+			[_droppedObj, _crewType, lmf_enemySide] spawn {
 				params ["_v", "_crew", "_side"];
 				sleep 1;
 				private _g = [getPos _v, _side, _crew] call BIS_fnc_spawnGroup;

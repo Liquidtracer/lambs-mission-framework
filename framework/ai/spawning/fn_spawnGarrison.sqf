@@ -27,7 +27,7 @@ _spawnPos = _spawnPos call CBA_fnc_getPos;
 
 // Prepare and spawn the group
 private _type = [_grpType] call _typeMaker;
-private _grp = [_spawnPos, var_enemySide, _type] call BIS_fnc_spawnGroup;
+private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 _grp deleteGroupWhenEmpty true;
 _grp setGroupIdGlobal [format ["Infantry Garrison (%1)", groupId _grp]];
 _grp setFormation "DIAMOND";

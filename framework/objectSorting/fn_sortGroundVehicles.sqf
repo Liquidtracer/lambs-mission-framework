@@ -20,7 +20,7 @@ private _vehicleKey = (lmf_ai_config get "VEHICLE_BY_CLASS") getOrDefault [toLow
 if (_vehicleKey in ["CAR", "CARARMED", "TRUCK", "APC", "TANK"]) then {[_vic] call lmf_ai_fnc_initGroundVehicle};
 
 // Configured player vehicles
-if !(var_playerGear) exitWith {};
-if (_type == var_vic1 || {_type == var_vic2 || {_type == var_vic3 || {_type == var_vic4}}}) then {
+if !(lmf_playerGear) exitWith {};
+if (_type == lmf_vic1 || {_type == lmf_vic2 || {_type == lmf_vic3 || {_type == lmf_vic4}}}) then {
 	[_vic] call lmf_playerVehicles_fnc_initGroundVehicle;
 };

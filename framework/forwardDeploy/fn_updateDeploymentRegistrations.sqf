@@ -28,7 +28,7 @@ private _hashGroups = [lmf_deploy_hash] call CBA_fnc_hashKeys;
 	};
 
 	// Release unplaced registrations after warmup.
-	if !(lmf_warmup) then {
+	if !(lmf_warmup_isActive) then {
 		if (_mrk isEqualTo "") then {
 			{
 				_x setVariable ["lmf_deploy_unowned",true,true];
@@ -65,7 +65,7 @@ private _hashGroups = [lmf_deploy_hash] call CBA_fnc_hashKeys;
 	};
 
 	// Remove marker on mission start
-	if !(lmf_warmup) then {
+	if !(lmf_warmup_isActive) then {
 		[{deleteMarker format ["mrk_deploy_%1",groupId (_this select 0)];},[_x],10] call CBA_fnc_waitAndExecute;
 	};
 } forEach _hashGroups;

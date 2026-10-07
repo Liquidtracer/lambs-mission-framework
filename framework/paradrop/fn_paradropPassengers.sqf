@@ -21,7 +21,7 @@ if (!local _aircraft) exitWith {};
 
 private _waypointPosition = getMarkerPos _waypoint;
 
-waitUntil {sleep 1; !isNil "lmf_warmup"};
+waitUntil {sleep 1; !isNil "lmf_warmup_isActive"};
 
 private _turrets = allTurrets [_aircraft, true];
 {_aircraft lockTurret [_x, true]} forEach _turrets;
@@ -54,11 +54,11 @@ if (!_useDefaultDepartureHeight) then {
 	_x setVariable ["lambs_danger_disableAI", true];
 } forEach units _group;
 
-if (var_bft) then {
+if (lmf_bft) then {
 	[_group, "b_plane", [_group, "JINX"] call lmf_ai_fnc_assignCallsign] call lmf_bft_fnc_setCallsign;
 };
 
-waitUntil {sleep 1; !lmf_warmup};
+waitUntil {sleep 1; !lmf_warmup_isActive};
 
 _aircraft setFuel 1;
 _aircraft engineOn true;

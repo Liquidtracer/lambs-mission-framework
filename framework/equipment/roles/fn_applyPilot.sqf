@@ -22,12 +22,12 @@ onMapSingleClick "";
 
 _unit addWeapon _binocular;
 
-if (var_playerMaps == 1) then {
+if (lmf_playerMaps == 1) then {
 	_unit linkItem "ItemMap";
 	_unit linkItem "ItemCompass";
 };
-if (var_playerGps == 1) then {_unit linkItem "ItemGPS"};
-if (var_playerNvg == 1) then {_unit linkItem _nvgPilot};
+if (lmf_playerGps == 1) then {_unit linkItem "ItemGPS"};
+if (lmf_playerNvg == 1) then {_unit linkItem _nvgPilot};
 
 [_unit, 0] call lmf_equipment_fnc_giveWeapon;
 [_unit, _pWeapon] call lmf_equipment_fnc_giveWeapon;

@@ -202,16 +202,16 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 	private _boxes = [
 		[".", ""],
-		[var_supSquad, "Small Ammo Crate"],
-		[var_supLarge, "Large Ammo Crate"],
-		[var_supExplosives, "Explosives Crate"],
-		[var_supMedical, "Medical Crate"],
-		[var_supVehicle, "Vehicle Supplies (RRR)"],
+		[lmf_supSquad, "Small Ammo Crate"],
+		[lmf_supLarge, "Large Ammo Crate"],
+		[lmf_supExplosives, "Explosives Crate"],
+		[lmf_supMedical, "Medical Crate"],
+		[lmf_supVehicle, "Vehicle Supplies (RRR)"],
 		[".", ""],
-		[var_vic1, getText (configFile >> "CfgVehicles" >> var_vic1 >> "displayName")],
-		[var_vic2, getText (configFile >> "CfgVehicles" >> var_vic2 >> "displayName")],
-		[var_vic3, getText (configFile >> "CfgVehicles" >> var_vic3 >> "displayName")],
-		[var_vic4, getText (configFile >> "CfgVehicles" >> var_vic4 >> "displayName")]
+		[lmf_vic1, getText (configFile >> "CfgVehicles" >> lmf_vic1 >> "displayName")],
+		[lmf_vic2, getText (configFile >> "CfgVehicles" >> lmf_vic2 >> "displayName")],
+		[lmf_vic3, getText (configFile >> "CfgVehicles" >> lmf_vic3 >> "displayName")],
+		[lmf_vic4, getText (configFile >> "CfgVehicles" >> lmf_vic4 >> "displayName")]
 	];
 	_boxes = _boxes select {_x#0 != ""};
 
@@ -240,7 +240,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_spawnPos = _initPos getPos [5000, _dir];
 		};
 
-		[_spawnPos, _pos, var_supplyDropAircraft, _type#0] remoteExec ["lmf_supplyDrop_fnc_deliverSupplies"];
+		[_spawnPos, _pos, lmf_supplyDropAircraft, _type#0] remoteExec ["lmf_supplyDrop_fnc_deliverSupplies"];
 		["Supply Drop spawned: %1", _type#1] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
@@ -339,15 +339,15 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 	_vehicles = [
 		[".", ""],
-		[var_vic1, getText (configFile >> "CfgVehicles" >> var_vic1 >> "displayName")],
-		[var_vic2, getText (configFile >> "CfgVehicles" >> var_vic2 >> "displayName")],
-		[var_vic3, getText (configFile >> "CfgVehicles" >> var_vic3 >> "displayName")],
-		[var_vic4, getText (configFile >> "CfgVehicles" >> var_vic4 >> "displayName")],
+		[lmf_vic1, getText (configFile >> "CfgVehicles" >> lmf_vic1 >> "displayName")],
+		[lmf_vic2, getText (configFile >> "CfgVehicles" >> lmf_vic2 >> "displayName")],
+		[lmf_vic3, getText (configFile >> "CfgVehicles" >> lmf_vic3 >> "displayName")],
+		[lmf_vic4, getText (configFile >> "CfgVehicles" >> lmf_vic4 >> "displayName")],
 		[".", ""],
-		[var_air1, getText (configFile >> "CfgVehicles" >> var_air1 >> "displayName")],
-		[var_air2, getText (configFile >> "CfgVehicles" >> var_air2 >> "displayName")],
-		[var_air3, getText (configFile >> "CfgVehicles" >> var_air3 >> "displayName")],
-		[var_air4, getText (configFile >> "CfgVehicles" >> var_air4 >> "displayName")]
+		[lmf_air1, getText (configFile >> "CfgVehicles" >> lmf_air1 >> "displayName")],
+		[lmf_air2, getText (configFile >> "CfgVehicles" >> lmf_air2 >> "displayName")],
+		[lmf_air3, getText (configFile >> "CfgVehicles" >> lmf_air3 >> "displayName")],
+		[lmf_air4, getText (configFile >> "CfgVehicles" >> lmf_air4 >> "displayName")]
 	];
 	_vehicles = _vehicles select {_x#0 != ""};
 

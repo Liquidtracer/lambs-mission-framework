@@ -16,33 +16,33 @@ if (isNull _unit || {alive player} || {_unit isNotEqualTo player}) exitWith {};
 cutText ["", "BLACK OUT", 0.001, true];
 
 // Calculate the respawn time.
-if (var_respawnType isEqualType "") then {
+if (lmf_respawnType isEqualType "") then {
 
-	if (var_respawnType == "WAVE") then {
-		setPlayerRespawnTime (var_respawnTime - ((floor CBA_missionTime) % var_respawnTime));
+	if (lmf_respawnType == "WAVE") then {
+		setPlayerRespawnTime (lmf_respawnTime - ((floor CBA_missionTime) % lmf_respawnTime));
 	};
 
-	if (var_respawnType == "OFF") then {
+	if (lmf_respawnType == "OFF") then {
 		setPlayerRespawnTime 1000000;
 	};
 
-	if (var_respawnType == "TICKETS") then {
-		if (var_respawnTickets == 0) exitWith {
+	if (lmf_respawnType == "TICKETS") then {
+		if (lmf_respawnTickets == 0) exitWith {
 			setPlayerRespawnTime 1000000;
 			["RESPAWN", "No respawn tickets remaining.", "\A3\modules_f\data\portraitrespawn_ca.paa", 2.85, 12, "", 1.1, true] call lmf_notifications_fnc_showAceMessage;
 		};
 
-		setPlayerRespawnTime (var_respawnTime - ((floor CBA_missionTime) % var_respawnTime));
-		var_respawnTickets = var_respawnTickets - 1;
+		setPlayerRespawnTime (lmf_respawnTime - ((floor CBA_missionTime) % lmf_respawnTime));
+		lmf_respawnTickets = lmf_respawnTickets - 1;
 	};
 
-	if (var_respawnType != "WAVE" && var_respawnType != "OFF" && var_respawnType != "TICKETS") then {
+	if (lmf_respawnType != "WAVE" && lmf_respawnType != "OFF" && lmf_respawnType != "TICKETS") then {
 		setPlayerRespawnTime 1000000;
 	};
 };
 
-if (var_respawnType isEqualType 0) then {
-	setPlayerRespawnTime var_respawnType;
+if (lmf_respawnType isEqualType 0) then {
+	setPlayerRespawnTime lmf_respawnType;
 };
 
 if (playerRespawnTime < 10) then {

@@ -59,7 +59,7 @@ _grp setVariable ["lambs_danger_dangerAI", "disabled"];
 {_x setVariable ["lambs_danger_disableAI", true]} count units _grp;
 _grp enableAttack false;
 
-if (var_bft) then {
+if (lmf_bft) then {
 	[_grp, _markerType, groupId _grp] call lmf_bft_fnc_setCallsign;
 };
 
@@ -150,7 +150,7 @@ _flare setVelocity [0, 0, -0.1];
 	};
 	{deleteVehicle _x} forEachReversed (attachedObjects _cargo);
 
-	if (!var_bft || {var_oldSchoolMap}) exitWith {};
+	if (!lmf_bft || {lmf_oldSchoolMap}) exitWith {};
 	private _markerType = "loc_container";
 	if (_cargo isKindOf "LandVehicle") then {_markerType = "loc_car"};
 	if (_cargo isKindOf "Ship") then {_markerType = "loc_boat"};

@@ -14,11 +14,11 @@ enableSaving [false, false];
 
 #include "medical\initUnconsciousEvent.sqf"
 
-if (var_supplyDropLimit > 0) then {
+if (lmf_supplyDropLimit > 0) then {
 	[] execVM "framework\supplyDrop\initSupplyDrop.sqf";
 };
 
-if (var_forwardDeploy) then {
+if (lmf_forwardDeploy) then {
 	[] execVM "framework\forwardDeploy\initForwardDeploy.sqf";
 };
 
@@ -34,7 +34,7 @@ if (isServer) then {
 
 	// Apply player loadouts to friendly AI during non-dedicated testing.
 	if !(isDedicated) then {
-		if (var_playerGear) then {
+		if (lmf_playerGear) then {
 			{
 				[_x] call lmf_equipment_fnc_applyRoleFromClass;
 			} forEach (playableUnits + switchableUnits) - [player];
@@ -58,7 +58,7 @@ call compile preprocessFileLineNumbers "framework\groupNotifications\initGroupNo
 // Initialize spectator, tracking and team colors.
 #include "spectator\initSpectatorEvents.sqf"
 
-if (var_bft) then {
+if (lmf_bft) then {
 	[] execVM "framework\bft\initGroupTracking.sqf";
 	[] execVM "framework\bft\initUnitTracking.sqf";
 };
@@ -82,7 +82,7 @@ player addEventHandler ["Respawn", {
 	_this spawn lmf_respawn_fnc_onRespawn;
 }];
 
-if (var_playerGear) then {
+if (lmf_playerGear) then {
 	[player] call lmf_equipment_fnc_applyRoleFromClass;
 } else {
 	// Keep the starting Eden equipment across player-object replacement.
@@ -92,7 +92,7 @@ if (var_playerGear) then {
 // Start briefing and deferred player setup.
 [] execVM "framework\briefing\createBriefing.sqf";
 
-[{player setUnitTrait ["camouflageCoef", var_camoCoef];}, [], 5] call CBA_fnc_waitAndExecute;
+[{player setUnitTrait ["camouflageCoef", lmf_camoCoef];}, [], 5] call CBA_fnc_waitAndExecute;
 
 // Initialize spawner and role actions after the intro signal.
 [] spawn {
@@ -102,11 +102,11 @@ if (var_playerGear) then {
 };
 
 // Start arsenal, JIP teleport and the intro/warmup sequence.
-if (var_playerGear && {var_personalArsenal}) then {
+if (lmf_playerGear && {lmf_personalArsenal}) then {
 	lmf_player_arsenalInit = [] execVM "framework\equipment\initPersonalArsenal.sqf";
 };
 
-if (var_jipTp && {didJIP}) then {
+if (lmf_jipTp && {didJIP}) then {
 	lmf_jipTeleport_init = [] execVM "framework\jipTeleport\initJipTeleport.sqf";
 };
 
@@ -114,21 +114,21 @@ if (var_jipTp && {didJIP}) then {
 lmf_player_menuInit = [] spawn {
 	waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
 
-	if (var_bft) then {
+	if (lmf_bft) then {
 		waitUntil {uiSleep 0.2; !isNil "lmf_bft_fnc_registerMenu"};
 		[] call lmf_bft_fnc_registerMenu;
 	};
-	if (var_supplyDropLimit > 0) then {
+	if (lmf_supplyDropLimit > 0) then {
 		waitUntil {uiSleep 0.2; !isNil "lmf_supplyDrop_fnc_registerMenu" && {!isNil "lmf_remainingSuppDrops"} && {!isNil "lmf_supplyDrop_nextRequest"}};
 		[] call lmf_supplyDrop_fnc_registerMenu;
 	};
-	if (var_jipTp && {didJIP}) then {
+	if (lmf_jipTp && {didJIP}) then {
 		waitUntil {uiSleep 0.2; !isNil "lmf_jipTeleport_fnc_registerMenu" || {scriptDone lmf_jipTeleport_init}};
 		if (!isNil "lmf_jipTeleport_fnc_registerMenu") then {
 			[] call lmf_jipTeleport_fnc_registerMenu;
 		};
 	};
-	if (var_forwardDeploy) then {
+	if (lmf_forwardDeploy) then {
 		waitUntil {uiSleep 0.2; !isNil "lmf_forwardDeploy_fnc_registerMenu"};
 		[] call lmf_forwardDeploy_fnc_registerMenu;
 	};

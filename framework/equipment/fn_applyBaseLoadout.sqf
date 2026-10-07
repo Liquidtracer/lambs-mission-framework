@@ -56,16 +56,16 @@ clearAllItemsFromBackpack _unit;
 // Radio
 _unit addWeapon "ItemWatch";
 _unit addWeapon "ItemRadioAcreFlagged";
-if (var_personalRadio) then {_unit addItem _radioR};
+if (lmf_personalRadio) then {_unit addItem _radioR};
 
 // Linked items
-if (var_playerMaps == 0) then {
+if (lmf_playerMaps == 0) then {
 	_unit addWeapon "ItemMap";
 	_unit addWeapon "ItemCompass";
 	_unit addItem "ACE_Chemlight_Shield_Red";
 };
-if (var_playerGps == 0) then {_unit addWeapon "ItemGPS"};
-if (var_playerNvg == 0) then {_unit addWeapon _nvg};
+if (lmf_playerGps == 0) then {_unit addWeapon "ItemGPS"};
+if (lmf_playerNvg == 0) then {_unit addWeapon _nvg};
 
 // Medical
 for "_i" from 1 to 4 do {_unit addItem "ACE_fieldDressing"};
@@ -73,7 +73,7 @@ for "_i" from 1 to 2 do {_unit addItem "ACE_tourniquet"};
 _unit addItem "ACE_morphine";
 
 // Sidearm
-if (var_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
+if (lmf_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
 
 // Grenades
 for "_i" from 1 to 2 do {[_unit, (selectRandom _grenade), true] call lmf_equipment_fnc_addItem};

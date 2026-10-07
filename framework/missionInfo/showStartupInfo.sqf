@@ -6,7 +6,7 @@
 if (!hasInterface) exitWith {};
 
 waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
-if (var_playerGear && {var_personalArsenal}) then {
+if (lmf_playerGear && {lmf_personalArsenal}) then {
 	waitUntil {uiSleep 0.2; scriptDone lmf_player_arsenalInit};
 };
 waitUntil {uiSleep 0.2; scriptDone lmf_player_menuInit};
@@ -23,7 +23,7 @@ private _addEntry = {
 	];
 };
 
-if (lmf_warmup && {var_playerGear} && {var_personalArsenal}) then {
+if (lmf_warmup_isActive && {lmf_playerGear} && {lmf_personalArsenal}) then {
 	["PERSONAL ARSENAL", "Customize your personal equipment.",
 		" Self-Interact » Equipment » Personal Arsenal"] call _addEntry;
 
@@ -33,13 +33,13 @@ if (lmf_warmup && {var_playerGear} && {var_personalArsenal}) then {
 	};
 };
 
-if (var_bft && {count (var_bftInfantry + var_bftGroundVehicles + var_bftAirVehicles) > 0}) then {
+if (lmf_bft && {count (lmf_bftInfantry + lmf_bftGroundVehicles + lmf_bftAirVehicles) > 0}) then {
 	["BLUE FORCE TRACKER", "Group leaders select their group's callsign and icon.",
 		" Self-Interact » Blue Force Tracker"] call _addEntry;
 };
 
-if (var_supplyDropLimit > 0 && {lmf_remainingSuppDrops > 0}) then {
-	private _body = if (var_supplyDropVehicles && {var_vic1 != "" || var_vic2 != "" || var_vic3 != "" || var_vic4 != ""}) then {
+if (lmf_supplyDropLimit > 0 && {lmf_remainingSuppDrops > 0}) then {
+	private _body = if (lmf_supplyDropVehicles && {lmf_vic1 != "" || lmf_vic2 != "" || lmf_vic3 != "" || lmf_vic4 != ""}) then {
 		"Request supplies or vehicles. Requires a map and long-range radio."
 	} else {
 		"Request supplies. Requires a map and long-range radio."
@@ -48,7 +48,7 @@ if (var_supplyDropLimit > 0 && {lmf_remainingSuppDrops > 0}) then {
 		" Self-Interact » Supply Drop"] call _addEntry;
 };
 
-if (lmf_warmup && {var_forwardDeploy}) then {
+if (lmf_warmup_isActive && {lmf_forwardDeploy}) then {
 	["FORWARD DEPLOY", "Group leaders register their group for deployment before warmup ends.",
 		" Self-Interact » Register Forward Deploy"] call _addEntry;
 };

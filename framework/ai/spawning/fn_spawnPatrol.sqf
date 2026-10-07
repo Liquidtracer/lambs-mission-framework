@@ -42,7 +42,7 @@ if (_patrolSpeed == "ATTACK") then {
 
 // Prepare and spawn the group
 private _type = [_grpType] call _typeMaker;
-private _grp = [_spawnPos, var_enemySide, _type] call BIS_fnc_spawnGroup;
+private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 [_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
 _grp deleteGroupWhenEmpty true;
 _grp setGroupIdGlobal [format ["Infantry Patrol (%1)", groupId _grp]];

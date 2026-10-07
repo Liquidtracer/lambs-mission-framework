@@ -20,7 +20,7 @@ clearMagazineCargoGlobal _supp;
 clearItemCargoGlobal _supp;
 clearBackpackCargoGlobal _supp;
 
-if (typeOf _supp == var_supVehicle) exitWith {
+if (typeOf _supp == lmf_supVehicle) exitWith {
 	[_supp, 20] call ace_cargo_fnc_setSpace;
 	for "_i" from 1 to 3 do {
 		["ACE_Track", _supp, true] call ace_cargo_fnc_loadItem;
@@ -30,7 +30,7 @@ if (typeOf _supp == var_supVehicle) exitWith {
 	_supp addItemCargoGlobal ["Toolkit", 3];
 };
 
-if (typeOf _supp == var_supSquad) exitWith {
+if (typeOf _supp == lmf_supSquad) exitWith {
 	_supp addItemCargoGlobal ["ACE_CableTie", 10];
 	_supp addItemCargoGlobal ["ACE_Wirecutter", 1];
 	if (_lat#0 != "") then {_supp addWeaponCargoGlobal [_lat#0, 2];};
@@ -47,7 +47,7 @@ if (typeOf _supp == var_supSquad) exitWith {
 	if (_rifleGlUgl4#0 != "") then {_supp addMagazineCargoGlobal [_rifleGlUgl4#0, 4];};
 };
 
-if (typeOf _supp == var_supLarge) exitWith {
+if (typeOf _supp == lmf_supLarge) exitWith {
 	_supp addItemCargoGlobal ["ACE_CableTie", 20];
 	if (_carbineAmmo#0 != "") then {_supp addMagazineCargoGlobal [_carbineAmmo#0, 40];};
 	if (_rifleAmmo#0 != "") then {_supp addMagazineCargoGlobal [_rifleAmmo#0, 40];};
@@ -68,7 +68,7 @@ if (typeOf _supp == var_supLarge) exitWith {
 	// _supp addItemCargoGlobal ["ACE_IR_Strobe_Item",30];
 };
 
-if (typeOf _supp == var_supMedical) exitWith {
+if (typeOf _supp == lmf_supMedical) exitWith {
 	_supp addItemCargoGlobal ["ACE_morphine", 15];
 	_supp addItemCargoGlobal ["ACE_epinephrine", 15];
 	_supp addItemCargoGlobal ["ACE_tourniquet", 10];
@@ -78,7 +78,7 @@ if (typeOf _supp == var_supMedical) exitWith {
 	_supp addItemCargoGlobal ["ACE_bodyBag", 10];
 };
 
-if (typeOf _supp == var_supExplosives) exitWith {
+if (typeOf _supp == lmf_supExplosives) exitWith {
 	_supp addItemCargoGlobal ["DemoCharge_Remote_Mag", 10];
 	_supp addItemCargoGlobal ["SatchelCharge_Remote_Mag", 5];
 	_supp addItemCargoGlobal ["ACE_M26_Clacker", 2];

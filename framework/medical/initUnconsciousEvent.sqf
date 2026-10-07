@@ -32,7 +32,7 @@
 
 		[{
 			params ["_unit"];
-			_unit setUnitTrait ["camouflageCoef", var_camoCoef];
+			_unit setUnitTrait ["camouflageCoef", lmf_camoCoef];
 		}, [_unit], 30] call CBA_fnc_waitAndExecute;
 
 	// AI

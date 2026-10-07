@@ -19,11 +19,11 @@ _unit setRank _squadLeader#2;
 
 _unit addWeapon _binocular;
 
-if (var_playerMaps == 1) then {
+if (lmf_playerMaps == 1) then {
 	_unit linkItem "ItemMap";
 	_unit linkItem "ItemCompass";
 };
-if (var_playerGps == 1) then {_unit linkItem "ItemGPS"};
+if (lmf_playerGps == 1) then {_unit linkItem "ItemGPS"};
 
 for "_i" from 1 to 2 do {
 	[_unit, (selectRandom _grenadeSmoke), false] call lmf_equipment_fnc_addItem;

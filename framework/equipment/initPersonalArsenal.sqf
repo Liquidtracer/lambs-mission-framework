@@ -5,14 +5,14 @@
 	Author: Alex2k. Contributor: Drgn V4karian.
 */
 
-if (!var_playerGear || {!var_personalArsenal} || {!var_warmup}) exitWith {};
+if (!lmf_playerGear || {!lmf_personalArsenal} || {!lmf_warmup}) exitWith {};
 ["Preload"] call BIS_fnc_arsenal;
 
 #include "..\..\settings\cfg_Player.sqf"
 
-waitUntil {sleep 1; !isNil "lmf_warmup"};
+waitUntil {sleep 1; !isNil "lmf_warmup_isActive"};
 waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
-if !(lmf_warmup) exitWith {};
+if !(lmf_warmup_isActive) exitWith {};
 
 // Add gear based on roles
 private _role = typeOf player;
@@ -323,7 +323,7 @@ if (_role == _crew#0) then {
 }] call BIS_fnc_addScriptedEventHandler;
 
 // Add actions
-private _personalArsenal = ["personalArsenal", "Personal Arsenal", ["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa", LMF_MAIN_COLOR], {["Open", [false, player, player]] spawn bis_fnc_arsenal; player action ["SwitchWeapon", player, player, 100];}, {lmf_warmup}] call ace_interact_menu_fnc_createAction;
+private _personalArsenal = ["personalArsenal", "Personal Arsenal", ["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa", LMF_MAIN_COLOR], {["Open", [false, player, player]] spawn bis_fnc_arsenal; player action ["SwitchWeapon", player, player, 100];}, {lmf_warmup_isActive}] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions", "ACE_Equipment"], _personalArsenal] call ace_interact_menu_fnc_addActionToObject;
 
 private _specialRoles = [_crew#0, _heloPilot#0, _heloCrew#0, _pilot#0, _crewLeader#0, _crewSgt#0];
@@ -335,7 +335,7 @@ if (_availableOptics isEqualTo [""]) exitWith {};
 lmf_player_availableOptics = _availableOptics;
 
 _condition = {
-	lmf_warmup
+	lmf_warmup_isActive
 };
 _statement = {
 	params ["_target", "_player", "_params"];

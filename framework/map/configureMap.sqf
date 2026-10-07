@@ -13,7 +13,7 @@ if !(hasInterface) exitWith {};
 		// Auto activate the textures button
 		ctrlActivate ((findDisplay 12) displayCtrl 107);
 		// (Removes textures button)
-		if (var_oldSchoolMap) then {
+		if (lmf_oldSchoolMap) then {
 			disableSerialization;
 			_display = uiNamespace getVariable "RSCDiary";
 			_ctrl = _display displayCtrl 1201;
@@ -25,7 +25,7 @@ if !(hasInterface) exitWith {};
 	}, []] call CBA_fnc_waitUntilAndExecute;
 
 	// Oldschool map system
-	if (var_oldSchoolMap) then {
+	if (lmf_oldSchoolMap) then {
 		{
 			if ((_x find "_USER_DEFINED #") != -1) then {deleteMarkerLocal _x};
 		} forEach allMapMarkers;

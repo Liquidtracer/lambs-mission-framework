@@ -40,7 +40,7 @@
 	[
 		{
 			params ["_flareObject", "_flarePos"];
-			private _machineGuns = vehicles select {side _x == var_enemySide && alive _x && _x isKindOf "StaticMGWeapon"};
+			private _machineGuns = vehicles select {side _x == lmf_enemySide && alive _x && _x isKindOf "StaticMGWeapon"};
 			if (_machineGuns isEqualTo []) exitWith {};
 			private _nearestMg = [_machineGuns, _flarePos] call BIS_fnc_nearestPosition;
 			private _targetPos = (getPosASL _flareObject) vectorAdd [0, 0, 2];
@@ -53,7 +53,7 @@
 	[
 		{
 			params ["_flareObject", "_flarePos"];
-			private _garrisonGroups = allGroups select {side _x == var_enemySide && ((groupId _x) find "Garrison") != -1};
+			private _garrisonGroups = allGroups select {side _x == lmf_enemySide && ((groupId _x) find "Garrison") != -1};
 			if (_garrisonGroups isEqualTo []) exitWith {};
 			private _nearestGarrisonGroup = [_garrisonGroups, _flarePos] call BIS_fnc_nearestPosition;
 			{_x setUnitPos "UP"} forEach (units _nearestGarrisonGroup select {alive _x});
@@ -78,7 +78,7 @@
 	[
 		{
 			params ["_flareObject", "_flarePos"];
-			private _qrfGroup = allGroups select {side _x == var_enemySide && (((groupId _x) find "QRF") != -1 || ((groupId _x) find "Patrol") != -1)};
+			private _qrfGroup = allGroups select {side _x == lmf_enemySide && (((groupId _x) find "QRF") != -1 || ((groupId _x) find "Patrol") != -1)};
 			if (_qrfGroup isEqualTo []) exitWith {};
 			private _nearestQrfGroup = [_qrfGroup, _flarePos] call BIS_fnc_nearestPosition;
 			if ((leader _nearestQrfGroup) distance2D _flarePos < 800) then {
@@ -94,13 +94,13 @@
 	[
 		{
 			params ["_flareObject", "_flarePos"];
-			private _mortars = vehicles select {side _x == var_enemySide && alive _x && _x isKindOf "StaticMortar"};
+			private _mortars = vehicles select {side _x == lmf_enemySide && alive _x && _x isKindOf "StaticMortar"};
 			if (_mortars isEqualTo []) exitWith {};
 			private _nearestMortar = [_mortars, _flarePos] call BIS_fnc_nearestPosition;
 
 			// Hold fire if there are units friendly to the mortar in the target area
 			private _unitsInRange = _flarePos nearEntities ["Man", 100];
-			private _friendlyUnitsInRange = _unitsInRange select {side _x == var_enemySide && alive _x};
+			private _friendlyUnitsInRange = _unitsInRange select {side _x == lmf_enemySide && alive _x};
 			if (count _friendlyUnitsInRange > 1) exitWith {};
 
 			private _targetPos = [[[(getPosASL _flareObject), 40]], []] call BIS_fnc_randomPos;

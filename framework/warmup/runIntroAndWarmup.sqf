@@ -19,25 +19,25 @@ _introUnit enableSimulation false;
 
 // Mission intro
 sleep 2;
-if (var_missionSubtitle isNotEqualTo "") then {
+if (lmf_missionSubtitle isNotEqualTo "") then {
 	[
 		[
-			[format ["%1", var_missionTitle], "align='center' shadow='2' size='1' font='PuristaBold'", LMF_MAIN_COLOR],
+			[format ["%1", lmf_missionTitle], "align='center' shadow='2' size='1' font='PuristaBold'", LMF_MAIN_COLOR],
 			["", "<br/>"],
-			[format ["%1", var_missionSubtitle], "align='center' shadow='2' size='0.5' font='PuristaBold'"]
+			[format ["%1", lmf_missionSubtitle], "align='center' shadow='2' size='0.5' font='PuristaBold'"]
 		], safeZoneX+0.0, safeZoneY+0.8
 	] spawn BIS_fnc_typeText2;
 } else {
 	[
 		[
-			[format ["%1", var_missionTitle], "align='center' shadow='2' size='1' font='PuristaBold'", LMF_MAIN_COLOR],
+			[format ["%1", lmf_missionTitle], "align='center' shadow='2' size='1' font='PuristaBold'", LMF_MAIN_COLOR],
 			["", "<br/>"]
 		], safeZoneX+0.0, safeZoneY+0.8
 	] spawn BIS_fnc_typeText2;
 };
 
 sleep 7;
-waitUntil {!isNil "lmf_warmup"};
+waitUntil {!isNil "lmf_warmup_isActive"};
 // The narrative intro is complete. Prepare the menus while the screen is still black.
 lmf_player_introComplete = true;
 
@@ -51,7 +51,7 @@ lmf_player_introComplete = true;
 };
 
 // Exit if no warmup or warmup has already ended (JIP)
-if !(lmf_warmup) exitWith {};
+if !(lmf_warmup_isActive) exitWith {};
 
 // Warmup
 player setUnitTrait ["camouflageCoef", 0];
@@ -101,10 +101,10 @@ private _mapOptions = [
 	format ["<t shadow='2' color='%1' size='0.9'align='left'>Map Access:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Leaders Only</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR],
 	format ["<t shadow='2' color='%1' size='0.9'align='left'>Map Access:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Disabled</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR_DARK]
 ];
-_maps = _mapOptions select var_playerMaps;
+_maps = _mapOptions select lmf_playerMaps;
 
 // Map mode
-private _mapMode = format ["<t shadow='2' color='%1' size='0.9'align='left'>Map Mode:  </t> <t shadow='2' color='%3' size='0.9'align='right'>%2</t><br/>", LMF_MAIN_COLOR, ["Standard", "Oldschool"] select var_oldSchoolMap, LMF_TEXT_COLOR];
+private _mapMode = format ["<t shadow='2' color='%1' size='0.9'align='left'>Map Mode:  </t> <t shadow='2' color='%3' size='0.9'align='right'>%2</t><br/>", LMF_MAIN_COLOR, ["Standard", "Oldschool"] select lmf_oldSchoolMap, LMF_TEXT_COLOR];
 
 // Blue force tracker
 private _bft = "";
@@ -112,7 +112,7 @@ private _bftOptions = [
 	format ["<t shadow='2' color='%1' size='0.9'align='left'>Blue Force Tracker:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Disabled</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR_DARK],
 	format ["<t shadow='2' color='%1' size='0.9'align='left'>Blue Force Tracker:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Enabled</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR]
 ];
-_bft = _bftOptions select var_bft;
+_bft = _bftOptions select lmf_bft;
 
 // Personal radio
 private _radios = "";
@@ -120,26 +120,26 @@ private _radiosOptions = [
 	format ["<t shadow='2' color='%1' size='0.9'align='left'>Personal Radio:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Disabled</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR_DARK],
 	format ["<t shadow='2' color='%1' size='0.9'align='left'>Personal Radio:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Everyone</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR]
 ];
-_radios = _radiosOptions select var_personalRadio;
+_radios = _radiosOptions select lmf_personalRadio;
 
 // Respawn type
 private _respawn = "";
-if (typeName var_respawnType == "SCALAR") then {
-	_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Delay (%2s)</t><br/>", LMF_MAIN_COLOR, var_respawnType, LMF_TEXT_COLOR];
+if (typeName lmf_respawnType == "SCALAR") then {
+	_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Delay (%2s)</t><br/>", LMF_MAIN_COLOR, lmf_respawnType, LMF_TEXT_COLOR];
 } else {
-	if (var_respawnType == "OFF") then {
+	if (lmf_respawnType == "OFF") then {
 		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Disabled</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR_DARK];
 	};
-	if (var_respawnType == "WAVE") then {
-		private _respTime = format ["<t shadow='2' color='%2'>%1", [var_respawnTime, "MM"] call BIS_fnc_secondsToString, LMF_MAIN_COLOR];
+	if (lmf_respawnType == "WAVE") then {
+		private _respTime = format ["<t shadow='2' color='%2'>%1", [lmf_respawnTime, "MM"] call BIS_fnc_secondsToString, LMF_MAIN_COLOR];
 		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Wave (%2m)</t><br/>", LMF_MAIN_COLOR, _respTime, LMF_TEXT_COLOR];
 	};
-	if (var_respawnType == "TICKETS") then {
-		private _respTime = format ["<t shadow='2' color='%2'>%1", [var_respawnTime, "MM"] call BIS_fnc_secondsToString, LMF_MAIN_COLOR];
-		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Tickets (%2x)</t><br/>", LMF_MAIN_COLOR, var_respawnTickets, LMF_TEXT_COLOR];
+	if (lmf_respawnType == "TICKETS") then {
+		private _respTime = format ["<t shadow='2' color='%2'>%1", [lmf_respawnTime, "MM"] call BIS_fnc_secondsToString, LMF_MAIN_COLOR];
+		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Tickets (%2x)</t><br/>", LMF_MAIN_COLOR, lmf_respawnTickets, LMF_TEXT_COLOR];
 	};
-	if (var_respawnType != "WAVE" && var_respawnType != "OFF" && var_respawnType != "TICKETS") then {
-		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn: </t> <t shadow='2' color='%3' size='0.9'align='right'>%2</t><br/>", LMF_MAIN_COLOR, var_respawnType, LMF_TEXT_COLOR];
+	if (lmf_respawnType != "WAVE" && lmf_respawnType != "OFF" && lmf_respawnType != "TICKETS") then {
+		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn: </t> <t shadow='2' color='%3' size='0.9'align='right'>%2</t><br/>", LMF_MAIN_COLOR, lmf_respawnType, LMF_TEXT_COLOR];
 	};
 };
 
@@ -149,8 +149,8 @@ private _staticInfo = (_br + _br + _maps + _mapMode + _bft + _radios + _respawn)
 // Match the server's deadline parsing for the end-time label and warning colors.
 private _hasDeadline = false;
 private _deadline = 0;
-if (var_maxWarmupTime != "") then {
-	private _parts = var_maxWarmupTime splitString ":";
+if (lmf_maxWarmupTime != "") then {
+	private _parts = lmf_maxWarmupTime splitString ":";
 	if (count _parts == 2) then {
 		_deadline = (parseNumber (_parts select 0)) * 60 + parseNumber (_parts select 1);
 		_hasDeadline = true;
@@ -158,7 +158,7 @@ if (var_maxWarmupTime != "") then {
 };
 
 // Information update loop
-while {lmf_warmup} do {
+while {lmf_warmup_isActive} do {
 
 	private _elapsedTime = CBA_missionTime;
 
@@ -183,7 +183,7 @@ while {lmf_warmup} do {
 
 	private _txt = format ["<t shadow='2' size='0.9' font='PuristaBold' color='%1' align='right'>%2</t>", _timeColor, _timeFormatted];
 	if (_hasDeadline) then {
-		_txt = format ["<t shadow='2' size='0.9' font='PuristaBold' color='%4' align='center'>[Ends at %1]</t><t shadow='2' size='0.9' font='PuristaBold' color='%2' align='right'>%3</t>", var_maxWarmupTime, _timeColor, _timeFormatted, LMF_LINK_COLOR];
+		_txt = format ["<t shadow='2' size='0.9' font='PuristaBold' color='%4' align='center'>[Ends at %1]</t><t shadow='2' size='0.9' font='PuristaBold' color='%2' align='right'>%3</t>", lmf_maxWarmupTime, _timeColor, _timeFormatted, LMF_LINK_COLOR];
 	};
 
 	_ctrl ctrlSetStructuredText parseText (_title + _txt + _staticInfo);
@@ -218,9 +218,9 @@ ctrlDelete _ctrl3;
 
 // Restore weapon use and configured camouflage.
 [false] call lmf_admin_fnc_setPlayerSafety;
-player setUnitTrait ["camouflageCoef", var_camoCoef];
+player setUnitTrait ["camouflageCoef", lmf_camoCoef];
 
 uiSleep 3;
 
-private _text = parseText format ["<t font='PuristaBold' size='1.4' color='%1' align='right'>%2</t><br/><t font='PuristaBold' size='1' color='%4' align='right'>%3</t>", LMF_MAIN_COLOR, var_missionTitle, var_missionSubtitle, LMF_TEXT_COLOR];
+private _text = parseText format ["<t font='PuristaBold' size='1.4' color='%1' align='right'>%2</t><br/><t font='PuristaBold' size='1' color='%4' align='right'>%3</t>", LMF_MAIN_COLOR, lmf_missionTitle, lmf_missionSubtitle, LMF_TEXT_COLOR];
 [_text, true, nil, 7, 0.7, 0] spawn BIS_fnc_textTiles;

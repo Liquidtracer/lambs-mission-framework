@@ -26,7 +26,7 @@ lmf_bft_fnc_applyCallsign = {
 	// Also serialize direct calls from scheduled server scripts with requests from clients.
 	isNil {
 		params ["_grp", "_type", "_txt", ["_requester", objNull]];
-		if (!var_bft || {isNull _grp}) exitWith {};
+		if (!lmf_bft || {isNull _grp}) exitWith {};
 		if (!isNull _requester && {_requester != leader _grp || {!alive _requester}}) exitWith {
 			[_requester, "Only the current group leader can change BFT.", false] call lmf_bft_fnc_sendFeedback;
 		};
@@ -89,7 +89,7 @@ lmf_bft_fnc_applyIcon = {
 	if (!isServer) exitWith {};
 	isNil {
 		params ["_grp", "_type", ["_requester", objNull], ["_label", ""]];
-		if (!var_bft || {isNull _grp}) exitWith {};
+		if (!lmf_bft || {isNull _grp}) exitWith {};
 		if (!isNull _requester && {_requester != leader _grp || {!alive _requester}}) exitWith {
 			[_requester, "Only the current group leader can change BFT.", false] call lmf_bft_fnc_sendFeedback;
 		};

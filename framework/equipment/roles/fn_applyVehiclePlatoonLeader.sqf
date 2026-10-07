@@ -19,13 +19,13 @@ _unit setRank _crewLeader#2;
 
 _unit addWeapon _binocular;
 
-if (var_playerMaps == 1) then {
+if (lmf_playerMaps == 1) then {
 	_unit linkItem "ItemMap";
 	_unit linkItem "ItemCompass";
 };
-if (var_playerGps == 1) then {_unit linkItem "ItemGPS"};
+if (lmf_playerGps == 1) then {_unit linkItem "ItemGPS"};
 
-if (!var_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
+if (!lmf_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
 [_unit, _vplWeapon] call lmf_equipment_fnc_giveWeapon;
 
 if (time > 10) then {[_unit getVariable "lmf_currentRole"] call lmf_equipment_fnc_showRoleChangeMessage};

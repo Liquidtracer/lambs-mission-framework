@@ -174,7 +174,7 @@ while {_initTickets > 0} do {
 			private _vehType = getText (configFile >> "CfgVehicles" >> typeOf _veh >> "displayName");
 
 			private _type = (selectRandom _team) + (selectRandom _sentry);
-			_grp = [_spawnPos, var_enemySide, _type] call BIS_fnc_spawnGroup;
+			_grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["Car: %1 (%2)", _vehType, groupId _grp]];
 			_grp setSpeedMode "FULL";
@@ -196,7 +196,7 @@ while {_initTickets > 0} do {
 			_veh setUnloadInCombat [false, false];
 			private _vehType = getText (configFile >> "CfgVehicles" >> typeOf _veh >> "displayName");
 
-			_grp = createGroup var_enemySide;
+			_grp = createGroup lmf_enemySide;
 			[_veh, _grp, false, "", _rifleman] call BIS_fnc_spawnCrew;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["Armed Car: %1 (%2)", _vehType, groupId _grp]];
@@ -214,7 +214,7 @@ while {_initTickets > 0} do {
 
 			private _randomTeam = selectRandom [_team, _mgTeam, _atTeam];
 			private _type = (selectRandom _squad) + (selectRandom _randomTeam);
-			_grp = [_spawnPos, var_enemySide, _type] call BIS_fnc_spawnGroup;
+			_grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["Truck: %1 (%2)", _vehType, groupId _grp]];
 			_grp setSpeedMode "FULL";
@@ -235,7 +235,7 @@ while {_initTickets > 0} do {
 			_veh setDir _dir;
 			private _vehType = getText (configFile >> "CfgVehicles" >> typeOf _veh >> "displayName");
 
-			_grp = createGroup var_enemySide;
+			_grp = createGroup lmf_enemySide;
 			[_veh, _grp, false, "", _crew] call BIS_fnc_spawnCrew;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["APC: %1 (%2)", _vehType, groupId _grp]];
@@ -243,7 +243,7 @@ while {_initTickets > 0} do {
 			{_veh deleteVehicleCrew _x} forEach _notCrew;
 
 			private _type = (selectRandom _mgTeam) + (selectRandom _atTeam);
-			_grp2 = [_spawnPos, var_enemySide, _type] call BIS_fnc_spawnGroup;
+			_grp2 = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 			_grp2 deleteGroupWhenEmpty true;
 			_grp2 setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _grp2]];
 			_grp2 setSpeedMode "FULL";
@@ -268,7 +268,7 @@ while {_initTickets > 0} do {
 			_veh setUnloadInCombat [false, false];
 			private _vehType = getText (configFile >> "CfgVehicles" >> typeOf _veh >> "displayName");
 
-			_grp = createGroup var_enemySide;
+			_grp = createGroup lmf_enemySide;
 			[_veh, _grp, false, "", _crew] call BIS_fnc_spawnCrew;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["Tank: %1 (%2)", _vehType, groupId _grp]];
@@ -287,7 +287,7 @@ while {_initTickets > 0} do {
 			_veh setUnloadInCombat [false, false];
 			private _vehType = getText (configFile >> "CfgVehicles" >> typeOf _veh >> "displayName");
 
-			_grp = createGroup var_enemySide;
+			_grp = createGroup lmf_enemySide;
 			[_veh, _grp, false, "", _pilot] call BIS_fnc_spawnCrew;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["Transport Heli: %1 (%2)", _vehType, groupId _grp]];
@@ -297,7 +297,7 @@ while {_initTickets > 0} do {
 			_wp setWaypointType "GUARD";
 
 			private _type = selectRandom _squad;
-			_grp2 = [_spawnPos, var_enemySide, _type] call BIS_fnc_spawnGroup;
+			_grp2 = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 			_grp2 deleteGroupWhenEmpty true;
 			_grp2 setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _grp2]];
 
@@ -397,7 +397,7 @@ while {_initTickets > 0} do {
 			_veh setUnloadInCombat [false, false];
 			private _vehType = getText (configFile >> "CfgVehicles" >> typeOf _veh >> "displayName");
 
-			_grp = createGroup var_enemySide;
+			_grp = createGroup lmf_enemySide;
 			[_veh, _grp, false, "", _pilot] call BIS_fnc_spawnCrew;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["Attack Heli: %1 (%2)", _vehType, groupId _grp]];

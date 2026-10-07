@@ -84,34 +84,34 @@ lmf_briefing_fnc_refreshRoster = {
 }, []] call CBA_fnc_waitUntilAndExecute;
 
 // Technical
-private _respawnLabel = var_respawnType;
+private _respawnLabel = lmf_respawnType;
 private _respawnDescription = "Mission-specific respawn rules.";
 private _respawnColor = LMF_TEXT_COLOR;
-if (typeName var_respawnType == "SCALAR") then {
-	_respawnLabel = format ["Delay (%1s)", var_respawnType];
+if (typeName lmf_respawnType == "SCALAR") then {
+	_respawnLabel = format ["Delay (%1s)", lmf_respawnType];
 	_respawnDescription = "Configured delay before returning after death.";
 } else {
-	switch (var_respawnType) do {
+	switch (lmf_respawnType) do {
 		case "OFF": {
 			_respawnLabel = "Disabled";
 			_respawnDescription = "Automatic respawn is disabled.";
 			_respawnColor = LMF_TEXT_COLOR_DARK;
 		};
 		case "WAVE": {
-			_respawnLabel = format ["Wave (%1m)", [var_respawnTime, "MM"] call BIS_fnc_secondsToString];
+			_respawnLabel = format ["Wave (%1m)", [lmf_respawnTime, "MM"] call BIS_fnc_secondsToString];
 			_respawnDescription = "Players return together at the next respawn wave.";
 		};
 		case "TICKETS": {
-			_respawnLabel = format ["Tickets (%1x)", var_respawnTickets];
+			_respawnLabel = format ["Tickets (%1x)", lmf_respawnTickets];
 			_respawnDescription = "Respawn waves with a limited number of respawns per player.";
 		};
 	};
 };
 private _technicalRows = [
-	["Map Access", ["Everyone", "Leaders Only", "Disabled"] select var_playerMaps, "Who is issued a map.", [LMF_TEXT_COLOR, LMF_TEXT_COLOR_DARK] select (var_playerMaps == 2)],
-	["Map Mode", ["Standard", "Oldschool"] select var_oldSchoolMap, "Oldschool hides new markers received from others.", LMF_TEXT_COLOR],
-	["Blue Force Tracker", ["Disabled", "Enabled"] select var_bft, "Shows tracked friendly positions on the map.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select var_bft],
-	["Personal Radio", ["Disabled", "Everyone"] select var_personalRadio, "Short-range radios for everyone.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select var_personalRadio],
+	["Map Access", ["Everyone", "Leaders Only", "Disabled"] select lmf_playerMaps, "Who is issued a map.", [LMF_TEXT_COLOR, LMF_TEXT_COLOR_DARK] select (lmf_playerMaps == 2)],
+	["Map Mode", ["Standard", "Oldschool"] select lmf_oldSchoolMap, "Oldschool hides new markers received from others.", LMF_TEXT_COLOR],
+	["Blue Force Tracker", ["Disabled", "Enabled"] select lmf_bft, "Shows tracked friendly positions on the map.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select lmf_bft],
+	["Personal Radio", ["Disabled", "Everyone"] select lmf_personalRadio, "Short-range radios for everyone.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select lmf_personalRadio],
 	["Respawn", _respawnLabel, _respawnDescription, _respawnColor]
 ];
 private _technicalText = format ["<font face='PuristaBold' size='16' color='%1'>TECHNICAL INFO</font><br/><font color='%2'>Mission settings shown during Safe Start are explained below.</font><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR];
@@ -134,4 +134,4 @@ player createDiaryRecord ["lmf_diary", [format ["OPORD"], format ["
 %5
 <br/><br/><font face='PuristaBold' size='16' color='%9'>ADMINISTRATION</font><br/>
 %6
-", _brfSituation, _enemyText, _friendText, _brfMission, _execText, _adminText, var_author, LMF_VERSION, LMF_MAIN_COLOR, LMF_LINK_COLOR, LMF_TEXT_COLOR_DARK, LMF_ERROR_COLOR, LMF_HIGHLIGHT_FRIENDLY_COLOR], "\A3\ui_f\data\igui\cfg\simpletasks\types\documents_ca.paa"], taskNull, "", false];
+", _brfSituation, _enemyText, _friendText, _brfMission, _execText, _adminText, lmf_author, LMF_VERSION, LMF_MAIN_COLOR, LMF_LINK_COLOR, LMF_TEXT_COLOR_DARK, LMF_ERROR_COLOR, LMF_HIGHLIGHT_FRIENDLY_COLOR], "\A3\ui_f\data\igui\cfg\simpletasks\types\documents_ca.paa"], taskNull, "", false];

@@ -14,11 +14,11 @@ params ["_unit"];
 #include "checkAdminAccess.sqf"
 
 [] spawn {
-	if (lmf_warmup) then {
+	if (lmf_warmup_isActive) then {
 		_result = ["Start mission?", "START MISSION", "OK", true] call BIS_fnc_guiMessage;
 		if (_result) then {
-			lmf_warmup = false;
-			publicVariable "lmf_warmup";
+			lmf_warmup_isActive = false;
+			publicVariable "lmf_warmup_isActive";
 		};
 	};
 };

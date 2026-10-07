@@ -39,7 +39,7 @@ if (isNull _object) exitWith {};
 
 // Stamp the deadline once, before distributing it, so JIP does not restart a finite duration.
 if (isServer && {_endTime == -2}) exitWith {
-	if (!var_bft) exitWith {};
+	if (!lmf_bft) exitWith {};
 	private _deadline = if (_maxDuration < 0) then {-1} else {serverTime + _maxDuration};
 	[
 		_object, _markerType, _markerColor, _markerSize, _markerText, _interval,
@@ -67,10 +67,10 @@ isNil {
 // Persistent remote execution can run early for a JIP client.
 waitUntil {
 	sleep 0.1;
-	isNull _object || {!isNil "var_bft" && {!isNull player}}
+	isNull _object || {!isNil "lmf_bft" && {!isNull player}}
 };
 
-if (isNull _object || {!var_bft} || {_trackWhileAlive && {!alive _object}}) exitWith {};
+if (isNull _object || {!lmf_bft} || {_trackWhileAlive && {!alive _object}}) exitWith {};
 
 // Resolve textures, profile-based marker colors and dimensions once, outside Draw.
 private _markerConfig = configFile >> "CfgMarkers" >> _markerType;

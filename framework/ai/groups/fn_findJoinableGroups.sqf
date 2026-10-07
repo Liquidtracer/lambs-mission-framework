@@ -8,7 +8,7 @@
 params ["_unit"];
 
 private _group = group _unit;
-private _friendlyGroups = (groups var_enemySide) select {
+private _friendlyGroups = (groups lmf_enemySide) select {
 	_x getVariable ["lmf_ai_joinableGroup", false] && {_x != _group}
 };
 

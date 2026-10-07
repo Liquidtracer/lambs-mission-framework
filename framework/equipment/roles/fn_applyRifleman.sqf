@@ -16,6 +16,6 @@ _unit setRank _rifleman#2;
 [_unit, _rUniform, _rVest, _rHeadgear, _rGoggles, _rBackpack] call lmf_equipment_fnc_applyBaseLoadout;
 
 [_unit, _rWeapon] call lmf_equipment_fnc_giveWeapon;
-if (var_riflemanLat) then {[_unit, 9] call lmf_equipment_fnc_giveWeapon};
+if (lmf_riflemanLat) then {[_unit, 9] call lmf_equipment_fnc_giveWeapon};
 
 if (time > 10) then {[_unit getVariable "lmf_currentRole"] call lmf_equipment_fnc_showRoleChangeMessage};

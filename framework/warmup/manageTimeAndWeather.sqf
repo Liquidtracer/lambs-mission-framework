@@ -5,8 +5,8 @@
 
 if (!isServer) exitWith {};
 
-waitUntil {sleep 1; !isNil "lmf_warmup"};
-if !(lmf_warmup) exitWith {};
+waitUntil {sleep 1; !isNil "lmf_warmup_isActive"};
+if !(lmf_warmup_isActive) exitWith {};
 
 private _date = date;
 private _fog = fogParams;
@@ -17,7 +17,7 @@ private _rain = rainParams;
 setTimeMultiplier 0.1;
 
 // Wait for warmup end
-waitUntil {sleep 0.1; !lmf_warmup};
+waitUntil {sleep 0.1; !lmf_warmup_isActive};
 
 // Reset time and weather.
 [_date] remoteExec ["setDate"];

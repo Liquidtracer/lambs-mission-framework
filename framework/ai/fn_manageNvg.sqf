@@ -25,7 +25,7 @@ private _applyNightState = {
 				_x unlinkItem (hmd _x);
 			};
 		};
-	} forEach (units var_enemySide);
+	} forEach (units lmf_enemySide);
 };
 
 private _wasNight = sunOrMoon < 1;

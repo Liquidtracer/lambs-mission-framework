@@ -8,7 +8,7 @@ params ["_colorRgb", "_shooter", "_projectile"];
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
 if !(_spawner) exitWith {};
-if (side _shooter == var_enemySide) exitWith {};
+if (side _shooter == lmf_enemySide) exitWith {};
 
 _detectionRange = 800;
 _targetPos = [[[(getPos _shooter), 200]], []] call BIS_fnc_randomPos;

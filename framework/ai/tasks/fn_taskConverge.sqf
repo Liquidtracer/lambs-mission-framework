@@ -39,7 +39,7 @@ private _transportAllowsTask = {
 // Find eligible groups
 private _groups = allGroups select {
 	local _x &&
-	{side _x == var_enemySide} &&
+	{side _x == lmf_enemySide} &&
 	{!(_x getVariable ["lmf_taskConverge_active", false])} &&
 	{[_x] call _transportAllowsTask} &&
 	{

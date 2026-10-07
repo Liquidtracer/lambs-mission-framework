@@ -3,13 +3,13 @@
     Registers forward-deployment events and ACE actions for troops and claimable assets.
     Author: Alex2k. Contributor: G4rrus.
     Forward deploy will commence (with a slight delay) at the end of the warmup/briefing stage.
-    var_deployHeight determines if it is a ground forward deploy or an airdrop.
+    lmf_deployHeight determines if it is a ground forward deploy or an airdrop.
     Assets that shall be claimable must be marked before this script executes (it executes post init)
     You can mark assets to be claimable by for example putting 'this setVariable ["lmf_deploy_unowned",true];' in their init in the editor.
     This requires the briefing stage component.
 */
 
-if !(var_forwardDeploy) exitWith {};
+if !(lmf_forwardDeploy) exitWith {};
 
 // Server
 if (isServer) then {
@@ -66,7 +66,7 @@ if (isServer) then {
 	// Cleanup loop
 	[{
 		[] call lmf_forwardDeploy_fnc_updateDeploymentRegistrations;
-		if !(lmf_warmup) then {
+		if !(lmf_warmup_isActive) then {
 			[(_this select 1)] call CBA_fnc_removePerFrameHandler;
 			["lmf_deploy_initiateDeploy",[]] call CBA_fnc_localEvent;
 		};
@@ -84,7 +84,7 @@ if (isServer) then {
 			_paraParams pushBack _info;
 		} forEach _hashGroups;
 		[{
-			[_this select 0,var_deployHeight] call lmf_forwardDeploy_fnc_deployUnitsAndAssets;
+			[_this select 0,lmf_deployHeight] call lmf_forwardDeploy_fnc_deployUnitsAndAssets;
 		},[_paraParams], 8] call CBA_fnc_waitAndExecute;
 	}] call CBA_fnc_addEventHandler;
 };
@@ -94,7 +94,7 @@ if !(hasInterface) exitWith {};
 
 // Called once by the ordered client menu setup after the intro.
 lmf_forwardDeploy_fnc_registerMenu = {
-    if !(lmf_warmup) exitWith {};
+    if !(lmf_warmup_isActive) exitWith {};
     player setVariable ["lmf_deploy_menuAvailable", true];
 
     // Events
@@ -148,7 +148,7 @@ lmf_forwardDeploy_fnc_registerMenu = {
     		private _grpId = groupId _grp;
 
     		if (markerText _mrkName isEqualTo "") exitWith {
-    			private _mrkType = ["mil_arrow2","mil_start"] select (var_deployHeight < 100);
+    			private _mrkType = ["mil_arrow2","mil_start"] select (lmf_deployHeight < 100);
     			lmf_deployMarker = createMarker [_mrkName,_pos];
     			lmf_deployMarker setMarkerType _mrkType;
     			lmf_deployMarker setMarkerSize [0.75, 0.75];
@@ -225,8 +225,8 @@ lmf_forwardDeploy_fnc_registerMenu = {
     };
 
     // Player actions
-    private _iconRegister = [["\A3\ui_f\data\map\vehicleicons\iconParachute_ca.paa",LMF_HIGHLIGHT_FRIENDLY_COLOR],["\A3\3den\data\displays\display3den\panelright\modeobjects_ca.paa",LMF_HIGHLIGHT_FRIENDLY_COLOR]] select (var_deployHeight < 100);
-    private _iconUnregister = [["\A3\ui_f\data\map\vehicleicons\iconParachute_ca.paa",LMF_ERROR_COLOR],["\A3\3den\data\displays\display3den\panelright\modeobjects_ca.paa",LMF_ERROR_COLOR]] select (var_deployHeight < 100);
+    private _iconRegister = [["\A3\ui_f\data\map\vehicleicons\iconParachute_ca.paa",LMF_HIGHLIGHT_FRIENDLY_COLOR],["\A3\3den\data\displays\display3den\panelright\modeobjects_ca.paa",LMF_HIGHLIGHT_FRIENDLY_COLOR]] select (lmf_deployHeight < 100);
+    private _iconUnregister = [["\A3\ui_f\data\map\vehicleicons\iconParachute_ca.paa",LMF_ERROR_COLOR],["\A3\3den\data\displays\display3den\panelright\modeobjects_ca.paa",LMF_ERROR_COLOR]] select (lmf_deployHeight < 100);
 
     private _registerGroup = ["lmf_deploy_register","Register Forward Deploy",_iconRegister,_statementRegister,_conditionRegister,{},[player]] call ace_interact_menu_fnc_createAction;
     private _unregisterGroup = ["lmf_deploy_unregister","Unregister Forward Deploy",_iconUnregister,_statementUnregister,_conditionUnregister,{},[player]] call ace_interact_menu_fnc_createAction;
