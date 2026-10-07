@@ -37,10 +37,6 @@ _unit addEventHandler ["Hit", {
 	[_unit] call lmf_ai_fnc_onHit;
 }];
 
-/* _unit addEventHandler ["Killed", {
-	_this call lmf_ai_fnc_onKilled;
-}]; */
-
 if !(lmf_ai_config get "CUSTOM_GEAR") exitWith {
 	private _validNvGs = (lmf_ai_config get "NVG") select {_x isNotEqualTo ""};
 	if (sunOrMoon < 1 && {!(_validNvGs isEqualTo [])}) then {_unit linkItem (selectRandom _validNvGs)};

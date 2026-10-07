@@ -6,6 +6,46 @@ The canonical practical mission-maker reference for mission scripts and triggers
 
 
 
+## Mission settings
+
+Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locally on every machine during preInit; it is not a server-synchronized runtime settings interface. Player loadout details belong in `settings/cfg_Player.sqf`, AI classes and gear in `settings/cfg_AI.hpp`, and briefing content in `settings/cfg_Briefing.sqf`.
+
+### Mission info and enemy side
+
+- `lmf_missionTitle` and `lmf_missionSubtitle` supply the intro/title text; `""` omits the intro subtitle. `lmf_author` supplies the briefing credit.
+- `lmf_enemySide` selects the side used by LMF enemy AI initialization, spawning and tasks: `WEST`, `EAST` or `INDEPENDENT`.
+
+### Warmup and respawn
+
+- `lmf_warmup` enables warmup. `lmf_maxWarmupTime` is a mission-time deadline as `"MM:SS"` (for example `"15:00"`), not a timer restarted for JIP. `""` disables automatic termination; admins can still end warmup.
+- `lmf_respawnType`: `"OFF"` disables normal automatic respawn; `"WAVE"` uses recurring mission-time intervals; `"TICKETS"` uses the same intervals with a per-player allowance. A number sets a delay in seconds. Other strings are display text only and suppress normal automatic respawn; they do not implement a custom mode. The death handler enforces a minimum delay of 10 seconds.
+- `lmf_respawnTime` is the interval in seconds for `"WAVE"` and `"TICKETS"`; use a positive value. `lmf_respawnTickets` is the initial per-player allowance for `"TICKETS"`, deducted on death; `0` allows no further automatic respawns. Tickets are client-session state, not a persistent quota across reconnects.
+
+### Player gear and equipment
+
+- `lmf_playerGear` applies the configured LMF loadouts. With `false`, starting Eden equipment is retained and its startup snapshot is restored on respawn. With custom gear enabled, `lmf_keepRole = true` restores the original slot role on respawn; `false` gives Rifleman.
+- `lmf_personalArsenal` enables warmup headgear/glasses selection and Available Optics; it requires both `lmf_playerGear` and `lmf_warmup`. Crew and pilot roles do not receive Available Optics.
+- `lmf_personalRadio` gives everyone the configured personal radio (AN/PRC-343 in the current player settings). `lmf_pistolAll` gives everyone a sidearm; disabling it retains role-specific sidearms. `lmf_riflemanLat` gives Rifleman the configured light anti-tank weapon. These gear switches require `lmf_playerGear`.
+- `lmf_playerMaps` and `lmf_playerGps`: `0` = everyone, `1` = configured leader and pilot roles, `2` = none. These follow loadout roles, not current group leadership. `lmf_playerNvg`: `0` = everyone, `1` = helicopter/plane pilots, `2` = none. These settings require `lmf_playerGear`.
+- `lmf_camoCoef` sets the player's camouflage coefficient; higher values make players easier for AI to spot. `lmf_jipTp` enables one successful JIP teleport to a suitable friendly player within five minutes of offer initialization; leaving the 200 m start area, death or changing unit ends the offer.
+
+### Map and BFT
+
+- `lmf_oldSchoolMap` disables sharing map markers/drawings and hides newly created nonlocal markers, including script markers. `lmf_bft` independently enables Blue Force Tracking.
+- With BFT enabled, `lmf_bftInfantry` supplies name families such as `["FOX"]`, producing `FOX/6`, `FOX/1`–`FOX/4` and `FOX/1V`–`FOX/4V`. `lmf_bftGroundVehicles` and `lmf_bftAirVehicles` produce `NAME1`–`NAME4`. An empty array hides that selection category; all three empty hides callsign selection without disabling tracking. See [Blue Force Tracking](#blue-force-tracking) for scripted setup.
+
+### Configured assets
+
+- `lmf_vic1`, `lmf_vic2`, `lmf_vic3`, `lmf_vic4` select ground vehicle classnames; `lmf_air1`, `lmf_air2`, `lmf_air3`, `lmf_air4` select aircraft classnames. `""` omits a menu choice. Spawnpad menus require Eden objects named `groundSpawner` / `groundPad` or `airSpawner` / `airPad` respectively; configuring a classname alone does not spawn an asset.
+- `lmf_supSquad`, `lmf_supLarge`, `lmf_supExplosives`, `lmf_supMedical` and `lmf_supVehicle` select supply crate classnames. All five are offered by Supply Drop when nonempty; the `ammoSpawner` / `ammoPad` menu offers squad, explosives and medical crates. `""` omits the corresponding choice.
+- These classnames also identify objects for LMF player-vehicle and supply-crate initialization, including Eden-placed objects. That initialization requires `lmf_playerGear`; menu availability itself does not.
+
+### Supply Drop and Forward Deploy
+
+- `lmf_supplyDropLimit` sets the shared mission request quota; `0` disables the player request module. Requests require an assigned map, a supported long-range radio and inactive warmup. Place a marker named `respawn` for the aircraft spawn-position calculation. Accepted requests share a 30-second cooldown.
+- `lmf_supplyDropAircraft` selects the transport classname; planes and helicopters use the same fly-over parachute delivery. `lmf_supplyDropVehicles` enables requests for nonempty `lmf_vic1`–`lmf_vic4` entries. Direct [Supply Drop calls](#supply-drop) bypass the player request quota and cooldown.
+- `lmf_forwardDeploy` enables group-leader registration during warmup and requires `lmf_warmup`. `lmf_forwardDeploy_height = 0` selects ground deployment; positive values select an airdrop in meters, with values below `100` raised to `100`. See [Forward Deploy](#forward-deploy) for required Eden asset registration and controls.
+
 ## AI spawning
 
 Enemy side: settings/cfg\_Mission.sqf · AI classes and equipment: settings/cfg\_AI.hpp

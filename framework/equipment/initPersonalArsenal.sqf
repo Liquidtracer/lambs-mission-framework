@@ -339,8 +339,6 @@ _condition = {
 };
 _statement = {
 	params ["_target", "_player", "_params"];
-	// Run on hover:
-	// ["ace_common_displayTextStructured", ["someone is thinking of giving you items", 1.5, _target], [_target]] call CBA_fnc_targetEvent;
 };
 _insertChildren = {
 	params ["_target", "_player", "_params"];
@@ -362,8 +360,6 @@ _insertChildren = {
 };
 _modifierFunc = {
 	params ["_target", "_player", "_params", "_actionData"];
-	// Modify the action - index 1 is the display name, 2 is the icon...
-	// _actionData set [1, format ["Available Optics: %1", count lmf_player_availableOptics]];
 };
 _action = ["lmf_equipment_availableOptics", "Available Optics", ["\A3\ui_f_curator\data\rsccommon\rscattributeinventory\filter_7_ca.paa", LMF_MAIN_COLOR], _statement, _condition, _insertChildren, [123], "", 4, [false, false, false, true, false], _modifierFunc] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions", "ACE_Equipment"], _action] call ace_interact_menu_fnc_addActionToObject;

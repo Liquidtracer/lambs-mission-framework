@@ -59,7 +59,7 @@ Initialization sources: [BIKI Initialisation Order](https://community.bohemia.ne
 
 Private includes depend on the consumer's scope; do not replace them with function calls without assessing the contract. Changes to `lmf_camelCase` or `lmf_ai_config` at runtime are local until explicitly synchronized over the network. The AI registry's uppercase HashMap keys are not covered by camelCase renaming.
 
-**Design:** The production environment is dedicated with JIP. `lmf_ai_fnc_isSpawner` uses `isServer`; HC spawning is intentionally disabled because the current volume does not justify the complexity. Inactive HC code is retained. Do not assume support for locality transfer of active AI sequences.
+**Design:** The production environment is dedicated with JIP. `lmf_ai_fnc_isSpawner` uses `isServer`; HC spawning is intentionally disabled because the current volume does not justify the complexity. No HC spawning implementation is retained. Do not assume support for locality transfer of active AI sequences.
 
 | State/system | Writer and distribution |
 |---|---|
@@ -151,7 +151,7 @@ Sources: [terminate](https://community.bohemia.net/wiki/terminate), [isNil](http
 
 **File:** `framework/ai/spawning/fn_spawnVehicleQrf.sqf`, with group/converge helpers. **Design:** Crewed transport continues the insertion attempt; a failed LZ search must never send passengers into retreat.
 
-- The normal route is TR UNLOAD at a dynamic `Land_HelipadEmpty_F`, then MOVE 25 km away with CARELESS/BLUE; the infantry receives GUARD. GETOUT/synchronization/activation for the infantry is commented out. Do not reintroduce this without assessment. Cargo is assigned before moveInCargo; normal insertion has no scripted/forced unloading.
+- The normal route is TR UNLOAD at a dynamic `Land_HelipadEmpty_F`, then MOVE 25 km away with CARELESS/BLUE; the infantry receives GUARD. No infantry GETOUT waypoint, synchronization or activation is implemented. Do not reintroduce this without assessment. Cargo is assigned before moveInCargo; normal insertion has no scripted/forced unloading.
 - The scheduled LZ search ranks open areas within 500 meters, without a specific terrain penalty. The candidate is checked against the helicopter type and requires 150–500 meters from the target, land, object clearance and gradient requirements. On a miss, the search repeats after five seconds with no attempt limit/radius expansion. TR UNLOAD → MOVE is built together unscheduled after an LZ is accepted. The helipad is used as a positional reference, not waypointAttachObject.
 - The pilot group stores cargo in `lmf_heliTransport_cargo`. `lmf_heliTransport_active` protects pilot waypoints from converge; the infantry's `lmf_heliTransport_vehicle` protects the group while survivors are aboard. The infantry is joinable, but does not receive survivors until the leader is on foot. No special priority for the pilots and no reinstated infantry UnitKilled join handler/light setup.
 - Five-second cleanup requires no players within 5 km and no living registered passengers aboard before heli/crew are deleted. An LZ miss does not delete passengers. The helipad is removed on cleanup or a dead/non-local heli. Tickets count original crew even after group changes.

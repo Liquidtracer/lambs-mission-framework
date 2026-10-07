@@ -14,9 +14,9 @@ if (hasInterface && {!isServer}) exitWith {};
 params ["_unit"];
 
 // Request FPS from the server and headless clients.
-"Checking FPS" remoteExec ["SystemChat", _unit];
+"Checking FPS" remoteExec ["systemChat", _unit];
 
 for "_i" from 1 to 10 do {
-	(format ["%1 has %2 FPS (%3/10)", ["Headless client", "Server"] select (isServer), round diag_fps, _i]) remoteExec ["SystemChat", _unit];
+	(format ["%1 has %2 FPS (%3/10)", ["Headless client", "Server"] select (isServer), round diag_fps, _i]) remoteExec ["systemChat", _unit];
 	sleep 5;
 };

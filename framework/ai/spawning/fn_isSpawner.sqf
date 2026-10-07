@@ -7,22 +7,7 @@
 */
 
 _isSpawner = false;
-// HC spawning is intentionally disabled; retained for possible future use.
-/*
-private _headless = (count entities "HeadlessClient_F") > 0;
-
-if (_headless && {isMultiplayer}) then {
-	if (typeOf player == "HeadlessClient_F") then {
-		_isSpawner = true;
-	};
-} else {
-	if (isServer) then {
-		_isSpawner = true;
-	};
-};
-*/
-
-// Use the server for AI spawning.
+// Use the server for AI spawning; HC spawning is intentionally disabled.
 if (isServer) then {
 	_isSpawner = true;
 };

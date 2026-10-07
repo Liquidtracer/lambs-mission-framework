@@ -11,12 +11,12 @@ lmf_enemySide = EAST; // Enemy side: WEST, EAST or INDEPENDENT.
 
 // Warmup
 lmf_warmup = true; // Starts the mission with warmup.
-lmf_maxWarmupTime = "03:30"; // Maximum warmup duration as "MM:SS"; "" disables the deadline.
+lmf_maxWarmupTime = ""; // Maximum warmup duration as "MM:SS"; "" disables the deadline.
 
 // Respawn
-lmf_respawnType = "TICKETS"; // "OFF", "WAVE", "TICKETS", delay in seconds or custom display text.
+lmf_respawnType = "OFF"; // "OFF", "WAVE", "TICKETS", delay in seconds or custom display text.
 lmf_respawnTime = 900; // Respawn delay in seconds for "WAVE" or "TICKETS".
-lmf_respawnTickets = 3; // Tickets per player when using "TICKETS".
+lmf_respawnTickets = 0; // Tickets per player when using "TICKETS".
 
 // Players
 lmf_playerGear = true; // Applies custom player gear; false retains starting Eden equipment and restores it on respawn.
@@ -43,14 +43,14 @@ lmf_bftGroundVehicles = []; // Vehicles: NAME1-4.
 lmf_bftAirVehicles = []; // Air: NAME1-4.
 
 // Ground vehicle classnames.
-lmf_vic1 = "";
-lmf_vic2 = "";
+lmf_vic1 = "CUP_M1240_OGPK_M240_NATO";
+lmf_vic2 = "B_Quadbike_01_F";
 lmf_vic3 = "";
 lmf_vic4 = "";
 
 // Aircraft classnames.
-lmf_air1 = "";
-lmf_air2 = "";
+lmf_air1 = "B_Heli_Light_01_dynamicLoadout_F";
+lmf_air2 = "B_Heli_Transport_01_pylons_F";
 lmf_air3 = "";
 lmf_air4 = "";
 

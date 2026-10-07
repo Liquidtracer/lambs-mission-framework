@@ -70,7 +70,6 @@ private _fncHeliTransportEh = {
 	[_group, _veh, _grp2, _troops, getPosATL _newTarget] spawn {
 		params ["_group", "_veh", "_grp2", "_troops", "_targetPos"];
 		private _landingPos = [];
-		diag_log format ["[LMF HELITRANSPORT] %1: searching for LZ within 500 m of %2", _veh, _targetPos];
 
 		// Rank openness first; allow moderate slopes with extra obstacle clearance.
 		while {_landingPos isEqualTo [] && {alive _veh} && {local _veh} && {local _group}
@@ -116,15 +115,9 @@ private _fncHeliTransportEh = {
 			// Use the exact pad position without an object-attached waypoint.
 			private _unload = _group addWaypoint [getPosASL _pad, -1];
 			_unload setWaypointType "TR UNLOAD";
-			/* private _getOut = _grp2 addWaypoint [_pad, 0];
-			_getOut setWaypointType "GETOUT";
-			_getOut waypointAttachObject _pad;
-			_unload synchronizeWaypoint [_getOut]; */
 			if (!isNull _grp2) then {
 				(_grp2 addWaypoint [ATLToASL _targetPos, -1]) setWaypointType "GUARD";
 			};
-			// _grp2 setCurrentWaypoint _getOut;
-			diag_log format ["[LMF HELITRANSPORT] %1: TR UNLOAD assigned at %2", _veh, _landingPos];
 
 			private _retreat = _group addWaypoint [_retreatPos, 0];
 			_retreat setWaypointType "MOVE";
