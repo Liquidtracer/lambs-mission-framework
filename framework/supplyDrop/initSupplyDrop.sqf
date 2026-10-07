@@ -30,7 +30,7 @@ if (isServer) then {
 			["lmf_supplyDrop_response", [format ["Supply drop available in %1 seconds.", _remaining], true], _requester] call CBA_fnc_targetEvent;
 		};
 
-		private _plane = var_suppDropPlane;
+		private _plane = var_supplyDropAircraft;
 
 		// Calculate the spawn position.
 		private _initPos = lmf_supplyDropPos;

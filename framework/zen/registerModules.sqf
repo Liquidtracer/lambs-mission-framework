@@ -240,7 +240,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
             _spawnPos = _initPos getPos [5000,_dir];
         };
 
-        [_spawnPos, _pos, var_suppDropPlane, _type#0] remoteExec ["lmf_supplyDrop_fnc_deliverSupplies"];
+        [_spawnPos, _pos, var_supplyDropAircraft, _type#0] remoteExec ["lmf_supplyDrop_fnc_deliverSupplies"];
         ["Supply Drop spawned: %1", _type#1] call zen_common_fnc_showMessage;
 
     }, {}, _this#0] call zen_dialog_fnc_create;

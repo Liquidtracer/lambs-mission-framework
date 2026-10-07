@@ -19,7 +19,8 @@
                 if (count _nearUnitsSorted > 0) then {
                     private _nearestUnit = _nearUnitsSorted#0;
                     private _distance = round (player distance2D _nearestUnit);
-                    _message = format ["<img image='A3\3den\data\cfgwaypoints\support_ca.paa' size='2' color='#ed1b2e'/><br/><t font='PuristaBold' color='%2'>Nearest friendly unit: %1m</t>", _distance, LMF_TEXT_COLOR];
+                    private _distanceColor = if (_distance <= 10) then {LMF_HIGHLIGHT_FRIENDLY_COLOR} else {LMF_TEXT_COLOR};
+                    _message = format ["<img image='A3\3den\data\cfgwaypoints\support_ca.paa' size='2' color='#ed1b2e'/><br/><t font='PuristaBold' color='%2'>Nearest friendly unit</t><br/><t font='PuristaBold' color='%3'>%1 m</t>", _distance, LMF_TEXT_COLOR, _distanceColor];
                     hintSilent parseText _message;
                 } else {
                     hintSilent "";

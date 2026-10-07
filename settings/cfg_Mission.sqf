@@ -62,7 +62,7 @@ var_supVehicle = "Box_IND_AmmoVeh_F"; // Vehicle supply crate
 
 // Supply drop
 var_supplyDropLimit = 12; // Number of available supply drops. Default: 0.
-var_suppDropPlane = "B_Heli_Transport_01_unarmed_F"; // Aircraft classname; planes and helicopters use the same parachute delivery.
+var_supplyDropAircraft = "B_Heli_Transport_01_unarmed_F"; // Aircraft classname; planes and helicopters use the same parachute delivery.
 var_supplyDropVehicles = true; // Allows vehicle requests through supply drop.
 
 // Forward deploy
