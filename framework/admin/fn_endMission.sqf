@@ -23,7 +23,7 @@ params ["_unit", ["_state", true]];
 	};
 	_ending params ["_message", "_hintFunction", "_endingName"];
 
-	private _result = [_message, "END MISSION", "OK", true] call BIS_fnc_guiMessage;
+	private _result = [_message, "End Mission", "OK", true] call BIS_fnc_guiMessage;
 	if (_result) then {
 		remoteExec [_hintFunction];
 		sleep 10;

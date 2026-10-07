@@ -62,7 +62,7 @@ if !(hasInterface) exitWith {};
 // Report the server's decision to the requester, including concurrent requests.
 ["lmf_supplyDrop_response", {
 	params ["_text", "_isError"];
-	["SUPPLY DROP", _text, "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.6, 10, ["beep", "addItemFailed"] select _isError, 1, _isError] call lmf_notifications_fnc_showAceMessage;
+	["Supply Drop", _text, "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.6, 10, ["beep", "addItemFailed"] select _isError, 1, _isError] call lmf_notifications_fnc_showAceMessage;
 }] call CBA_fnc_addEventHandler;
 
 // Called once by the ordered client menu setup after replicated quota and deadline are available.
@@ -84,20 +84,20 @@ lmf_supplyDrop_fnc_registerMenu = {
 		// Reject cooldown attempts before opening the map or installing selection handlers.
 		private _remaining = ceil (lmf_supplyDrop_nextRequest - serverTime);
 		if (_remaining > 0) exitWith {
-			["SUPPLY DROP", format ["Supply drop available in %1 seconds.", _remaining], "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 3, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
+			["Supply Drop", format ["Supply drop available in %1 seconds.", _remaining], "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 3, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
 		};
 
 		// Exit if not ready
 		if !("ItemMap" in (assignedItems _player)) exitWith {
-			["SUPPLY DROP", "A map is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
+			["Supply Drop", "A map is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
 		};
 
 		if !([_player] call lmf_radio_fnc_hasLongRangeRadio) exitWith {
-			["SUPPLY DROP", "A long-range radio is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
+			["Supply Drop", "A long-range radio is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
 		};
 
 		if (lmf_warmup_isActive) exitWith {
-			["SUPPLY DROP", "Start the mission first.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
+			["Supply Drop", "Start the mission first.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
 		};
 
 		// Reserve the client selection before starting scheduled map work.

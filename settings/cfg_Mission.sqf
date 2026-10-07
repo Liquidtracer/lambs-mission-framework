@@ -11,12 +11,12 @@ lmf_enemySide = EAST; // Enemy side: WEST, EAST or INDEPENDENT.
 
 // Warmup
 lmf_warmup = true; // Starts the mission with warmup.
-lmf_maxWarmupTime = ""; // Maximum warmup duration as "MM:SS"; "" disables the deadline.
+lmf_maxWarmupTime = "03:30"; // Maximum warmup duration as "MM:SS"; "" disables the deadline.
 
 // Respawn
-lmf_respawnType = "OFF"; // "OFF", "WAVE", "TICKETS", delay in seconds or custom display text.
+lmf_respawnType = "TICKETS"; // "OFF", "WAVE", "TICKETS", delay in seconds or custom display text.
 lmf_respawnTime = 900; // Respawn delay in seconds for "WAVE" or "TICKETS".
-lmf_respawnTickets = 0; // Tickets per player when using "TICKETS".
+lmf_respawnTickets = 3; // Tickets per player when using "TICKETS".
 
 // Players
 lmf_playerGear = true; // Applies custom player gear; false retains starting Eden equipment and restores it on respawn.
@@ -61,10 +61,10 @@ lmf_supMedical = "ACE_medicalSupplyCrate"; // Supply spawnpad medical supplies
 lmf_supVehicle = "Box_IND_AmmoVeh_F"; // Vehicle supply crate
 
 // Supply drop
-lmf_supplyDropLimit = 12; // Number of available supply drops.
+lmf_supplyDropLimit = 3; // Number of available supply drops.
 lmf_supplyDropAircraft = "B_Heli_Transport_01_unarmed_F"; // Aircraft classname; planes and helicopters use the same parachute delivery.
 lmf_supplyDropVehicles = true; // Allows vehicle requests through supply drop.
 
 // Forward deploy
-lmf_forwardDeploy = true; // Allows group leaders to register for forward deployment during warmup.
-lmf_forwardDeploy_height = 100; // Deployment height in meters: 0 = ground; positive values below 100 use 100.
+lmf_forwardDeploy = false; // Allows group leaders to register for forward deployment during warmup.
+lmf_forwardDeploy_height = 0; // Deployment height in meters: 0 = ground; positive values below 100 use 100.

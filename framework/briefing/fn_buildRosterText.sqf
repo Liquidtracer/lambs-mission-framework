@@ -48,8 +48,8 @@ _allUniqueGroups sort true;
 _brfPlatoon = _brfPlatoon select [0, count _brfPlatoon - 5];
 
 private _text = format ["
-<font color='%3' size='11'><execute expression='[player] call lmf_briefing_fnc_refreshRoster'>[REFRESH PAGE]</execute></font><br/>
-<font face='PuristaBold' color='%2' size='16'>TABLE OF ORGANIZATION AND EQUIPMENT</font><br/>
+<font color='%3' size='11'><execute expression='[player] call lmf_briefing_fnc_refreshRoster'>[Refresh Page]</execute></font><br/>
+<font face='PuristaBold' color='%2' size='16'>Table of Organization and Equipment</font><br/>
 Overview of player call signs and roles.<br/>
 %1
 ", _brfPlatoon, LMF_MAIN_COLOR, LMF_LINK_COLOR];

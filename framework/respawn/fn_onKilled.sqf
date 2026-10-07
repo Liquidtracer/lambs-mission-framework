@@ -29,7 +29,7 @@ if (lmf_respawnType isEqualType "") then {
 	if (lmf_respawnType == "TICKETS") then {
 		if (lmf_respawnTickets == 0) exitWith {
 			setPlayerRespawnTime 1000000;
-			["RESPAWN", "No respawn tickets remaining.", "\A3\modules_f\data\portraitrespawn_ca.paa", 2.85, 12, "", 1.1, true] call lmf_notifications_fnc_showAceMessage;
+			["Respawn", "No respawn tickets remaining.", "\A3\modules_f\data\portraitrespawn_ca.paa", 2.85, 12, "", 1.1, true] call lmf_notifications_fnc_showAceMessage;
 		};
 
 		setPlayerRespawnTime (lmf_respawnTime - ((floor CBA_missionTime) % lmf_respawnTime));

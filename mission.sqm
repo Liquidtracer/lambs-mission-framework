@@ -16,10 +16,10 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={14611.807,52.562004,16779.184};
-		dir[]={0.60525888,-0.69834167,-0.38207826};
-		up[]={0.59052402,0.71576363,-0.3727769};
-		aside[]={-0.53380334,-3.9115548e-08,-0.84561032};
+		pos[]={14549.566,85.940071,16693.088};
+		dir[]={0.63886648,-0.63083875,0.44035381};
+		up[]={0.51941031,0.7759124,0.35801631};
+		aside[]={0.56752461,4.1478779e-07,-0.82336777};
 	};
 };
 binarizationWanted=0;
@@ -32,14 +32,13 @@ addons[]=
 	"A3_Structures_F_EPC_Items_Electronics",
 	"A3_Structures_F_Civ_Camping",
 	"ace_dragging",
-	"A3_Structures_F_Mil_Helipads",
-	"CUP_WheeledVehicles_M1240"
+	"A3_Structures_F_Mil_Helipads"
 };
 class AddonsMetaData
 {
 	class List
 	{
-		items=8;
+		items=7;
 		class Item0
 		{
 			className="A3_Ui_F";
@@ -89,16 +88,7 @@ class AddonsMetaData
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
-		class Item7
-		{
-			className="CUP_WheeledVehicles_M1240";
-			name="CUP_WheeledVehicles_M1240";
-		};
 	};
-};
-dlcs[]=
-{
-	"CUP_Vehicles"
 };
 randomSeed=6813385;
 class ScenarioData
@@ -152,7 +142,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=7;
+		items=6;
 		class Item0
 		{
 			dataType="Layer";
@@ -1901,7 +1891,7 @@ class Mission
 						{
 							dataType="Trigger";
 							position[]={14634.396,17.91,16713.248};
-							angle=2.3410189;
+							angle=2.3410187;
 							class Attributes
 							{
 								name="RRR";
@@ -1921,7 +1911,7 @@ class Mission
 						{
 							dataType="Trigger";
 							position[]={14634.396,17.91,16713.248};
-							angle=2.3410189;
+							angle=2.3410187;
 							class Attributes
 							{
 								condition="(""Land"" countType thislist > 0) && {((getposATL (thislist select 0)) select 2 < 1)}";
@@ -1949,22 +1939,6 @@ class Mission
 			};
 			id=135;
 			atlOffset=189.87564;
-		};
-		class Item6
-		{
-			dataType="Object";
-			class PositionInfo
-			{
-				position[]={14634.552,20.731956,16765.371};
-			};
-			side="Empty";
-			flags=4;
-			class Attributes
-			{
-				init="this setVariable [""lmf_forwardDeploy_registration"", true];";
-			};
-			id=136;
-			type="CUP_M1240_OGPK_M2_NATO";
 		};
 	};
 };

@@ -4,11 +4,11 @@
 */
 
 lmf_notifications_fnc_showVictory = {
-	["LMFvictory", ["MISSION COMPLETED"]] call BIS_fnc_showNotification;
+	["LMFvictory", ["Mission completed"]] call BIS_fnc_showNotification;
 };
 
 lmf_notifications_fnc_showDefeat = {
-	["LMFdefeat", ["MISSION FAILED"]] call BIS_fnc_showNotification;
+	["LMFdefeat", ["Mission failed"]] call BIS_fnc_showNotification;
 };
 
 lmf_notifications_fnc_showNotification = {

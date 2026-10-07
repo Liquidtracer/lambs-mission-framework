@@ -77,7 +77,7 @@ _ctrl ctrlCommit 0;
 private _ctrl2 = (findDisplay 46) ctrlCreate ["RscStructuredText", -2];
 _ctrl2 ctrlSetPosition [_xPos, _yPos + 0.2, _wPos, _hPos - 0.1];
 _ctrl2 ctrlSetBackgroundColor [0, 0, 0, 0];
-private _img = "<img size='8' shadow='0' align='center' image='framework\images\lambs.paa'/>";
+private _img = format ["<img size='8' shadow='0' align='center' image='%1'/>", LMF_LOGO];
 _ctrl2 ctrlSetStructuredText parseText (_img);
 _ctrl2 ctrlSetFade 1;
 _ctrl2 ctrlCommit 0;
@@ -92,7 +92,7 @@ _ctrl2 ctrlCommit 3;
 
 // Information fields
 private _br = format ["<br/>"];
-private _title = format ["<t shadow='2' font='PuristaBold' color='%1' size='1.2' align='left'>SAFE START</t>", LMF_MAIN_COLOR];
+private _title = format ["<t shadow='2' font='PuristaBold' color='%1' size='1.2' align='left'>Safe Start</t>", LMF_MAIN_COLOR];
 
 // Maps
 private _maps = "";
@@ -165,16 +165,14 @@ while {lmf_warmup_isActive} do {
 	private _timeColor = if (_hasDeadline) then {
 		private _remainingTime = _deadline - _elapsedTime;
 		switch (true) do {
-			case (_remainingTime <= 60):  {"#ee3030"};
-			case (_remainingTime <= 180): {"#ff8800"};
-			case (_remainingTime <= 300): {"#FFD700"};
+			case (_remainingTime <= 60):  {LMF_STATUS_CRITICAL_COLOR};
+			case (_remainingTime <= 180): {LMF_STATUS_WARNING_COLOR};
 			default {LMF_TEXT_COLOR};
 		};
 	} else {
 		switch (true) do {
-			case (_elapsedTime >= 1200): {"#ee3030"};
-			case (_elapsedTime >= 900):  {"#ff8800"};
-			case (_elapsedTime >= 600):  {"#FFD700"};
+			case (_elapsedTime >= 1200): {LMF_STATUS_CRITICAL_COLOR};
+			case (_elapsedTime >= 900):  {LMF_STATUS_WARNING_COLOR};
 			default {LMF_TEXT_COLOR};
 		};
 	};

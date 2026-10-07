@@ -24,17 +24,17 @@ private _addEntry = {
 };
 
 if (lmf_warmup_isActive && {lmf_playerGear} && {lmf_personalArsenal}) then {
-	["PERSONAL ARSENAL", "Customize your personal equipment.",
+	["Personal Arsenal", "Customize your personal equipment.",
 		" Self-Interact » Equipment » Personal Arsenal"] call _addEntry;
 
 	if (count (missionNamespace getVariable ["lmf_player_availableOptics", []]) > 0) then {
-		["AVAILABLE OPTICS", "Choose an optic for your primary weapon.",
+		["Available Optics", "Choose an optic for your primary weapon.",
 			" Self-Interact » Equipment » Available Optics"] call _addEntry;
 	};
 };
 
 if (lmf_bft && {count (lmf_bftInfantry + lmf_bftGroundVehicles + lmf_bftAirVehicles) > 0}) then {
-	["BLUE FORCE TRACKER", "Group leaders select their group's callsign and icon.",
+	["Blue Force Tracker", "Group leaders select their group's callsign and icon.",
 		" Self-Interact » Blue Force Tracker"] call _addEntry;
 };
 
@@ -44,7 +44,7 @@ if (lmf_supplyDropLimit > 0 && {lmf_remainingSuppDrops > 0}) then {
 	} else {
 		"Request supplies. Requires a map and long-range radio."
 	};
-	["SUPPLY DROP", _body,
+	["Supply Drop", _body,
 		" Self-Interact » Supply Drop"] call _addEntry;
 };
 
@@ -54,7 +54,7 @@ if (lmf_warmup_isActive && {lmf_forwardDeploy}) then {
 };
 
 if (player getVariable ["lmf_jipAvailable", false]) then {
-	["JIP TELEPORT", "Teleport to friendlies once. Available for five minutes, until you leave the 200 m spawn area or die.",
+	["JIP Teleport", "Teleport to friendlies once. Available for five minutes, until you leave the 200 m spawn area or die.",
 		" Self-Interact » JIP Teleport"] call _addEntry;
 };
 

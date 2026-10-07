@@ -19,7 +19,7 @@ params ["_unit"];
 		_parentDisplay = [] call BIS_fnc_displayMission;
 	};
 
-	private _result = ["Trigger respawn wave?", "RESPAWN WAVE", "OK", true, _parentDisplay] call BIS_fnc_guiMessage;
+	private _result = ["Trigger respawn wave?", "Respawn Wave", "OK", true, _parentDisplay] call BIS_fnc_guiMessage;
 	if (_result) then {
 		private _deadPlayers = [] call ace_spectator_fnc_players;
 		[30] remoteExec ["setPlayerRespawnTime", _deadPlayers, false];

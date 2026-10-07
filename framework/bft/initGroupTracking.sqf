@@ -211,7 +211,7 @@ lmf_bft_fnc_registerMenu = {
 			["b_mortar", "Mortar"],
 			["b_med", "Medical"],
 			["b_support", "Support"],
-			["", "Reset icon"]
+			["", "Reset Icon"]
 		];
 	};
 

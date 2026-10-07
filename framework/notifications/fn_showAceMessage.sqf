@@ -20,7 +20,7 @@
 	Separate complete sentences with <br/> when text continues; omit trailing breaks.
 
 	Example:
-		["SUPPLY DROP", "A map is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
+		["Supply Drop", "A map is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
 */
 
 if (!hasInterface || {isNull player}) exitWith {};

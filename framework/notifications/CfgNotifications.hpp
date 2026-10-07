@@ -18,7 +18,7 @@ class CfgNotifications {
 	};
 
 	class LMFvictory {
-		title = "VICTORY";
+		title = "Victory";
 		iconPicture = "\A3\modules_f_curator\Data\portraitAnimalsSheep_ca.paa";
 		iconText = "+%2";
 		description = "%1";
@@ -27,7 +27,7 @@ class CfgNotifications {
 	};
 
 	class LMFdefeat {
-		title = "DEFEAT";
+		title = "Defeat";
 		iconPicture = "\A3\modules_f_curator\Data\portraitAnimalsSheep_ca.paa";
 		iconText = "+%2";
 		description = "%1";
@@ -36,7 +36,7 @@ class CfgNotifications {
 	};
 
 	class LMFnotification {
-		title = "NOTIFICATION";
+		title = "Notification";
 		iconPicture = "\A3\modules_f_curator\Data\portraitAnimalsSheep_ca.paa";
 		iconText = "+%2";
 		description = "%1";

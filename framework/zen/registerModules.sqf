@@ -12,7 +12,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 	params ["", "_obj"];
 
-	if (isNull _obj) exitWith {["ERROR: No Unit"] call zen_common_fnc_showMessage};
+	if (isNull _obj) exitWith {["Error: no unit"] call zen_common_fnc_showMessage};
 
 	[_obj] remoteExec ["lmf_equipment_fnc_applyRoleFromClass"];
 	["Loadout reloaded for %1", name _obj] call zen_common_fnc_showMessage;
@@ -22,7 +22,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 // Respawn one player
 ["LMF Utility", "Respawn Single Player", {
 	private _players = [] call ace_spectator_fnc_players;
-	if (count _players == 0) exitWith {["ERROR: No Dead Players"] call zen_common_fnc_showMessage};
+	if (count _players == 0) exitWith {["Error: no dead players"] call zen_common_fnc_showMessage};
 	private _names = _players apply {name _x};
 	["Respawn Single Player", [
 
@@ -31,7 +31,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		params ["_dialog"];
 		_dialog params [["_plr", objNull, [objNull]]];
-		if (isNull _plr) exitWith {["ERROR: Unable To Find Player"] call zen_common_fnc_showMessage};
+		if (isNull _plr) exitWith {["Error: unable to find player"] call zen_common_fnc_showMessage};
 
 		// Respawn the player and show feedback.
 		[5] remoteExec ["setPlayerRespawnTime", _plr];
@@ -301,8 +301,8 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		_dialog params ["_type"];
 
 		// Exit if the selected object is not a player.
-		if (isNull _obj) exitWith {["ERROR: No Unit"] call zen_common_fnc_showMessage};
-		if !(_obj isKindOf "Man") exitWith {["ERROR: Not a soldier"] call zen_common_fnc_showMessage};
+		if (isNull _obj) exitWith {["Error: no unit"] call zen_common_fnc_showMessage};
+		if !(_obj isKindOf "Man") exitWith {["Error: not a soldier"] call zen_common_fnc_showMessage};
 
 		#include "..\..\settings\cfg_Player.sqf"
 

@@ -24,17 +24,17 @@ _friendText = _friendText + (_friendLines joinString "<br/>");
 
 // Prepare execution briefing text.
 private _execText = "";
-if (_brfExecIntent != "") then {_execText = _execText + format ["<font face='PuristaBold'>COMMANDER'S INTENT</font><br/>%1<br/><br/>", _brfExecIntent];};
+if (_brfExecIntent != "") then {_execText = _execText + format ["<font face='PuristaBold'>Commander's Intent</font><br/>%1<br/><br/>", _brfExecIntent];};
 
 if (count _brfExecConop > 0) then {
-	_execText = _execText + "<font face='PuristaBold'>CONCEPT OF OPERATIONS</font><br/>";
+	_execText = _execText + "<font face='PuristaBold'>Concept of Operations</font><br/>";
 	private _conopLines = _brfExecConop apply {format ["<font face='PuristaBold'>•</font> %1", _x]};
 	_execText = _execText + (_conopLines joinString "<br/>");
 };
 
 if (count _brfExecCoord > 0) then {
 	if (_execText != "") then {_execText = _execText + "<br/><br/>";};
-	_execText = _execText + "<font face='PuristaBold'>COORDINATING INSTRUCTIONS</font><br/>";
+	_execText = _execText + "<font face='PuristaBold'>Coordinating Instructions</font><br/>";
 	private _coordLines = _brfExecCoord apply {format ["<font face='PuristaBold'>•</font> %1", _x]};
 	_execText = _execText + (_coordLines joinString "<br/>");
 };
@@ -59,7 +59,7 @@ player createDiarySubject ["lmf_diary", "Mission", "A3\3den\data\cfgwaypoints\se
 #include "..\admin\createAdminDiary.sqf"
 
 // Thanks
-private _thanksText = format ["<font face='PuristaBold' size='16' color='%1'>THANKS TO</font><br/><font color='%2'>A big thank you to everyone who has lent a hand, shared an idea or helped figure things out along the way. From building LMF to making and testing missions, every bit of help is appreciated.</font>", LMF_MAIN_COLOR, LMF_TEXT_COLOR];
+private _thanksText = format ["<font face='PuristaBold' size='16' color='%1'>Thanks To</font><br/><font color='%2'>A big thank you to everyone who has lent a hand, shared an idea or helped figure things out along the way. From building LMF to making and testing missions, every bit of help is appreciated.</font>", LMF_MAIN_COLOR, LMF_TEXT_COLOR];
 {
 	_x params ["_name", ["_reason", ""]];
 	_thanksText = _thanksText + format ["<br/><br/><font face='PuristaBold' color='%2'>%1</font>", _name, LMF_LINK_COLOR];
@@ -114,7 +114,7 @@ private _technicalRows = [
 	["Personal Radio", ["Disabled", "Everyone"] select lmf_personalRadio, "Short-range radios for everyone.", [LMF_TEXT_COLOR_DARK, LMF_TEXT_COLOR] select lmf_personalRadio],
 	["Respawn", _respawnLabel, _respawnDescription, _respawnColor]
 ];
-private _technicalText = format ["<font face='PuristaBold' size='16' color='%1'>TECHNICAL INFO</font><br/><font color='%2'>Mission settings shown during Safe Start are explained below.</font><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR];
+private _technicalText = format ["<font face='PuristaBold' size='16' color='%1'>Technical Info</font><br/><font color='%2'>Mission settings shown during Safe Start are explained below.</font><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR];
 {
 	_x params ["_label", "_value", "_explanation", "_valueColor"];
 	_technicalText = _technicalText + format ["<br/><font face='PuristaBold' color='%4'>%1: </font><font color='%5'> [%2] </font><font color='%6'>- %3</font>", _label, _value, _explanation, LMF_MAIN_COLOR, _valueColor, LMF_TEXT_COLOR_DARK];
@@ -123,15 +123,15 @@ player createDiaryRecord ["lmf_diary", ["Technical", _technicalText, "\A3\missio
 
 // Briefing
 player createDiaryRecord ["lmf_diary", [format ["OPORD"], format ["
-<font color='%10' size='10'><marker name='mrk_clearMap'>[CLEAR COORDINATES]</marker></font><font color='%11' size='10'>  |  Made by %7 with LMF %8</font>
-<br/><font face='PuristaBold' color='%9' size='16'>SITUATION</font><br/>
+<font color='%10' size='10'><marker name='mrk_clearMap'>[Clear Coordinates]</marker></font><font color='%11' size='10'>  |  Made by %7 with LMF %8</font>
+<br/><font face='PuristaBold' color='%9' size='16'>Situation</font><br/>
 <font >%1</font>
-<br/><br/><font face='PuristaBold' color='%12' >ENEMY ></font> %2
-<br/><br/><font face='PuristaBold' color='%13' >FRIENDLY ></font> %3
-<br/><br/><font face='PuristaBold' size='16' color='%9'>MISSION</font><br/>
+<br/><br/><font face='PuristaBold' color='%12' >Enemy ></font> %2
+<br/><br/><font face='PuristaBold' color='%13' >Friendly ></font> %3
+<br/><br/><font face='PuristaBold' size='16' color='%9'>Mission</font><br/>
 <font >%4</font>
-<br/><br/><font face='PuristaBold' size='16' color='%9'>EXECUTION</font><br/>
+<br/><br/><font face='PuristaBold' size='16' color='%9'>Execution</font><br/>
 %5
-<br/><br/><font face='PuristaBold' size='16' color='%9'>ADMINISTRATION</font><br/>
+<br/><br/><font face='PuristaBold' size='16' color='%9'>Administration</font><br/>
 %6
 ", _brfSituation, _enemyText, _friendText, _brfMission, _execText, _adminText, lmf_author, LMF_VERSION, LMF_MAIN_COLOR, LMF_LINK_COLOR, LMF_TEXT_COLOR_DARK, LMF_ERROR_COLOR, LMF_HIGHLIGHT_FRIENDLY_COLOR], "\A3\ui_f\data\igui\cfg\simpletasks\types\documents_ca.paa"], taskNull, "", false];

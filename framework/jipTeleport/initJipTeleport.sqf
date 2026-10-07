@@ -35,7 +35,7 @@ private _statement = {
 
 	private _target = [_unit] call lmf_jipTeleport_fnc_selectTeleportTarget;
 	if (isNull _target || {!alive _target}) exitWith {
-		["JIP TELEPORT", format ["<t color='%1'>No suitable friendly player away from spawn.</t><br/>Try again shortly.", LMF_ERROR_COLOR],
+		["JIP Teleport", format ["<t color='%1'>No suitable friendly player away from spawn.</t><br/>Try again shortly.", LMF_ERROR_COLOR],
 			"\a3\Ui_f\data\GUI\Cfg\CommunicationMenu\transport_ca.paa", 3.8, 12, "addItemFailed", 1.1] call lmf_notifications_fnc_showAceMessage;
 	};
 
@@ -56,7 +56,7 @@ private _statement = {
 		};
 	};
 	if (!_useSeat && {_destination isEqualTo []}) exitWith {
-		["JIP TELEPORT", format ["<t color='%1'>No free seat or suitable ground position.</t><br/>Try again shortly.", LMF_ERROR_COLOR],
+		["JIP Teleport", format ["<t color='%1'>No free seat or suitable ground position.</t><br/>Try again shortly.", LMF_ERROR_COLOR],
 			"\a3\Ui_f\data\GUI\Cfg\CommunicationMenu\transport_ca.paa", 3.8, 12, "addItemFailed", 1.1] call lmf_notifications_fnc_showAceMessage;
 	};
 
@@ -84,7 +84,7 @@ private _statement = {
 			_restored = _unit moveInAny _originVehicle;
 		};
 		if (!_restored) then {_unit setPosATL _origin};
-		["JIP TELEPORT", format ["<t color='%1'>Unable to move you.</t><br/>The action is still available; try again.", LMF_ERROR_COLOR],
+		["JIP Teleport", format ["<t color='%1'>Unable to move you.</t><br/>The action is still available; try again.", LMF_ERROR_COLOR],
 			"\a3\Ui_f\data\GUI\Cfg\CommunicationMenu\transport_ca.paa", 3.8, 12, "addItemFailed", 1.1] call lmf_notifications_fnc_showAceMessage;
 	} else {
 		_unit setVariable ["lmf_jipAvailable", false];

@@ -151,7 +151,7 @@ if (hasInterface) then {
 		};
 		// Re-selecting the current callsign is informational.
 		private _isError = !_success && {_message != "callsignAlready"};
-		["BLUE FORCE TRACKER", _text, "A3\modules_f\data\portraitstrategicmapimage_ca.paa", 2.55, 12,
+		["Blue Force Tracker", _text, "A3\modules_f\data\portraitstrategicmapimage_ca.paa", 2.55, 12,
 			if (_isError) then {"addItemFailed"} else {["", "beep"] select _success}, 1.1, _isError] call lmf_notifications_fnc_showAceMessage;
 	}] call CBA_fnc_addEventHandler;
 };
