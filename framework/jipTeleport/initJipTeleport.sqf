@@ -93,7 +93,7 @@ private _statement = {
 };
 
 private _action = [
-	"tpToGroup", "JIP Teleport",
+	"lmf_jipTeleport_teleport", "JIP Teleport",
 	["\a3\Ui_f\data\GUI\Cfg\CommunicationMenu\transport_ca.paa", LMF_MAIN_COLOR],
 	_statement, _condition, {}, [_unit, _deadline]
 ] call ace_interact_menu_fnc_createAction;

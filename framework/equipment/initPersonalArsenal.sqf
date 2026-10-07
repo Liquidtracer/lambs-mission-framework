@@ -323,7 +323,7 @@ if (_role == _crew#0) then {
 }] call BIS_fnc_addScriptedEventHandler;
 
 // Add actions
-private _personalArsenal = ["personalArsenal", "Personal Arsenal", ["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa", LMF_MAIN_COLOR], {["Open", [false, player, player]] spawn bis_fnc_arsenal; player action ["SwitchWeapon", player, player, 100];}, {lmf_warmup_isActive}] call ace_interact_menu_fnc_createAction;
+private _personalArsenal = ["lmf_equipment_personalArsenal", "Personal Arsenal", ["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa", LMF_MAIN_COLOR], {["Open", [false, player, player]] spawn bis_fnc_arsenal; player action ["SwitchWeapon", player, player, 100];}, {lmf_warmup_isActive}] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions", "ACE_Equipment"], _personalArsenal] call ace_interact_menu_fnc_addActionToObject;
 
 private _specialRoles = [_crew#0, _heloPilot#0, _heloCrew#0, _pilot#0, _crewLeader#0, _crewSgt#0];
@@ -354,7 +354,7 @@ _insertChildren = {
 			} forEach lmf_player_availableOptics;
 		};
 		_displayName = [configFile >> "CfgWeapons" >> _x] call BIS_fnc_displayName;
-		private _action = [format ["item:%1", _x], _displayName, "", _childStatement, {true}, {}, _x] call ace_interact_menu_fnc_createAction;
+		private _action = [format ["lmf_equipment_optic_%1", _x], _displayName, "", _childStatement, {true}, {}, _x] call ace_interact_menu_fnc_createAction;
 		_actions pushBack [_action, [], _target]; // New action, it's children, and the action's target
 	} forEach lmf_player_availableOptics;
 
@@ -365,5 +365,5 @@ _modifierFunc = {
 	// Modify the action - index 1 is the display name, 2 is the icon...
 	// _actionData set [1, format ["Available Optics: %1", count lmf_player_availableOptics]];
 };
-_action = ["availableOptics", "Available Optics", ["\A3\ui_f_curator\data\rsccommon\rscattributeinventory\filter_7_ca.paa", LMF_MAIN_COLOR], _statement, _condition, _insertChildren, [123], "", 4, [false, false, false, true, false], _modifierFunc] call ace_interact_menu_fnc_createAction;
+_action = ["lmf_equipment_availableOptics", "Available Optics", ["\A3\ui_f_curator\data\rsccommon\rscattributeinventory\filter_7_ca.paa", LMF_MAIN_COLOR], _statement, _condition, _insertChildren, [123], "", 4, [false, false, false, true, false], _modifierFunc] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions", "ACE_Equipment"], _action] call ace_interact_menu_fnc_addActionToObject;

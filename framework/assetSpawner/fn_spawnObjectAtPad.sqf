@@ -17,7 +17,7 @@ if (_vehicle isKindOf "Thing") then {_conditionRemove = {_target distance2D ammo
 if (_vehicle isKindOf "Land") then {_conditionRemove = {_target distance2D groundPad < 10}};
 if (_vehicle isKindOf "Air") then {_conditionRemove = {_target distance2D airPad < 10}};
 
-private _vehDelete = ["vehDelete", "Delete", ["\A3\ui_f\data\map\MapControl\taskIconFailed_ca.paa", LMF_ERROR_COLOR], {deleteVehicle _target}, _conditionRemove] call ace_interact_menu_fnc_createAction;
+private _vehDelete = ["lmf_assetSpawner_delete", "Delete", ["\A3\ui_f\data\map\MapControl\taskIconFailed_ca.paa", LMF_ERROR_COLOR], {deleteVehicle _target}, _conditionRemove] call ace_interact_menu_fnc_createAction;
 [_vehicle, 0, ["ACE_MainActions"], _vehDelete] remoteExec ["ace_interact_menu_fnc_addActionToObject", 0, _vehicle];
 
 private _vehTypeText = getText (configFile >> "CfgVehicles" >> _vehType >> "displayName");

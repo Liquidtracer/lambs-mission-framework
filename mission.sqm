@@ -8,18 +8,18 @@ class EditorData
 	toggles=513;
 	class ItemIDProvider
 	{
-		nextID=28;
+		nextID=136;
 	};
 	class LayerIndexProvider
 	{
-		nextID=24;
+		nextID=33;
 	};
 	class Camera
 	{
-		pos[]={14681.19,87.186348,16666.217};
-		dir[]={-0.39261952,-0.47998488,0.78451556};
-		up[]={-0.21481413,0.87727678,0.42923239};
-		aside[]={0.89426237,1.4901161e-08,0.44754353};
+		pos[]={14575.174,82.241798,16786.701};
+		dir[]={0.65782106,-0.63878518,-0.39903015};
+		up[]={0.54615861,0.76938516,-0.33129641};
+		aside[]={-0.51863515,0,-0.85499579};
 	};
 };
 binarizationWanted=0;
@@ -28,13 +28,17 @@ addons[]=
 {
 	"A3_Ui_F",
 	"A3_Modules_F_Curator_Curator",
-	"A3_Characters_F"
+	"A3_Characters_F",
+	"A3_Structures_F_EPC_Items_Electronics",
+	"A3_Structures_F_Civ_Camping",
+	"ace_dragging",
+	"A3_Structures_F_Mil_Helipads"
 };
 class AddonsMetaData
 {
 	class List
 	{
-		items=3;
+		items=7;
 		class Item0
 		{
 			className="A3_Ui_F";
@@ -53,6 +57,34 @@ class AddonsMetaData
 		{
 			className="A3_Characters_F";
 			name="Arma 3 Alpha - Characters and Clothing";
+			author="Bohemia Interactive";
+			url="https://www.arma3.com";
+		};
+		class Item3
+		{
+			className="A3_Structures_F_EPC";
+			name="Arma 3 Win Episode - Buildings and Structures";
+			author="Bohemia Interactive";
+			url="https://www.arma3.com";
+		};
+		class Item4
+		{
+			className="A3_Structures_F";
+			name="Arma 3 - Buildings and Structures";
+			author="Bohemia Interactive";
+			url="https://www.arma3.com";
+		};
+		class Item5
+		{
+			className="ace_dragging";
+			name="ACE3 - Dragging";
+			author="ACE-Team";
+			url="https://ace3.acemod.org/";
+		};
+		class Item6
+		{
+			className="A3_Structures_F_Mil";
+			name="Arma 3 - Military Buildings and Structures";
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
@@ -110,7 +142,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=5;
+		items=6;
 		class Item0
 		{
 			dataType="Layer";
@@ -1401,6 +1433,512 @@ class Mission
 				};
 				nAttributes=1;
 			};
+		};
+		class Item5
+		{
+			dataType="Layer";
+			name="LMF 1.2";
+			class Entities
+			{
+				items=8;
+				class Item0
+				{
+					dataType="Layer";
+					name="Framework Critical Components_1";
+					class Entities
+					{
+						items=1;
+						class Item0
+						{
+							dataType="Marker";
+							position[]={14743.556,17.91,16645.896};
+							name="respawn_1";
+							markerType="ELLIPSE";
+							type="rectangle";
+							colorName="ColorGUER";
+							fillName="SolidBorder";
+							a=10;
+							b=10;
+							drawBorder=1;
+							id=32;
+						};
+					};
+					id=28;
+				};
+				class Item1
+				{
+					dataType="Layer";
+					name="Gear Selection";
+					class Entities
+					{
+						items=2;
+						class Item0
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14680.201,18.879078,16770.518};
+								angles[]={-0,5.4826121,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								name="crateRoles";
+								disableSimulation=1;
+							};
+							id=34;
+							type="Land_Laptop_device_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+						class Item1
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14680.201,18.315201,16770.518};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								createAsSimpleObject=1;
+							};
+							id=35;
+							type="Land_CampingTable_small_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+					};
+					id=33;
+					atlOffset=0.40650177;
+				};
+				class Item2
+				{
+					dataType="Layer";
+					name="Ammo Spawner";
+					class Entities
+					{
+						items=3;
+						class Item0
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14671.147,18.315201,16761.188};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								createAsSimpleObject=1;
+							};
+							id=37;
+							type="Land_CampingTable_small_F";
+						};
+						class Item1
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14677.609,17.91,16754.92};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								name="ammoPad";
+								disableSimulation=1;
+							};
+							id=38;
+							type="Land_JumpTarget_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+						class Item2
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14671.149,18.879078,16761.188};
+								angles[]={-0,5.4826121,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								name="ammoSpawner";
+								disableSimulation=1;
+							};
+							id=39;
+							type="Land_Laptop_device_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+					};
+					id=36;
+					atlOffset=0.40650177;
+				};
+				class Item3
+				{
+					dataType="Layer";
+					name="Ground Vehicle Spawner";
+					class Entities
+					{
+						items=3;
+						class Item0
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14661.401,18.315201,16751.139};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								createAsSimpleObject=1;
+							};
+							id=41;
+							type="Land_CampingTable_small_F";
+						};
+						class Item1
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14667.861,17.91,16744.871};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								name="groundPad";
+								disableSimulation=1;
+							};
+							id=42;
+							type="Land_JumpTarget_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+						class Item2
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14661.401,18.879078,16751.139};
+								angles[]={-0,5.4826121,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								name="groundSpawner";
+								disableSimulation=1;
+							};
+							id=43;
+							type="Land_Laptop_device_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+					};
+					id=40;
+					atlOffset=0.40650177;
+				};
+				class Item4
+				{
+					dataType="Layer";
+					name="Air Vehicle Spawner";
+					class Entities
+					{
+						items=3;
+						class Item0
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14651.652,18.315201,16741.09};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								createAsSimpleObject=1;
+							};
+							id=45;
+							type="Land_CampingTable_small_F";
+						};
+						class Item1
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14658.113,17.91,16734.822};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								name="airPad";
+								disableSimulation=1;
+							};
+							id=46;
+							type="Land_JumpTarget_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+						class Item2
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14651.652,18.879078,16741.09};
+								angles[]={-0,5.4826121,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								name="airSpawner";
+								disableSimulation=1;
+							};
+							id=47;
+							type="Land_Laptop_device_F";
+							class CustomAttributes
+							{
+								class Attribute0
+								{
+									property="allowDamage";
+									expression="_this allowdamage _value;";
+									class Value
+									{
+										class data
+										{
+											singleType="BOOL";
+											value=1;
+										};
+									};
+								};
+								nAttributes=1;
+							};
+						};
+					};
+					id=44;
+					atlOffset=0.40650177;
+				};
+				class Item5
+				{
+					dataType="Layer";
+					name="Automatic Hospital";
+					id=48;
+					atlOffset=185.97;
+				};
+				class Item6
+				{
+					dataType="Layer";
+					name="Automatic RRR";
+					class Entities
+					{
+						items=4;
+						class Item0
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14639.967,17.91,16718.99};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								disableSimulation=1;
+							};
+							id=53;
+							type="Land_HelipadSquare_F";
+						};
+						class Item1
+						{
+							dataType="Object";
+							class PositionInfo
+							{
+								position[]={14628.825,17.91,16707.504};
+								angles[]={-0,2.3410194,0};
+							};
+							side="Empty";
+							flags=4;
+							class Attributes
+							{
+								disableSimulation=1;
+							};
+							id=54;
+							type="Land_HelipadSquare_F";
+						};
+						class Item2
+						{
+							dataType="Trigger";
+							position[]={14634.396,17.91,16713.248};
+							angle=2.3410189;
+							class Attributes
+							{
+								name="RRR";
+								condition="(""Air"" countType thislist > 0) && {((getposATL (thislist select 0)) select 2 < 1)}";
+								onActivation="[(thislist select 0),4] spawn lmf_player_fnc_vehicleService;";
+								sizeA=15;
+								sizeB=8;
+								sizeC=8;
+								repeatable=1;
+								activationBy="ANY";
+								isRectangle=1;
+							};
+							id=55;
+							type="EmptyDetectorArea10x10";
+						};
+						class Item3
+						{
+							dataType="Trigger";
+							position[]={14634.396,17.91,16713.248};
+							angle=2.3410189;
+							class Attributes
+							{
+								condition="(""Land"" countType thislist > 0) && {((getposATL (thislist select 0)) select 2 < 1)}";
+								onActivation="[(thislist select 0),4] spawn lmf_player_fnc_vehicleService;";
+								sizeA=15;
+								sizeB=8;
+								sizeC=8;
+								repeatable=1;
+								activationBy="ANY";
+								isRectangle=1;
+							};
+							id=56;
+							type="EmptyDetectorArea10x10";
+						};
+					};
+					id=52;
+				};
+				class Item7
+				{
+					dataType="Layer";
+					name="Enemy Showcase";
+					id=57;
+					atlOffset=185.97;
+				};
+			};
+			id=135;
+			atlOffset=189.87564;
 		};
 	};
 };

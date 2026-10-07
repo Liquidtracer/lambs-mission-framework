@@ -50,7 +50,7 @@ while {!_finished && {!lmf_supplyDrop_selectionCancelled} && {visibleMap} && {al
 				if (_remaining > 0) then {
 					["SUPPLY DROP", format ["Supply drop available in %1 seconds.", _remaining], "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 3, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
 				} else {
-					["lmf_supplyDropEventServer", [_pos, _crate, _requester]] call CBA_fnc_serverEvent;
+					["lmf_supplyDrop_request", [_pos, _crate, _requester]] call CBA_fnc_serverEvent;
 					_sent = true;
 				};
 			};

@@ -4,7 +4,7 @@
 */
 
 if !(isNil "ammoSpawner") then {
-	_crateSpawnMkr = createMarker ["mrk_crateSpawn", getPosASL ammoSpawner];
+	_crateSpawnMkr = createMarker ["lmf_assetSpawner_supplyMarker", getPosASL ammoSpawner];
 	_crateSpawnMkr setMarkerType "b_service";
 	_crateSpawnMkr setMarkerSize [0.75, 0.75];
 	_crateSpawnMkr setMarkerColor "ColorBlack";
@@ -13,7 +13,7 @@ if !(isNil "ammoSpawner") then {
 	};
 
 if !(isNil "groundSpawner") then {
-	_vehSpawnMkr = createMarker ["mrk_vehSpawn", getPosASL groundSpawner];
+	_vehSpawnMkr = createMarker ["lmf_assetSpawner_groundMarker", getPosASL groundSpawner];
 	_vehSpawnMkr setMarkerType "b_motor_inf";
 	_vehSpawnMkr setMarkerSize [0.75, 0.75];
 	_vehSpawnMkr setMarkerColor "ColorBlack";
@@ -22,7 +22,7 @@ if !(isNil "groundSpawner") then {
 };
 
 if !(isNil "airSpawner") then {
-	_vehSpawnMkr = createMarker ["mrk_airSpawn", getPosASL airSpawner];
+	_vehSpawnMkr = createMarker ["lmf_assetSpawner_airMarker", getPosASL airSpawner];
 	_vehSpawnMkr setMarkerType "b_air";
 	_vehSpawnMkr setMarkerSize [0.75, 0.75];
 	_vehSpawnMkr setMarkerColor "ColorBlack";

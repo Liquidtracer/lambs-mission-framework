@@ -129,15 +129,15 @@ lmf_bft_fnc_registerMenu = {
 
 	private _vehicleIcon = "\A3\ui_f\data\map\markers\nato\b_motor_inf.paa";
 	private _categories = [
-		["parentInfantry", "Infantry", lmf_bftInfantry, "b_inf", "\A3\ui_f\data\map\markers\nato\b_inf.paa", true],
-		["parentVehicles", "Vehicles", lmf_bftGroundVehicles, "b_armor", "\A3\ui_f\data\map\markers\nato\b_armor.paa", false],
-		["parentAir", "Air", lmf_bftAirVehicles, "b_air", "\A3\ui_f\data\map\markers\nato\b_air.paa", false]
+		["lmf_bft_infantry", "Infantry", lmf_bftInfantry, "b_inf", "\A3\ui_f\data\map\markers\nato\b_inf.paa", true],
+		["lmf_bft_vehicles", "Vehicles", lmf_bftGroundVehicles, "b_armor", "\A3\ui_f\data\map\markers\nato\b_armor.paa", false],
+		["lmf_bft_air", "Air", lmf_bftAirVehicles, "b_air", "\A3\ui_f\data\map\markers\nato\b_air.paa", false]
 	];
 
 	// Hide the selection menu when all lists are empty, but keep the tracker and map handlers running.
 	if (_categories findIf {count (_x select 2) > 0} != -1) then {
 		private _rootPath = [
-			"parentBFT", "Blue Force Tracker", "A3\modules_f\data\portraitstrategicmapimage_ca.paa",
+			"lmf_bft_menu", "Blue Force Tracker", "A3\modules_f\data\portraitstrategicmapimage_ca.paa",
 			["ACE_SelfActions"], _isLeader
 		] call _addMenu;
 
@@ -178,7 +178,7 @@ lmf_bft_fnc_registerMenu = {
 
 		// Keep the menu visible before callsign selection; the server explains the prerequisite.
 		private _iconPath = [
-			"parentBFTIcon", "Icon", "", _rootPath, _isLeader
+			"lmf_bft_icon", "Icon", "", _rootPath, _isLeader
 		] call _addMenu;
 
 		// Fixed framework choices: mission makers only configure the callsign lists.
@@ -190,7 +190,7 @@ lmf_bft_fnc_registerMenu = {
 				format ["\A3\ui_f\data\map\markers\nato\%1.paa", _markerType]
 			};
 			private _action = [
-				format ["bftIcon_%1", _forEachIndex], _label, [_icon, if (_markerType == "") then {LMF_TEXT_COLOR} else {LMF_MAIN_COLOR}],
+				format ["lmf_bft_icon_%1", _forEachIndex], _label, [_icon, if (_markerType == "") then {LMF_TEXT_COLOR} else {LMF_MAIN_COLOR}],
 				{
 					params ["_target", "_player", "_actionParams"];
 					_actionParams params ["_markerType", "_label"];
