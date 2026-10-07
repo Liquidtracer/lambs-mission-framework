@@ -1,24 +1,7 @@
 # LMF changelog
 
-Major changes to LAMBS Mission Framework, newest first.
-
-Last release: **LMF 1.4** - `CO25\\\_Steel\\\_Corridor\\\_I.WL\\\_Rosche`.
-Development mission: `LMF\\\_DEV.Altis`.
-
-Historical entries below 2.0.0 retain their original detail and wording, with formatting normalized. Their headings do not imply release status; historical claims are not a fresh verification of current behavior.
-
-
-
-
-
 #### LMF 2.0.0 - Unreleased
 
-* **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal/Available Optics; TO&E handles missing LMF roles.
-* **Fixed:** Garrison reactions handle empty building-position searches, and destroyed UAVs stop before dropping grenades.
-* **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
-* **Fixed:** Supply Drop remains available after player respawn while drops remain.
-* **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
-* **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
 * **Added:** Startup mission information and group-arrival notifications for leaders.
 * **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
 * **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
@@ -26,7 +9,13 @@ Historical entries below 2.0.0 retain their original detail and wording, with fo
 * **Improved:** Reworked AI helicopter landing searches and evacuation handling, and boat landing and follow-up tasks.
 * **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups.
 * **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.
+* **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Tweaked:** Garrison stance reactions now account for cover, suppression and group losses.
+* **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal/Available Optics; TO&E handles missing LMF roles.
+* **Fixed:** Garrison reactions handle empty building-position searches, and destroyed UAVs stop before dropping grenades.
+* **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
+* **Fixed:** Supply Drop remains available after player respawn while drops remain.
+* **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
 * **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
 * **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg\\\_AI.hpp`.
 * **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.

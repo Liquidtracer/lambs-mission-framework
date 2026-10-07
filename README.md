@@ -10,7 +10,5 @@ The current development version is **2.0.0**, marked **Unreleased** in the chang
 
 ## Documentation
 
-- [Architecture and project context](docs/architecture.md)
-- [Development guide](docs/development.md)
 - [Mission-maker reference](docs/mission-maker-reference.md)
 - [Changelog](CHANGELOG.md)
