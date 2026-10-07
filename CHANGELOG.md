@@ -1,6 +1,6 @@
 # LMF changelog
 
-#### LMF 2.0.0 - Unreleased
+## LMF 2.0.0 - Unreleased
 
 * **Added:** Startup mission information and group-arrival notifications for leaders.
 * **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
@@ -22,7 +22,7 @@
 
 
 
-#### LMF 1.42.0
+## LMF 1.42.0
 
 * **Added:** `lmf\\\_bft\\\_fnc\\\_trackObject` for reusable client-local, JIP-compatible tracking of networked objects on the BFT map.
 * **Improved:** Reworked the AI loadout system around Unit Loadout Arrays and setUnitLoadout for simpler configuration, faster AI spawning and reduced network traffic.
@@ -33,7 +33,7 @@
 
 
 
-#### LMF 1.41c
+## LMF 1.41c
 
 * **Tweaked:** AI NVG management now only updates units during initialization and actual day/night transitions instead of every 30 seconds.
 * **Tweaked:** AI NVG management now queries units from the configured enemy side instead of filtering all units.
@@ -43,7 +43,7 @@
 
 
 
-#### LMF 1.41b
+## LMF 1.41b
 
 * **Removed:** The system that created a "reinforcement group" when players died. It did not work properly and was not really needed :)
 * **Tweaked:** Switched the spectator medical UI from sleep to uiSleep and reduced its update frequency.
@@ -62,7 +62,7 @@
 
 
 
-#### LMF 1.41
+## LMF 1.41
 
 * **Added:** Chance for garrison AI to surrender.
 * **Added:** `fn\\\_addVehicleFlipAction.sqf`. (This adds an ACE action to player ground vehicles when they are upside down. Allowing players to recover them)
@@ -77,7 +77,7 @@
 
 
 
-#### LMF 1.4
+## LMF 1.4
 
 * **Added:** `lmf\\\_common\\\_fnc\\\_distributeItems`. (Distributes items to unit in prioritized ordering)
 * **Added:** `lmf\\\_player\\\_fnc\\\_spectatorMedical`. (Shows medical info for unit in focus when in ace spectator)
@@ -104,7 +104,7 @@
 
 
 
-#### LMF 1.33b
+## LMF 1.33b
 
 * Removed "waitUntil {time > 1};" from groupTracker.
 * Fixed hitEH problem where it wouldn't completely clear effects after hit.
@@ -113,7 +113,7 @@
 
 
 
-#### LMF 1.33a
+## LMF 1.33a
 
 * Removed superfluous remoteExec from respawnWave. Added local message in killedEH instead.
 * Fixed spawning height of boat when groups are spawned over water.
@@ -130,7 +130,7 @@
 
 
 
-#### LMF 1.33
+## LMF 1.33
 
 * Removed MAT AI unit from random pool of units, now only spawned through manual placing or specific teams/squads.
 * Updated UAV to randomize flyinheight once in a while.
