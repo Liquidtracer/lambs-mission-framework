@@ -17,9 +17,9 @@ class EditorData
 	class Camera
 	{
 		pos[]={14552.968,131.80104,16787.541};
-		dir[]={0.52449298,-0.72416043,-0.44782361};
-		up[]={0.5507338,0.68962264,-0.47022799};
-		aside[]={-0.64935011,3.320165e-07,-0.76052117};
+		dir[]={0.52448058,-0.72414327,-0.44781318};
+		up[]={0.55071312,0.68964952,-0.47021109};
+		aside[]={-0.64933431,1.4901161e-08,-0.76050293};
 	};
 };
 binarizationWanted=0;
@@ -1891,7 +1891,7 @@ class Mission
 						{
 							dataType="Trigger";
 							position[]={14634.396,17.91,16713.248};
-							angle=2.3410101;
+							angle=2.3410096;
 							class Attributes
 							{
 								name="RRR";
@@ -1911,7 +1911,7 @@ class Mission
 						{
 							dataType="Trigger";
 							position[]={14634.396,17.91,16713.248};
-							angle=2.3410101;
+							angle=2.3410096;
 							class Attributes
 							{
 								condition="(""Land"" countType thislist > 0) && {((getPosATL (thislist select 0)) select 2 < 1)}";

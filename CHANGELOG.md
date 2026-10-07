@@ -3,6 +3,7 @@
 ## LMF 2.0.0 - Unreleased
 
 * **Added:** Startup mission information and group-arrival notifications for leaders.
+* **Added:** Zeus Infantry Patrol can target a living player's position at confirmation while spawning at the clicked position.
 * **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
 * **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
 * **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
@@ -18,6 +19,7 @@
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
 * **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
 * **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg\\\_AI.hpp`.
+* **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
 * **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
 
 

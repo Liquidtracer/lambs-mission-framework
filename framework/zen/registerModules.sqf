@@ -68,25 +68,33 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 // AI infantry patrol
 ["LMF AI", "Infantry Patrol", {
+	private _players = (allPlayers - entities "HeadlessClient_F") select {alive _x};
+	private _names = _players apply {name _x};
 	["Infantry Patrol", [
 
 		["COMBO", "Group Type", [lmf_zen_groupTypes, lmf_zen_groupTypes, 0]],
 		["SLIDER", "Custom Amount", [1, 60, 4, 0]],
 		["EDIT", "Patrol Radius", ["100"]],
 		["COMBO", "Speed", [lmf_zen_speedMode, lmf_zen_speedMode, 0]],
-		["COMBO", "Formation", [lmf_zen_formationTypes, lmf_zen_formationTypes, 0]]
+		["COMBO", "Formation", [lmf_zen_formationTypes, lmf_zen_formationTypes, 0]],
+		["COMBO", "Target", [[objNull] + _players, ["Clicked Position"] + _names, 0], true]
 	], {
 
 		params ["_dialog", "_pos"];
-		_dialog params ["_type", "_amount", "_radius", "_speed", "_formation"];
+		_dialog params ["_type", "_amount", "_radius", "_speed", "_formation", "_target"];
 
 		_pos = ASLToATL _pos;
+		// Snapshot the player position on confirmation; stale selections use the clicked position.
+		private _patrolTarget = _pos;
+		if (!isNull _target && {alive _target} && {isPlayer _target}) then {
+			_patrolTarget = getPosATL _target;
+		};
 		_radius = parseNumber _radius;
 		if (_type == "CUSTOM AMOUNT") then {
 			_type = round _amount;
 		};
 
-		[_pos, _pos, _type, _radius, _speed, _formation] remoteExec ["lmf_ai_fnc_spawnPatrol"];
+		[_pos, _patrolTarget, _type, _radius, _speed, _formation] remoteExec ["lmf_ai_fnc_spawnPatrol"];
 		["Patrol started: %1 (%2m radius)", _type, _radius] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
