@@ -64,7 +64,6 @@ if (var_bft) then {
 };
 
 private _pilot = units _grp select 0;
-_pilot setVariable ["lmf_ai_civ_cannotPanic",true];
 _pilot setVariable ["acex_headless_blacklist",true];
 _pilot call lmf_equipment_fnc_applyPilot;
 _pilot moveInAny _veh;

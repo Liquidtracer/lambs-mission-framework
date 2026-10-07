@@ -13,14 +13,12 @@
 
 // Supply spawner
 if !(isNil "ammoSpawner") then {
-	private _ammoLarge = ["ammoLarge","Platoon Box","\A3\ui_f\data\IGUI\Cfg\simpleTasks\types\rearm_ca.paa",{[var_supLarge, ammoPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;},{true}] call ace_interact_menu_fnc_createAction;
 	private _ammoSquad = ["ammoSmall","Squad Box","\A3\ui_f\data\IGUI\Cfg\simpleTasks\types\rearm_ca.paa",{[var_supSquad, ammoPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;},{true}] call ace_interact_menu_fnc_createAction;
 	private _ammoExplosive = ["ammoExplosive","Explosives","\A3\ui_f\data\IGUI\Cfg\simpleTasks\types\destroy_ca.paa",{[var_supExplosives, ammoPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;},{true}] call ace_interact_menu_fnc_createAction;
 	private _ammoMedic = ["ammoMedic","Medical","\A3\ui_f\data\IGUI\Cfg\simpleTasks\types\heal_ca.paa",{[var_supMedical, ammoPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;},{true}] call ace_interact_menu_fnc_createAction;
 	private _spareWheel = ["spareWheel","Spare Wheel","",{["ACE_Wheel", ammoPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;},{true}] call ace_interact_menu_fnc_createAction;
 	private _spareTrack = ["spareTrack","Spare Track","",{["ACE_Track", ammoPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;},{true}] call ace_interact_menu_fnc_createAction;
 
-	// if (var_supLarge != "") then {[ammoSpawner, 0, ["ACE_MainActions"], _ammolarge] call ace_interact_menu_fnc_addActionToObject;};
 	if (var_supSquad != "") then {[ammoSpawner, 0, ["ACE_MainActions"], _ammoSquad] call ace_interact_menu_fnc_addActionToObject;};
 	if (var_supExplosives != "") then {[ammoSpawner, 0, ["ACE_MainActions"], _ammoExplosive] call ace_interact_menu_fnc_addActionToObject;};
 	if (var_supMedical != "") then {[ammoSpawner, 0, ["ACE_MainActions"], _ammoMedic] call ace_interact_menu_fnc_addActionToObject;};

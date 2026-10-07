@@ -92,8 +92,7 @@ lmf_supplyDrop_fnc_registerMenu = {
     		["SUPPLY DROP", "A map is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
     	};
 
-    	private _radios = ["ACRE_PRC148","ACRE_PRC152","ACRE_PRC77","ACRE_PRC117F","ACRE_SEM70"];
-        if (_radios findIf {[_player, _x] call acre_api_fnc_hasKindOfRadio} == -1) exitWith {
+        if !([_player] call lmf_radio_fnc_hasLongRangeRadio) exitWith {
     		["SUPPLY DROP", "A long-range radio is required.", "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 2.5, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
     	};
 
