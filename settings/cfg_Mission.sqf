@@ -66,5 +66,5 @@ lmf_supplyDropAircraft = "B_Heli_Transport_01_unarmed_F"; // Aircraft classname;
 lmf_supplyDropVehicles = true; // Allows vehicle requests through supply drop.
 
 // Forward deploy
-lmf_forwardDeploy = false; // Allows group leaders to register for forward deployment during warmup.
-lmf_deployHeight = 0; // Deployment height in meters: 0 = ground; positive values below 100 use 100.
+lmf_forwardDeploy = true; // Allows group leaders to register for forward deployment during warmup.
+lmf_forwardDeploy_height = 100; // Deployment height in meters: 0 = ground; positive values below 100 use 100.

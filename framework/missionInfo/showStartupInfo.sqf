@@ -49,7 +49,7 @@ if (lmf_supplyDropLimit > 0 && {lmf_remainingSuppDrops > 0}) then {
 };
 
 if (lmf_warmup_isActive && {lmf_forwardDeploy}) then {
-	["FORWARD DEPLOY", "Group leaders register their group for deployment before warmup ends.",
+	["Forward Deploy", "Group leaders register their group for deployment before warmup ends.",
 		" Self-Interact » Register Forward Deploy"] call _addEntry;
 };
 

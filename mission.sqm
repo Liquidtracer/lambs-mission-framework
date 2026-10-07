@@ -8,7 +8,7 @@ class EditorData
 	toggles=513;
 	class ItemIDProvider
 	{
-		nextID=136;
+		nextID=137;
 	};
 	class LayerIndexProvider
 	{
@@ -16,10 +16,10 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={14575.174,82.241798,16786.701};
-		dir[]={0.65782106,-0.63878518,-0.39903015};
-		up[]={0.54615861,0.76938516,-0.33129641};
-		aside[]={-0.51863515,0,-0.85499579};
+		pos[]={14611.807,52.562004,16779.184};
+		dir[]={0.60525888,-0.69834167,-0.38207826};
+		up[]={0.59052402,0.71576363,-0.3727769};
+		aside[]={-0.53380334,-3.9115548e-08,-0.84561032};
 	};
 };
 binarizationWanted=0;
@@ -32,13 +32,14 @@ addons[]=
 	"A3_Structures_F_EPC_Items_Electronics",
 	"A3_Structures_F_Civ_Camping",
 	"ace_dragging",
-	"A3_Structures_F_Mil_Helipads"
+	"A3_Structures_F_Mil_Helipads",
+	"CUP_WheeledVehicles_M1240"
 };
 class AddonsMetaData
 {
 	class List
 	{
-		items=7;
+		items=8;
 		class Item0
 		{
 			className="A3_Ui_F";
@@ -88,7 +89,16 @@ class AddonsMetaData
 			author="Bohemia Interactive";
 			url="https://www.arma3.com";
 		};
+		class Item7
+		{
+			className="CUP_WheeledVehicles_M1240";
+			name="CUP_WheeledVehicles_M1240";
+		};
 	};
+};
+dlcs[]=
+{
+	"CUP_Vehicles"
 };
 randomSeed=6813385;
 class ScenarioData
@@ -142,7 +152,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=6;
+		items=7;
 		class Item0
 		{
 			dataType="Layer";
@@ -1939,6 +1949,22 @@ class Mission
 			};
 			id=135;
 			atlOffset=189.87564;
+		};
+		class Item6
+		{
+			dataType="Object";
+			class PositionInfo
+			{
+				position[]={14634.552,20.731956,16765.371};
+			};
+			side="Empty";
+			flags=4;
+			class Attributes
+			{
+				init="this setVariable [""lmf_forwardDeploy_registration"", true];";
+			};
+			id=136;
+			type="CUP_M1240_OGPK_M2_NATO";
 		};
 	};
 };

@@ -276,6 +276,26 @@ Normal cooldown: **10 seconds** after artillery firing ends, or **60 seconds** a
 
 
 
+## Forward Deploy
+
+Forward Deploy lets group leaders register a deployment position and claim marked assets during warmup. Enable `lmf_warmup` and `lmf_forwardDeploy` in `settings/cfg_Mission.sqf`. Set `lmf_forwardDeploy_height` to `0` for ground deployment or a positive height in meters for an airdrop; positive values below `100` are raised to `100` during deployment.
+
+In Eden, open each claimable vehicle or asset's attributes and enter this in its **Init** field:
+
+```sqf
+this setVariable ["lmf_forwardDeploy_registration", true];
+```
+
+Mark assets before Forward Deploy initializes in postInit. The registration value contract is:
+
+- Absent: the object is not part of Forward Deploy.
+- `true`: the object is eligible and unclaimed.
+- GROUP: the object is claimed by that group; Forward Deploy manages this value during registration.
+
+Group leaders use **Self-Interact » Register Forward Deploy**, left-click to place or move the position, Shift + left-click to rotate it, and close the map to confirm. **Unregister Forward Deploy** cancels the group registration. Marked assets provide **Claim Vehicle** and **Unclaim Vehicle** interactions; entry into marked assets is temporarily blocked during warmup and the deployment transition. Deployment begins shortly after warmup ends. Clients joining after warmup do not receive the registration menu.
+
+When updating an existing mission, use the current setting and object-variable names above in mission scripts and Eden init fields. Make Eden changes through the editor. LMF 2.0 provides no legacy aliases.
+
 ## Blue Force Tracking
 
 Requires lmf\_bft = true. Use server calls for mission setup. Group state and distributed object tracking support JIP.
