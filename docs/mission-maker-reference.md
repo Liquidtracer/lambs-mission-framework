@@ -129,7 +129,7 @@ Spawns a QRF vehicle with crew and, where applicable, infantry passengers.
 
 **Categories:** CAR, CARARMED, TRUCK, APC, TANK, HELITRANSPORT, HELIATTACK, UAV.
 
-Use an LMF category, not a classname. The delay applies with multiple tickets. UAV uses the grenade-dropping task.
+Use an LMF category, not a classname. The delay applies with multiple tickets. UAV uses the grenade-dropping task; destruction during its target wait ends the attack without spawning a grenade.
 
 
 
@@ -178,6 +178,8 @@ var\_suppDropPlane configures the aircraft used by player requests. Both plane a
 * **3. Crate or vehicle classname** — String. Default: "B\_supplyCrate\_F".
 
 Supply valid positions, such as marker names or \[x,y,z]. Delivery uses ACE Cargo and parachutes. Direct calls bypass the player menu's quota and request cooldown.
+
+If the aircraft is destroyed before cargo release, the delivery is lost and undelivered cargo is deleted. There is no refund, retry or emergency drop. The aircraft, wreck and crew remain for Arma's normal cleanup; LMF only cleans up living aircraft after a completed delivery. Cargo already released continues its landing sequence independently.
 
 
 

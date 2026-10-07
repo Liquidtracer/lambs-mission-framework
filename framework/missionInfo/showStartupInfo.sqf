@@ -6,7 +6,7 @@
 if (!hasInterface) exitWith {};
 
 waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
-if (var_personalArsenal) then {
+if (var_playerGear && {var_personalArsenal}) then {
     waitUntil {uiSleep 0.2; scriptDone lmf_player_arsenalInit};
 };
 waitUntil {uiSleep 0.2; scriptDone lmf_player_menuInit};
@@ -23,7 +23,7 @@ private _addEntry = {
     ];
 };
 
-if (lmf_warmup && {var_personalArsenal}) then {
+if (lmf_warmup && {var_playerGear} && {var_personalArsenal}) then {
     ["PERSONAL ARSENAL", "Customize your personal equipment.",
         " Self-Interact » Equipment » Personal Arsenal"] call _addEntry;
 

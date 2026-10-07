@@ -78,7 +78,7 @@ lmf_ai_fnc_onGarrisonHit = {
 	_unit setUnitPos "AUTO";
 	_unit enableAI "PATH";
 	_posArray = [_unit, 10, true, true] call lambs_main_fnc_findBuildings;
-	_unit doMove selectRandom _posArray;
+	if (_posArray isNotEqualTo []) then {_unit doMove selectRandom _posArray};
 };
 {
 	_x addEventHandler ["Hit", {
@@ -177,7 +177,7 @@ _grp addEventHandler ["EnemyDetected", {
 			[_x] call lmf_ai_fnc_clearGarrisonStance;
 			_x enableAI "PATH";
 			_posArray = [_x, 10, true, true] call lambs_main_fnc_findBuildings;
-			_x doMove selectRandom _posArray;
+			if (_posArray isNotEqualTo []) then {_x doMove selectRandom _posArray};
 		};
 	} forEach (units _group) - [leader _group];
 
@@ -189,7 +189,7 @@ _grp addEventHandler ["EnemyDetected", {
 				[_x] call lmf_ai_fnc_clearGarrisonStance;
 				_x enableAI "PATH";
 				_posArray = [_x, 10, true, true] call lambs_main_fnc_findBuildings;
-				_x doMove selectRandom _posArray;
+				if (_posArray isNotEqualTo []) then {_x doMove selectRandom _posArray};
 			};
 		} forEach (units _group) - [leader _group];
 		_group removeEventHandler [_thisEvent, _thisEventHandler];

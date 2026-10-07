@@ -111,6 +111,11 @@ _veh limitSpeed 100;
 
 waitUntil {sleep 0.5; (_veh distance2D _dropPos) < 50 || {!alive _veh}};
 
+// A destroyed transport loses the undelivered cargo; the reserved drop is not refunded.
+if (!alive _veh) exitWith {
+    deleteVehicle _crate;
+};
+
 // Release the route before dropping so the aircraft continues straight ahead.
 [_grp] call CBA_fnc_clearWaypoints;
 private _straightAhead = _veh getRelPos [5000, 0];
@@ -165,7 +170,9 @@ _flare setVelocity [0,0,-0.1];
 _veh limitSpeed 999;
 _veh doMove (_spawnPos getPos [(_spawnPos distance2D _dropPos) + 10000,_dir - 180]);
 
-waitUntil {sleep 0.5; allPlayers findIf {_x distance2D _veh < 5000} == -1};
+waitUntil {sleep 0.5; !alive _veh || {allPlayers findIf {_x distance2D _veh < 5000} == -1}};
+// Leave destroyed aircraft and their crew to Arma's normal cleanup.
+if (!alive _veh) exitWith {};
 deleteVehicleCrew _veh;
 deleteVehicle _veh;
 

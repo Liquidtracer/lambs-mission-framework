@@ -5,7 +5,7 @@
     Author: Alex2k. Contributor: Drgn V4karian.
 */
 
-if !(var_warmup) exitWith {};
+if (!var_playerGear || {!var_personalArsenal} || {!var_warmup}) exitWith {};
 ["Preload"] call BIS_fnc_arsenal;
 
 #include "..\..\settings\cfg_Player.sqf"

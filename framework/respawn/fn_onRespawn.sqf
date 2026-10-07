@@ -25,6 +25,8 @@ if (var_playerGear) then {
 	} else {
 		[player] call lmf_equipment_fnc_applyRoleFromClass;
 	};
+} else {
+	player setUnitLoadout [lmf_player_startLoadout, false];
 };
 
 // Channel setup

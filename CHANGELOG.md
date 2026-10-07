@@ -13,6 +13,9 @@ Historical entries below 2.0.0 retain their original detail and wording, with fo
 
 #### LMF 2.0.0 - Unreleased
 
+* **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal/Available Optics; TO&E handles missing LMF roles.
+* **Fixed:** Garrison reactions handle empty building-position searches, and destroyed UAVs stop before dropping grenades.
+* **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.

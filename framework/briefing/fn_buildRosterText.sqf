@@ -32,10 +32,13 @@ _allUniqueGroups sort true;
 
 	// Soldier roster entry
 	{
+		private _role = _x getVariable ["lmf_currentRole", ""];
+		if (_role isEqualTo "") then {_role = roleDescription _x};
+		if (_role isEqualTo "") then {_role = getText (configOf _x >> "displayName")};
 		if (_x == player) then {
-			_brfPlatoon = _brfPlatoon + "<font color='" + LMF_HIGHLIGHT_FRIENDLY_COLOR + "'>" + name _x + "<font color='" + LMF_TEXT_COLOR_DARK + "'> - " + (_x getVariable "lmf_currentRole") + "</font color></font><br/>";
+			_brfPlatoon = _brfPlatoon + "<font color='" + LMF_HIGHLIGHT_FRIENDLY_COLOR + "'>" + name _x + "<font color='" + LMF_TEXT_COLOR_DARK + "'> - " + _role + "</font color></font><br/>";
 		} else {
-			_brfPlatoon = _brfPlatoon + "<font>" + name _x + "<font color='" + LMF_TEXT_COLOR_DARK + "'> - " + (_x getVariable "lmf_currentRole") + "</font><br/>";
+			_brfPlatoon = _brfPlatoon + "<font>" + name _x + "<font color='" + LMF_TEXT_COLOR_DARK + "'> - " + _role + "</font><br/>";
 		};
 	} forEach (units _grp);
 

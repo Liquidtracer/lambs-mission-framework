@@ -84,6 +84,9 @@ player addEventHandler ["Respawn", {
 
 if (var_playerGear) then {
     [player] call lmf_equipment_fnc_applyRoleFromClass;
+} else {
+    // Keep the starting Eden equipment across player-object replacement.
+    lmf_player_startLoadout = getUnitLoadout player;
 };
 
 // Start briefing and deferred player setup.
@@ -99,7 +102,7 @@ if (var_playerGear) then {
 };
 
 // Start arsenal, JIP teleport and the intro/warmup sequence.
-if (var_personalArsenal) then {
+if (var_playerGear && {var_personalArsenal}) then {
     lmf_player_arsenalInit = [] execVM "framework\equipment\initPersonalArsenal.sqf";
 };
 

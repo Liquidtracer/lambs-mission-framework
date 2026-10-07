@@ -19,11 +19,11 @@ var_respawnTime = 900; // Respawn delay in seconds for "WAVE" or "TICKETS". Defa
 var_respawnTickets = 0; // Tickets per player when using "TICKETS". Default: 0.
 
 // Players
-var_playerGear = true; // Applies custom player gear. Default: true.
+var_playerGear = true; // Applies custom player gear; false retains starting Eden equipment and restores it on respawn. Default: true.
 var_keepRole = false; // Role after respawn: true restores the slot's original role; false gives Rifleman. Default: false.
 var_camoCoef = 1; // Higher values make players easier for AI to spot. Default: 1.
 var_jipTp = true; // Enables JIP teleport to friendlies. Default: true.
-var_personalArsenal = true; // Enables the limited personal arsenal during warmup. Default: true.
+var_personalArsenal = true; // Enables Personal Arsenal and Available Optics during warmup; requires var_playerGear. Default: true.
 
 // Player gear (only relevant if var_playerGear = true)
 var_personalRadio = true; // Gives everyone an AN/PRC-343. Default: false.
