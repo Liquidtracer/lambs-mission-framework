@@ -63,21 +63,33 @@ Enemy side: settings/cfg\_Mission.sqf · AI classes and equipment: settings/cfg\
 
 A positive integer may replace the infantry type to spawn that many randomly selected soldiers.
 
-**Tickets** are the total number of spawns, including the first. 1 spawns once; 0 spawns nothing.
+**One-shot:** Use the existing spawner name with `call` and omit tickets to return the primary group or object. Patrol and Garrison are always one-shot. These calls can run without suspension after LMF preInit has loaded AI settings; they do not wait for mission time or apply wave proximity checks.
 
-**QRF and hunter proximity checks** apply even with one ticket. A nearby grounded player stops the spawner; an airborne player delays it. The radius is **500 m** for infantry QRF/hunters and **1,000 m** for vehicle/para QRF.
+```sqf
+private _grp = [spawn_1, "TEAM"] call lmf_ai_fnc_spawnInfantryQrf;
+```
 
+**Managed waves:** Supply the ticket argument explicitly, including `1`, and use `spawn`. Tickets are the total number of spawns; `0` spawns nothing. Argument presence selects the mode, regardless of `call` or `spawn`. The caller of `spawn` receives a script handle, not the delivery. Managed execution requires a scheduled context: use `spawn`. ZEN function `remoteExec` is already scheduled; unscheduled managed calls exit without spawning.
 
+```sqf
+[spawn_1, "TEAM", 3] spawn lmf_ai_fnc_spawnInfantryQrf;
+```
+
+Managed QRF/hunter calls retain the mission-start wait and proximity checks through `lmf_ai_fnc_runWaves`, including with one ticket. A nearby grounded player ends the source; an airborne player delays spawning. Ranges are **500 m** for infantry QRF/hunters and **1,000 m** for vehicle/para QRF. Polling is approximately **10 seconds** for infantry QRF and **5 seconds** for the others.
+
+A wave follows only its primary delivery: a group finishes with no living members; an object finishes when dead/deleted. Infantry QRF/hunters have no added respawn delay; Vehicle/Para QRF default to **300 seconds** before a replacement. Null, empty or already-dead initial deliveries end the source without retrying. The controller exits immediately after spawning the final ticket; it waits for delivery completion only when another replacement ticket remains. Transport flight and cleanup continue independently.
 
 ### Garrison
 
 Spawns infantry to occupy buildings and available gunner seats in nearby vehicles or static weapons.
 
-**Run on:** Server · **Use:** spawn
+**Run on:** Server · **Use:** call · **Returns:** GROUP
 
 **Example**
 
-\[garrison\_1, "TEAM", 100, 1, false] spawn lmf\_ai\_fnc\_spawnGarrison;
+```sqf
+private _grp = [garrison_1, "TEAM", 100, 1, false] call lmf_ai_fnc_spawnGarrison;
+```
 
 **Arguments**
 
@@ -93,11 +105,13 @@ Spawns infantry to occupy buildings and available gunner seats in nearby vehicle
 
 Spawns infantry to patrol an area and react to detected threats. Spawning over water creates a boat group.
 
-**Run on:** Server · **Use:** spawn
+**Run on:** Server · **Use:** call · **Returns:** GROUP
 
 **Example**
 
-\[spawn\_1, "mrk\_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] spawn lmf\_ai\_fnc\_spawnPatrol;
+```sqf
+private _grp = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] call lmf_ai_fnc_spawnPatrol;
+```
 
 **Arguments**
 
@@ -115,38 +129,44 @@ Spawns infantry to patrol an area and react to detected threats. Spawning over w
 
 ### Infantry QRF
 
-Spawns infantry with a GUARD task and reactions to detected ground targets. Additional tickets provide replacement groups after losses. Spawning over water creates a boat group.
+Returns an infantry GROUP with a GUARD task and reactions to detected ground targets. Additional tickets provide replacement groups after losses. Spawning over water creates a boat group.
 
-**Run on:** Server · **Use:** spawn
+**Run on:** Server · **Use:** call without tickets / spawn with tickets
 
 **Example**
 
-\[spawn\_1, "TEAM", 1] spawn lmf\_ai\_fnc\_spawnInfantryQrf;
+```sqf
+private _grp = [spawn_1, "TEAM"] call lmf_ai_fnc_spawnInfantryQrf;
+[spawn_1, "TEAM", 3] spawn lmf_ai_fnc_spawnInfantryQrf;
+```
 
 **Arguments**
 
 * **0. Spawn position: object or \[x,y,z]** — Object / Array. Default: \[0,0,0].
 * **1. Infantry type or soldier count** — String / Number. Default: "TEAM".
-* **2. Total spawn tickets** — Number. Default: 1.
+* **2. Total spawn tickets** — Number. Optional: omit for one-shot; supply for managed waves.
 
 
 
 ### Infantry hunter
 
-Spawns infantry that actively hunts players within range without needing to detect them first. Spawning over water creates a boat group.
+Returns an infantry GROUP that actively hunts players within range without needing to detect them first. Spawning over water creates a boat group.
 
-**Run on:** Server · **Use:** spawn
+**Run on:** Server · **Use:** call without tickets / spawn with tickets
 
 **Example**
 
-\[spawn\_1, "TEAM", 500, 1] spawn lmf\_ai\_fnc\_spawnInfantryHunters;
+```sqf
+private _grp = [spawn_1, "TEAM", 1500] call lmf_ai_fnc_spawnInfantryHunters;
+[spawn_1, "TEAM", 1500, 3] spawn lmf_ai_fnc_spawnInfantryHunters;
+```
 
 **Arguments**
 
 * **0. Spawn position: object or \[x,y,z]** — Object / Array. Default: \[0,0,0].
 * **1. Infantry type or soldier count** — String / Number. Default: "TEAM".
 * **2. Hunting radius from the group leader, metres** — Number. Default: 500.
-* **3. Total spawn tickets** — Number. Default: 1.
+* **3. Total spawn tickets** — Number. Optional: omit for one-shot; supply for managed waves.
 
 
 
@@ -154,20 +174,25 @@ Spawns infantry that actively hunts players within range without needing to dete
 
 Spawns a QRF vehicle with crew and, where applicable, infantry passengers.
 
-**Run on:** Server · **Use:** spawn
+**Run on:** Server · **Use:** call without tickets / spawn with tickets
 
 **Example**
 
-\[spawn\_1, "HELITRANSPORT", 3, 300] spawn lmf\_ai\_fnc\_spawnVehicleQrf;
+```sqf
+private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
+[spawn_1, "HELITRANSPORT", 3, 300] spawn lmf_ai_fnc_spawnVehicleQrf;
+```
 
 **Arguments**
 
 * **0. Spawn position; uses object direction or a random direction for arrays** — Object / Array. Default: \[0,0,0].
 * **1. Vehicle category; see below** — String. Default: "TRUCK".
-* **2. Total spawn tickets** — Number. Default: 1.
-* **3. Delay after the replacement condition is met, seconds** — Number. Default: 300.
+* **2. Total spawn tickets** — Number. Optional: omit for one-shot; supply for managed waves.
+* **3. Delay after the primary delivery finishes, seconds** — Number. Default: 300.
 
 **Categories:** CAR, CARARMED, TRUCK, APC, TANK, HELITRANSPORT, HELIATTACK, DRONE.
+
+**Primary delivery:** CAR/TRUCK → infantry GROUP; APC/HELITRANSPORT → cargo infantry GROUP; CARARMED/TANK/HELIATTACK/DRONE → vehicle OBJECT. Vehicle completion ignores surviving dismounted crew; infantry completion ignores the surviving transport. HELITRANSPORT retains its independent insertion, evacuation, retreat and cleanup.
 
 Use an LMF category for argument 1. The delay applies with multiple tickets. In LMF 2.0, rename the old `_uav` pool to `_drones` and change `"UAV"` calls to `"DRONE"`; there is no legacy alias.
 
@@ -189,20 +214,28 @@ Zeus **LMF AI → Vehicle QRF → DRONE** exposes the category and randomly sele
 
 Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs and is cleaned up. The infantry payload is one MG team plus one AT team.
 
-**Run on:** Server · **Use:** spawn
+**Run on:** Server · **Use:** call without tickets / spawn with tickets
 
 **Example**
 
-\[spawn\_1, 1, 300, "mrk\_dropZone", 200, ""] spawn lmf\_ai\_fnc\_spawnParadropQrf;
+```sqf
+private _grp = [spawn_1, "mrk_dropZone", 200, ""] call lmf_ai_fnc_spawnParadropQrf;
+private _tank = [spawn_1, "mrk_dropZone", 200, "TANK"] call lmf_ai_fnc_spawnParadropQrf;
+[spawn_1, "mrk_dropZone", 200, "TANK", 3, 300] spawn lmf_ai_fnc_spawnParadropQrf;
+```
 
 **Arguments**
 
 * **0. Spawn position; above 20 m or over water selects an airborne start** — Object / Array. Default: \[0,0,0].
-* **1. Total delivery tickets** — Number. Default: 1.
-* **2. Delay after the next-delivery condition is met, seconds** — Number. Default: 300.
-* **3. Drop zone: marker, trigger or location; \[0,0,0] selects autonomous mode** — String / Object / Location / Array. Default: \[0,0,0].
-* **4. Flight height, metres** — Number. Default: 200.
-* **5. Payload: "" for infantry; otherwise vehicle classname or category** — String. Default: "".
+* **1. Drop zone: marker, trigger or location; \[0,0,0] selects autonomous mode** — String / Object / Location / Array. Default: \[0,0,0].
+* **2. Flight height, metres** — Number. Default: 200.
+* **3. Payload: "" for infantry; otherwise vehicle classname or category** — String. Default: "".
+* **4. Total delivery tickets** — Number. Optional: omit for one-shot; supply for managed waves.
+* **5. Delay after the primary payload finishes, seconds** — Number. Default: 300.
+
+**Returns:** Infantry GROUP or dropped vehicle OBJECT, prepared immediately. Flight, drop, crew creation after vehicle release, GUARD assignment and aircraft cleanup continue asynchronously. A returned payload is not confirmation of a completed drop. Failed preparation returns a null delivery; an undeliverable payload is cleaned up.
+
+**LMF 2.0 migration:** Paradrop arguments are now spawn position, drop zone, flying height, payload, tickets, respawn delay. Update existing mission/Eden calls; the previous order is unsupported.
 
 **Vehicle payload categories:** CAR, CARARMED, TRUCK, APC, TANK. The transport aircraft comes from \_paraVehicle in AI settings.
 

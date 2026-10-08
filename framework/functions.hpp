@@ -66,6 +66,7 @@ class ai {
 		class spawnInfantryHunters {};
 		class spawnVehicleQrf {};
 		class spawnParadropQrf {};
+		class runWaves {};
 		class getPlayerProximityState {};
 	};
 };

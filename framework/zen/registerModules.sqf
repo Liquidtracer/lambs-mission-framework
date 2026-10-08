@@ -116,7 +116,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_type = round _amount;
 		};
 
-		[_pos, _type] remoteExec ["lmf_ai_fnc_spawnInfantryQrf"];
+		[_pos, _type, 1] remoteExec ["lmf_ai_fnc_spawnInfantryQrf"];
 		["Infantry QRF spawned: %1", _type] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
@@ -140,7 +140,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_type = round _amount;
 		};
 
-		[_pos, _type, _radius] remoteExec ["lmf_ai_fnc_spawnInfantryHunters"];
+		[_pos, _type, _radius, 1] remoteExec ["lmf_ai_fnc_spawnInfantryHunters"];
 		["Hunter group spawned: %1 (%2m radius)", _type, _radius] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
@@ -159,7 +159,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		_pos = ASLToATL _pos;
 
-		[_pos, _type] remoteExec ["lmf_ai_fnc_spawnVehicleQrf"];
+		[_pos, _type, 1] remoteExec ["lmf_ai_fnc_spawnVehicleQrf"];
 		["Vehicle QRF spawned: %1", _type] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
@@ -193,11 +193,11 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		[
 			_spawnPos,
-			_tickets,
-			parseNumber _timer,
 			[0, 0, 0],
 			_flyHeight,
-			_dropVehicle
+			_dropVehicle,
+			_tickets,
+			parseNumber _timer
 		] remoteExec ["lmf_ai_fnc_spawnParadropQrf"];
 
 		["Para QRF spawned at %1m altitude (%2)", _flyHeight, _type] call zen_common_fnc_showMessage;

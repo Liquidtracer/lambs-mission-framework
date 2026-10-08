@@ -12,12 +12,14 @@
 		5: Patrol formation <STRING> (default: "STAG COLUMN")
 
 	Example:
-		[spawn_1, "mrk_patrol", "TEAM", 200, "FAST", "LINE"] spawn lmf_ai_fnc_spawnPatrol;
+		private _grp = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] call lmf_ai_fnc_spawnPatrol;
+
+	Returns: Spawned group <GROUP>; grpNull on a non-spawner machine.
+	One-shot only. Call on the server after LMF preInit; no suspension is required.
 */
 
-waitUntil {sleep 1; CBA_missionTime > 0};
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {};
+if !(_spawner) exitWith {grpNull};
 
 #include "spawnDefinitions.sqf"
 
@@ -87,3 +89,5 @@ _grp addEventHandler ["UnitKilled", {
 	[_aliveUnits#0] spawn lmf_ai_fnc_reassignSurvivor;
 	_group removeEventHandler [_thisEvent, _thisEventHandler];
 }];
+
+_grp

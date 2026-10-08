@@ -9,6 +9,7 @@
 * **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
 * **Improved:** Reworked AI helicopter landing searches and evacuation handling, and boat landing and follow-up tasks.
 * **Improved:** Unified UAV/UGV QRF in the configured `_drones`/`DRONE` pool, with native GUARD behavior, real IED payload drops, RF self-destruct attacks and category-based drone spawning in Zeus.
+* **Improved:** AI spawners return primary groups or objects for one-shot calls; explicit tickets use shared wave management. Vehicle waves follow their primary infantry or vehicle, and Paradrop now takes drop zone, height and payload before optional tickets and delay.
 * **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups.
 * **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.

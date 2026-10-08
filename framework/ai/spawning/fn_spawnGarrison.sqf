@@ -1,7 +1,7 @@
 /*
 	Spawn garrison
 	Spawns a group of infantry that garrisons buildings.
-	Runs scheduled on the server. Covered defenders reconsider stance on fire and detection events.
+	Runs once on the server without suspension, after LMF preInit. Covered defenders reconsider stance on fire and detection events.
 	Suppression and group losses reduce exposure; releasing a defender ends stance control.
 	Author: nkenny. Contributor: Drgn V4karian, Alex2k.
 
@@ -9,16 +9,18 @@
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
 		1: Group type or soldier count <STRING or NUMBER> (default: "TEAM"; "SQUAD", "TEAM", "SENTRY", "ATTEAM", "AATEAM" or "MGTEAM")
 		2: Garrison radius in meters <NUMBER> (default: 100)
-		3: Distribution <NUMBER> (default: 1; 0 = evenly, 1 = building by building)
-		4: Fill from the roof down <BOOLEAN> (default: false; false = random garrison)
+		3: Distribution <NUMBER> (default: 1; 0 = evenly, 1 = building by building, 2 = random)
+		4: Fill from the roof down <BOOLEAN> (default: false; applies to distribution 0 and 1)
 
 	Example:
-		[garrison_1, "TEAM", 100, 1, false] spawn lmf_ai_fnc_spawnGarrison;
+		private _grp = [garrison_1, "TEAM", 100, 1, false] call lmf_ai_fnc_spawnGarrison;
+
+	Returns: Spawned group <GROUP>; grpNull on a non-spawner machine.
+	One-shot only. Call on the server after LMF preInit; no suspension is required.
 */
 
-waitUntil {sleep 1; CBA_missionTime > 0};
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {};
+if !(_spawner) exitWith {grpNull};
 
 #include "spawnDefinitions.sqf"
 
@@ -297,3 +299,5 @@ _grp addEventHandler ["UnitKilled", {
 } forEach (units _grp);
 
 _grp enableDynamicSimulation true;
+
+_grp

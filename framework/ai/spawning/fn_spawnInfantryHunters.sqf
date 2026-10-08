@@ -2,40 +2,40 @@
 	Spawn infantry hunters
 	Spawns infantry that hunts targets within the configured radius.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
-	Player proximity is checked before every spawn, including when only one ticket is configured.
+
+	Server-owned; call after LMF preInit without tickets to return one delivery without suspension.
+	Supplying tickets selects runWaves, with startup wait and proximity checks even for one ticket.
+	Use spawn for managed waves; managed execution requires a scheduled context (also provided by ZEN remoteExec).
+	Managed execution returns no primary delivery; spawn returns its normal script handle.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
 		1: Group type or soldier count <STRING or NUMBER> (default: "TEAM"; "SQUAD", "TEAM", "SENTRY", "ATTEAM", "AATEAM" or "MGTEAM")
 		2: Hunting radius in meters <NUMBER> (default: 500)
-		3: Spawn tickets <NUMBER> (default: 1)
+		3: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 
-	Example:
+	Examples:
+		private _grp = [spawn_1, "TEAM", 1500] call lmf_ai_fnc_spawnInfantryHunters;
 		[spawn_1, "TEAM", 500, 1] spawn lmf_ai_fnc_spawnInfantryHunters;
+
+	One-shot returns: Spawned GROUP; grpNull on a non-spawner machine. No respawn delay between tickets.
 */
 
-waitUntil {sleep 1; CBA_missionTime > 0};
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {};
+if !(_spawner) exitWith {grpNull};
+
+// Argument presence selects the mode; managed execution requires suspension.
+private _managed = count _this > 3;
+if (_managed && {!canSuspend}) exitWith {};
+if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
 
 params [["_spawnPos", [0, 0, 0]], ["_grpType", "TEAM"], ["_radius", 500], ["_tickets", 1]];
 _spawnPos = _spawnPos call CBA_fnc_getPos;
-private _range = 500;
 
-// Prepare and spawn the group
-private _initTickets = _tickets;
-
-while {_initTickets > 0} do {
-
-	if ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "airClose") then {
-
-		waitUntil {sleep 5; ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState) in ["airDistance", "groundClose"]};
-	};
-
-	if ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose") exitWith {};
-
+// Create one delivery; the controller calls this in the current scope.
+private _spawnOnce = {
 	// Spawn and configure the group.
 	private _type = [_grpType] call _typeMaker;
 	private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
@@ -81,10 +81,11 @@ while {_initTickets > 0} do {
 		_grp setVariable ["lmf_ai_huntScript", [_grp, _radius] spawn lmf_ai_fnc_taskHunt];
 	};
 
-	if (_tickets > 1) then {
-
-		waitUntil {sleep 5; {alive _x} count units _grp < 1 || {[_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose"}};
-	};
-
-	_initTickets = _initTickets - 1;
+	_grp
 };
+
+if (_managed) exitWith {
+	[_spawnOnce, _tickets, 0, _spawnPos, 500, 5] call lmf_ai_fnc_runWaves;
+};
+
+call _spawnOnce

@@ -2,32 +2,44 @@
 	Spawn vehicle QRF
 	Spawns a vehicle QRF with additional infantry where configured.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
-	Player proximity is checked before every spawn, including when only one ticket is configured.
-	Scheduled, server-owned spawning. Drones use GUARD with capability-specific payload tasks.
+	Drones use GUARD with capability-specific payload tasks.
+
+	Server-owned; call after LMF preInit without tickets to return one delivery without suspension.
+	Supplying tickets selects runWaves, with startup wait and proximity checks even for one ticket.
+	Use spawn for managed waves; managed execution requires a scheduled context (also provided by ZEN remoteExec).
+	Managed execution returns no primary delivery; spawn returns its normal script handle.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
 		1: Vehicle type <STRING> (default: "TRUCK"; "CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK" or "DRONE")
-		2: Spawn tickets <NUMBER> (default: 1)
+		2: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 		3: Respawn delay in seconds <NUMBER> (default: 300)
 
-	Example:
+	Examples:
+		private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
 		[spawn_1, "TRUCK", 1, 300] spawn lmf_ai_fnc_spawnVehicleQrf;
+
+	One-shot returns: Primary GROUP for CAR/TRUCK infantry and APC/HELITRANSPORT cargo infantry;
+	vehicle OBJECT for CARARMED/TANK/HELIATTACK/DRONE. objNull for no spawn/non-spawner.
+	Transport flight/cleanup continues independently of the primary group.
 */
 
-waitUntil {sleep 1; CBA_missionTime > 0};
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {};
+if !(_spawner) exitWith {objNull};
+
+// Argument presence selects the mode; managed execution requires suspension.
+private _managed = count _this > 2;
+if (_managed && {!canSuspend}) exitWith {};
+if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
 
 params [["_spawnPos", [0, 0, 0]], ["_vicType", "TRUCK"], ["_tickets", 1], ["_respawnTime", 300]];
-private _range = 1000;
 private _dir = random 360;
 if !(_spawnPos isEqualType []) then {_dir = getDir _spawnPos;};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 _vicType = toUpper _vicType;
-if (_vicType == "DRONE" && {_drones isEqualTo []}) exitWith {};
+if (_vicType == "DRONE" && {_drones isEqualTo []}) exitWith {objNull};
 
 // Local functions for event handlers
 private _fncUnitKilledEh = {
@@ -145,22 +157,12 @@ private _fncHeliTransportEh = {
 	};
 };
 
-// Prepare and spawn
-private _initTickets = _tickets;
-
-while {_initTickets > 0} do {
-
-	if ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "airClose") then {
-		waitUntil {sleep 5; ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState) in ["airDistance", "groundClose"]};
-	};
-
-	if ([_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose") exitWith {};
-
+// Create one delivery; the controller calls this in the current scope.
+private _spawnOnce = {
 	private _veh = objNull;
 	private _grp = grpNull;
 	private _grp2 = grpNull;
 	private _wp = [];
-	private _transportCrew = [];
 
 	switch (_vicType) do {
 		case "CAR": {
@@ -286,7 +288,6 @@ while {_initTickets > 0} do {
 			[_veh, _grp, false, "", _pilot] call BIS_fnc_spawnCrew;
 			_grp deleteGroupWhenEmpty true;
 			_grp setGroupIdGlobal [format ["Transport Heli: %1 (%2)", _vehType, groupId _grp]];
-			_transportCrew = units _grp;
 
 			_wp = _grp addWaypoint [getPosASL _veh, -1];
 			_wp setWaypointType "GUARD";
@@ -454,14 +455,18 @@ while {_initTickets > 0} do {
 		};
 	};
 
-	if (_tickets > 1) then {
-		waitUntil {
-			sleep 5;
-			(!alive _veh && {{alive _x} count (if (_vicType == "HELITRANSPORT") then {_transportCrew} else {units _grp}) == 0})
-			|| {[_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState isEqualTo "groundClose"}
-		};
-		sleep _respawnTime;
-	};
-
-	_initTickets = _initTickets - 1;
+	// Only the primary delivery determines wave completion.
+	switch (_vicType) do {
+		case "CAR";
+		case "TRUCK": {_grp};
+		case "APC";
+		case "HELITRANSPORT": {_grp2};
+		default {_veh};
+	}
 };
+
+if (_managed) exitWith {
+	[_spawnOnce, _tickets, _respawnTime, _spawnPos, 1000, 5] call lmf_ai_fnc_runWaves;
+};
+
+call _spawnOnce

@@ -3,31 +3,45 @@
 	Spawns an aircraft that drops AI infantry or a vehicle, then leaves and despawns.
 	Author: Alex2k. Contributor: Drgn V4karian.
 
+	Server-owned; call after LMF preInit without tickets to return one delivery without suspension.
+	Supplying tickets selects runWaves, with startup wait and proximity checks even for one ticket.
+	Use spawn for managed waves; managed execution requires a scheduled context (also provided by ZEN remoteExec).
+	Managed execution returns no primary delivery; spawn returns its normal script handle.
+
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0]; object direction is used in autonomous mode)
-		1: Spawn tickets <NUMBER> (default: 1)
-		2: Respawn delay in seconds <NUMBER> (default: 300)
-		3: Drop zone <STRING, OBJECT or LOCATION> (marker, trigger or location; [0, 0, 0] selects targets automatically; other position arrays are unsupported)
-		4: Flying height in meters <NUMBER> (default: 200)
-		5: Vehicle classname to drop <STRING> (default: "" for infantry)
+		1: Drop zone <STRING, OBJECT, LOCATION or ARRAY> (default: [0, 0, 0]; marker, trigger or location; [0, 0, 0] selects targets automatically; other position arrays are unsupported)
+		2: Flying height in meters <NUMBER> (default: 200)
+		3: Vehicle classname or CAR/CARARMED/TRUCK/APC/TANK category to drop <STRING> (default: "" for infantry)
+		4: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
+		5: Respawn delay in seconds <NUMBER> (default: 300; managed replacements only)
 
-	Example:
-		[spawn_1, 1, 30, "mrk_dropZone", 200, "CUP_B_M113A1_olive_USA"] spawn lmf_ai_fnc_spawnParadropQrf;
+	Examples:
+		private _delivery = [spawn_1, "mrk_dropZone", 200, "TANK"] call lmf_ai_fnc_spawnParadropQrf;
+		[spawn_1, "mrk_dropZone", 200, "TANK", 3, 300] spawn lmf_ai_fnc_spawnParadropQrf;
+
+	One-shot returns: Infantry GROUP or dropped vehicle OBJECT, prepared before the asynchronous flight/drop/cleanup.
+	Returns a null delivery on preparation failure; objNull on a non-spawner machine.
+	The returned payload may still be aboard the aircraft; aircraft cleanup is independent of waves.
 */
 
-waitUntil {sleep 1; CBA_missionTime > 0};
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {};
+if !(_spawner) exitWith {objNull};
+
+// Argument presence selects the mode; managed execution requires suspension.
+private _managed = count _this > 4;
+if (_managed && {!canSuspend}) exitWith {};
+if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
 
 params [
 	["_spawnPos", [0, 0, 0]],
-	["_tickets", 1],
-	["_respawnTime", 300],
 	["_dropZone", [0, 0, 0]],
 	["_flyInHeight", 200],
-	["_dropVehicle", ""]
+	["_dropVehicle", ""],
+	["_tickets", 1],
+	["_respawnTime", 300]
 ];
 
 private _dir = if (_spawnPos isEqualType objNull) then {getDir _spawnPos} else {random 360};
@@ -35,26 +49,16 @@ _spawnPos = _spawnPos call CBA_fnc_getPos;
 private _isAutonomous = _dropZone isEqualTo [0, 0, 0];
 private _dzPos = if (_dropZone isEqualType []) then {_dropZone} else {_dropZone call BIS_fnc_randomPosTrigger};
 private _isVehicleDrop = _dropVehicle != "";
-private _range = 1000;
 
-// Prepare and spawn
-private _initTickets = _tickets;
-
-while {_initTickets > 0} do {
-
-	// Player proximity check
-	private _check = {[_spawnPos, _range] call lmf_ai_fnc_getPlayerProximityState};
-	if (call _check isEqualTo "airClose") then {
-		waitUntil {sleep 5; (call _check) in ["airDistance", "groundClose"]};
-	};
-	if (call _check isEqualTo "groundClose") exitWith {};
-
+// Create one delivery; the controller calls this in the current scope.
+private _spawnOnce = {
 	// Aircraft spawning
-	_initTickets = _initTickets - 1;
+	if (_paraVehicle isEqualTo []) exitWith {if (_isVehicleDrop) then {objNull} else {grpNull}};
 	private _isAirSpawn = (_spawnPos # 2) > 20 || surfaceIsWater _spawnPos;
 	private _spawnType = if (_isAirSpawn) then {"FLY"} else {"NONE"};
 
 	private _veh = createVehicle [selectRandom _paraVehicle, _spawnPos, [], 0, _spawnType];
+	if (isNull _veh) exitWith {if (_isVehicleDrop) then {objNull} else {grpNull}};
 	_veh setDir (
 		if (_isAutonomous) then {_dir} else {_spawnPos getDir _dzPos}
 	);
@@ -75,6 +79,7 @@ while {_initTickets > 0} do {
 	private _grp2 = grpNull;
 	private _droppedObj = objNull;
 	private _cargoSize = 0;
+	private _payloadReady = false;
 
 	if (!_isVehicleDrop) then {
 		_grp2 = [_spawnPos, lmf_enemySide, (selectRandom _mgTeam) + (selectRandom _atTeam)] call BIS_fnc_spawnGroup;
@@ -84,6 +89,9 @@ while {_initTickets > 0} do {
 			_x moveInCargo _veh;
 			_x setSkill ((skill _x)*1.25);
 		} forEach units _grp2;
+		// Unseated infantry cannot be delivered by this aircraft.
+		{deleteVehicle _x} forEach (units _grp2 select {objectParent _x != _veh});
+		_payloadReady = units _grp2 findIf {alive _x} != -1;
 		_grp2 enableIRLasers false;
 		_grp2 enableGunLights "ForceOff";
 		_grp2 setSpeedMode "FULL";
@@ -106,7 +114,18 @@ while {_initTickets > 0} do {
 		[_veh, 1000] call ace_cargo_fnc_setSpace;
 		_cargoSize = [_droppedObj] call ace_cargo_fnc_getSizeItem;
 		[_droppedObj, 1] call ace_cargo_fnc_setSize;
-		[_droppedObj, _veh, true] call ace_cargo_fnc_loadItem;
+		_payloadReady = alive _droppedObj && {[_droppedObj, _veh, true] call ace_cargo_fnc_loadItem};
+	};
+
+	// Do not leave a prepared payload or transport behind after a failed setup.
+	if (!_payloadReady || {!alive driver _veh}) exitWith {
+		{
+			private _parent = objectParent _x;
+			if (isNull _parent) then {deleteVehicle _x} else {_parent deleteVehicleCrew _x};
+		} forEach (units _grp + units _grp2);
+		deleteVehicle _droppedObj;
+		deleteVehicle _veh;
+		if (_isVehicleDrop) then {objNull} else {grpNull}
 	};
 
 	// Flight orders
@@ -120,105 +139,114 @@ while {_initTickets > 0} do {
 	_veh flyInHeight _flyInHeight;
 	_veh limitSpeed 200;
 
-	// Wait for the drop.
-	waitUntil {
-		sleep 3;
-		private _triggered = if (_isAutonomous) then {
-			(allPlayers - entities "HeadlessClient_F") findIf {_x distance2D _veh < 600 + (random 600)} != -1
-		} else {
-			_veh inArea _dropZone;
-		};
-		_triggered || {!alive _veh} || {{alive _x} count units _grp < 1}
-	};
+	// Explicit state survives the one-shot caller returning.
+	[_veh, _grp, _grp2, _droppedObj, _cargoSize, _isAutonomous, _dropZone, _isVehicleDrop, _spawnPos, _vehicleCrew, _sentry, _team] spawn {
+		params ["_veh", "_grp", "_grp2", "_droppedObj", "_cargoSize", "_isAutonomous", "_dropZone", "_isVehicleDrop", "_spawnPos", "_vehicleCrew", "_sentry", "_team"];
 
-	// Payload deployment
-	if (alive _veh && {{alive _x} count units _grp > 0}) then {
-		[_grp] call CBA_fnc_clearWaypoints;
-		_veh doMove (_veh getRelPos [5000, 0]);
-
-		if (_isVehicleDrop) then {
-			// Vehicle deployment
-			_veh allowDamage false;
-			[_droppedObj, "ACE_CARGO", [_veh, _cargoSize, 1.5, 0.5, false]] call lmf_paradrop_fnc_dropObject;
-
-			private _crewType = _vehicleCrew;
-			if (_droppedObj isKindOf "Car") then {
-				_crewType = if (count (allTurrets [_droppedObj, false]) > 0) then {selectRandom _sentry} else {(selectRandom _team) + (selectRandom _sentry)};
-			};
-
-			_veh allowDamage true;
-
-			[_droppedObj, _crewType, lmf_enemySide] spawn {
-				params ["_v", "_crew", "_side"];
-				sleep 1;
-				private _g = [getPos _v, _side, _crew] call BIS_fnc_spawnGroup;
-				_g deleteGroupWhenEmpty true;
-
-				if (_v isKindOf "Tank" || _v isKindOf "APC") then {
-					((units _g)#0) moveInDriver _v;
-					if (count units _g > 1) then {((units _g)#1) moveInGunner _v};
-					if (count units _g > 2) then {((units _g)#2) moveInCommander _v};
-				} else {
-					{_x moveInAny _v} forEach units _g;
-				};
-				{deleteVehicle _x} forEach (units _g select {vehicle _x == _x});
-
-				waitUntil {sleep 0.5; isTouchingGround _v};
-				sleep 1;
-
-				private _wp = _g addWaypoint [getPosATL _v, 0];
-				_wp setWaypointType "GUARD";
-				// _g setVariable ["lmf_ai_joinableGroup", true];
-			};
-
-		} else {
-			// Infantry deployment
-			{
-				if !(alive _veh) exitWith {};
-				[_x, "BACKPACK", [_veh, 1.5, "ACE_NonSteerableParachute"]] call lmf_paradrop_fnc_dropUnit;
-			} forEach units _grp2;
-
-			_grp2 leaveVehicle _veh;
-			[
-				{isTouchingGround (leader (_this#0)) || !alive (leader (_this#0))},
-				{
-					params ["_g2"];
-					private _wp = _g2 addWaypoint [getPosATL leader _g2, 0];
-					_wp setWaypointType "GUARD";
-					_g2 setVariable ["lmf_ai_joinableGroup", true];
-				}, [_grp2]
-			] call CBA_fnc_waitUntilAndExecute;
-		};
-
-		// Retreat
-		sleep 20;
-		if (alive _veh) then {
-			{deleteWaypoint _x} forEachReversed waypoints _grp;
-			_veh limitSpeed 999;
-			_veh doMove (_veh getRelPos [25000, _veh getRelDir _spawnPos]);
-			waitUntil {sleep 5; (allPlayers findIf {_x distance2D _veh < 5000} == -1) || !alive _veh};
-			if (alive _veh) then {{_veh deleteVehicleCrew _x} forEach crew _veh; deleteVehicle _veh};
-		};
-	} else {
-		if (_isVehicleDrop) then {deleteVehicle _droppedObj} else {
-			{
-				private _parent = objectParent _x;
-				if (isNull _parent) then {
-					deleteVehicle _x;
-				} else {
-					_parent deleteVehicleCrew _x;
-				};
-			} forEach units _grp2;
-		};
-	};
-
-	// Wait before the next spawn.
-	if (_tickets > 1) then {
+		// Wait for the drop.
 		waitUntil {
-			sleep 10;
-			private _isDead = if (_isVehicleDrop) then {!alive _droppedObj} else {{alive _x} count units _grp2 < 1};
-			_isDead || {!alive _veh} || {call _check isEqualTo "groundClose"}
+			sleep 3;
+			private _triggered = if (_isAutonomous) then {
+				(allPlayers - entities "HeadlessClient_F") findIf {_x distance2D _veh < 600 + (random 600)} != -1
+			} else {
+				_veh inArea _dropZone;
+			};
+			_triggered || {!alive _veh} || {{alive _x} count units _grp < 1}
 		};
-		sleep _respawnTime;
+
+		// Payload deployment
+		if (alive _veh && {{alive _x} count units _grp > 0}) then {
+			[_grp] call CBA_fnc_clearWaypoints;
+			_veh doMove (_veh getRelPos [5000, 0]);
+
+			if (_isVehicleDrop) then {
+				// Vehicle deployment
+				_veh allowDamage false;
+				private _dropped = [_droppedObj, "ACE_CARGO", [_veh, _cargoSize, 1.5, 0.5, false]] call lmf_paradrop_fnc_dropObject;
+				if (!_dropped) exitWith {
+					_veh allowDamage true;
+					deleteVehicle _droppedObj;
+				};
+
+				private _crewType = _vehicleCrew;
+				if (_droppedObj isKindOf "Car") then {
+					_crewType = if (count (allTurrets [_droppedObj, false]) > 0) then {selectRandom _sentry} else {(selectRandom _team) + (selectRandom _sentry)};
+				};
+
+				_veh allowDamage true;
+
+				[_droppedObj, _crewType, lmf_enemySide] spawn {
+					params ["_v", "_crew", "_side"];
+					sleep 1;
+					if (!alive _v) exitWith {};
+					private _g = [getPos _v, _side, _crew] call BIS_fnc_spawnGroup;
+					_g deleteGroupWhenEmpty true;
+
+					if (_v isKindOf "Tank" || _v isKindOf "APC") then {
+						((units _g)#0) moveInDriver _v;
+						if (count units _g > 1) then {((units _g)#1) moveInGunner _v};
+						if (count units _g > 2) then {((units _g)#2) moveInCommander _v};
+					} else {
+						{_x moveInAny _v} forEach units _g;
+					};
+					{deleteVehicle _x} forEach (units _g select {vehicle _x == _x});
+
+					waitUntil {sleep 0.5; !alive _v || {isTouchingGround _v}};
+					sleep 1;
+					if (!alive _v) exitWith {};
+
+					private _wp = _g addWaypoint [getPosATL _v, 0];
+					_wp setWaypointType "GUARD";
+					// _g setVariable ["lmf_ai_joinableGroup", true];
+				};
+
+			} else {
+				// Infantry deployment
+				{
+					if !(alive _veh) exitWith {};
+					[_x, "BACKPACK", [_veh, 1.5, "ACE_NonSteerableParachute"]] call lmf_paradrop_fnc_dropUnit;
+				} forEach units _grp2;
+
+				_grp2 leaveVehicle _veh;
+				[
+					{isTouchingGround (leader (_this#0)) || !alive (leader (_this#0))},
+					{
+						params ["_g2"];
+						private _wp = _g2 addWaypoint [getPosATL leader _g2, 0];
+						_wp setWaypointType "GUARD";
+						_g2 setVariable ["lmf_ai_joinableGroup", true];
+					}, [_grp2]
+				] call CBA_fnc_waitUntilAndExecute;
+			};
+
+			// Retreat
+			sleep 20;
+			if (alive _veh) then {
+				{deleteWaypoint _x} forEachReversed waypoints _grp;
+				_veh limitSpeed 999;
+				_veh doMove (_veh getRelPos [25000, _veh getRelDir _spawnPos]);
+				waitUntil {sleep 5; (allPlayers findIf {_x distance2D _veh < 5000} == -1) || !alive _veh};
+				if (alive _veh) then {{_veh deleteVehicleCrew _x} forEach crew _veh; deleteVehicle _veh};
+			};
+		} else {
+			if (_isVehicleDrop) then {deleteVehicle _droppedObj} else {
+				{
+					private _parent = objectParent _x;
+					if (isNull _parent) then {
+						deleteVehicle _x;
+					} else {
+						_parent deleteVehicleCrew _x;
+					};
+				} forEach units _grp2;
+			};
+		};
 	};
+
+	if (_isVehicleDrop) then {_droppedObj} else {_grp2}
 };
+
+if (_managed) exitWith {
+	[_spawnOnce, _tickets, _respawnTime, _spawnPos, 1000, 5] call lmf_ai_fnc_runWaves;
+};
+
+call _spawnOnce
