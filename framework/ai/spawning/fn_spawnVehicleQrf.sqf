@@ -2,12 +2,8 @@
 	Spawn vehicle QRF
 	Spawns a vehicle QRF with additional infantry where configured.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
-	Drones use GUARD with capability-specific payload tasks.
 
-	Server-owned; call after LMF preInit without tickets to return one delivery without suspension.
-	Supplying tickets selects runWaves, with startup wait and proximity checks even for one ticket.
-	Use spawn for managed waves; managed execution requires a scheduled context (also provided by ZEN remoteExec).
-	Managed execution returns no primary delivery; spawn returns its normal script handle.
+	Server only, after LMF preInit. One-shot call does not suspend; use spawn for managed waves.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
@@ -15,19 +11,16 @@
 		2: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 		3: Respawn delay in seconds <NUMBER> (default: 300)
 
-	Examples:
+	Example:
 		private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
-		[spawn_1, "TRUCK", 1, 300] spawn lmf_ai_fnc_spawnVehicleQrf;
 
-	One-shot returns: Primary GROUP for CAR/TRUCK infantry and APC/HELITRANSPORT cargo infantry;
+	Returns (one-shot): Infantry GROUP for CAR/TRUCK/APC/HELITRANSPORT;
 	vehicle OBJECT for CARARMED/TANK/HELIATTACK/DRONE. objNull for no spawn/non-spawner.
-	Transport flight/cleanup continues independently of the primary group.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
 if !(_spawner) exitWith {objNull};
 
-// Argument presence selects the mode; managed execution requires suspension.
 private _managed = count _this > 2;
 if (_managed && {!canSuspend}) exitWith {};
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
@@ -157,7 +150,6 @@ private _fncHeliTransportEh = {
 	};
 };
 
-// Create one delivery; the controller calls this in the current scope.
 private _spawnOnce = {
 	private _veh = objNull;
 	private _grp = grpNull;
@@ -455,7 +447,6 @@ private _spawnOnce = {
 		};
 	};
 
-	// Only the primary delivery determines wave completion.
 	switch (_vicType) do {
 		case "CAR";
 		case "TRUCK": {_grp};

@@ -3,32 +3,26 @@
 	Spawns an aircraft that drops AI infantry or a vehicle, then leaves and despawns.
 	Author: Alex2k. Contributor: Drgn V4karian.
 
-	Server-owned; call after LMF preInit without tickets to return one delivery without suspension.
-	Supplying tickets selects runWaves, with startup wait and proximity checks even for one ticket.
-	Use spawn for managed waves; managed execution requires a scheduled context (also provided by ZEN remoteExec).
-	Managed execution returns no primary delivery; spawn returns its normal script handle.
+	Server only, after LMF preInit. One-shot call does not suspend; use spawn for managed waves.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0]; object direction is used in autonomous mode)
-		1: Drop zone <STRING, OBJECT, LOCATION or ARRAY> (default: [0, 0, 0]; marker, trigger or location; [0, 0, 0] selects targets automatically; other position arrays are unsupported)
+		1: Drop zone <STRING, OBJECT, LOCATION or ARRAY> (default: [0, 0, 0] = autonomous; otherwise marker, trigger or location)
 		2: Flying height in meters <NUMBER> (default: 200)
 		3: Vehicle classname or CAR/CARARMED/TRUCK/APC/TANK category to drop <STRING> (default: "" for infantry)
 		4: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 		5: Respawn delay in seconds <NUMBER> (default: 300; managed replacements only)
 
-	Examples:
+	Example:
 		private _delivery = [spawn_1, "mrk_dropZone", 200, "TANK"] call lmf_ai_fnc_spawnParadropQrf;
-		[spawn_1, "mrk_dropZone", 200, "TANK", 3, 300] spawn lmf_ai_fnc_spawnParadropQrf;
 
-	One-shot returns: Infantry GROUP or dropped vehicle OBJECT, prepared before the asynchronous flight/drop/cleanup.
+	Returns (one-shot): Prepared infantry GROUP or vehicle OBJECT; delivery continues asynchronously.
 	Returns a null delivery on preparation failure; objNull on a non-spawner machine.
-	The returned payload may still be aboard the aircraft; aircraft cleanup is independent of waves.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
 if !(_spawner) exitWith {objNull};
 
-// Argument presence selects the mode; managed execution requires suspension.
 private _managed = count _this > 4;
 if (_managed && {!canSuspend}) exitWith {};
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
@@ -50,7 +44,6 @@ private _isAutonomous = _dropZone isEqualTo [0, 0, 0];
 private _dzPos = if (_dropZone isEqualType []) then {_dropZone} else {_dropZone call BIS_fnc_randomPosTrigger};
 private _isVehicleDrop = _dropVehicle != "";
 
-// Create one delivery; the controller calls this in the current scope.
 private _spawnOnce = {
 	// Aircraft spawning
 	if (_paraVehicle isEqualTo []) exitWith {if (_isVehicleDrop) then {objNull} else {grpNull}};
@@ -139,7 +132,7 @@ private _spawnOnce = {
 	_veh flyInHeight _flyInHeight;
 	_veh limitSpeed 200;
 
-	// Explicit state survives the one-shot caller returning.
+	// Pass flight state explicitly to the scheduled continuation.
 	[_veh, _grp, _grp2, _droppedObj, _cargoSize, _isAutonomous, _dropZone, _isVehicleDrop, _spawnPos, _vehicleCrew, _sentry, _team] spawn {
 		params ["_veh", "_grp", "_grp2", "_droppedObj", "_cargoSize", "_isAutonomous", "_dropZone", "_isVehicleDrop", "_spawnPos", "_vehicleCrew", "_sentry", "_team"];
 

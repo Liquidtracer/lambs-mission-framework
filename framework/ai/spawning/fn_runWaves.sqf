@@ -1,24 +1,17 @@
 /*
 	Run AI waves
-	Manages replacements for one wave source, following only its primary group or object.
-	Call from a scheduled server scope that keeps the spawn operation's locals alive.
-	The public spawners handle startup waiting before entering this controller.
-	Ends after spawning the final ticket; only pending replacements require a completion wait.
-	Grounded player proximity ends the source; airborne proximity delays spawning.
-	A missing, unsupported, null or already-finished delivery ends the source.
+	Manages replacements for one primary group or object.
+	Call synchronously from a scheduled server spawner scope.
 
 	Arguments:
-		0: One-shot operation returning a GROUP or OBJECT <CODE>
-		1: Total tickets, including the first spawn <NUMBER>
-		2: Delay between completed delivery and replacement, seconds <NUMBER>
+		0: One-shot operation returning GROUP or OBJECT <CODE>
+		1: Total tickets <NUMBER>
+		2: Replacement delay in seconds <NUMBER>
 		3: Proximity position <OBJECT or ARRAY>
 		4: Proximity radius in meters <NUMBER>
-		5: Proximity and completion polling interval, seconds <NUMBER> (default: 5)
+		5: Polling interval in seconds <NUMBER> (default: 5)
 
-	Example (inside a scheduled spawner):
-		[_spawnOnce, _tickets, 0, _spawnPos, 500, 10] call lmf_ai_fnc_runWaves;
-
-	Returns: Nothing. Do not spawn a code closure that depends on caller locals.
+	Returns: Nothing.
 */
 
 params ["_spawnOne", "_waveTickets", "_waveDelay", "_wavePos", "_waveRadius", ["_wavePoll", 5]];
@@ -41,7 +34,7 @@ while {_waveTickets > 0} do {
 	if (_proximity == "groundClose") exitWith {};
 
 	private _primary = call _spawnOne;
-	// Stop failed sources instead of spending tickets in a rapid retry loop.
+	// Stop failed sources without retrying.
 	if (isNil "_primary") exitWith {};
 	if !(_primary isEqualType grpNull || {_primary isEqualType objNull}) exitWith {};
 	if (isNull _primary || {[_primary] call _isFinished}) exitWith {};

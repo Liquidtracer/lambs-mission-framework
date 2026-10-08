@@ -3,6 +3,8 @@
 	Spawns infantry and assigns a patrol task.
 	Author: nkenny. Contributor: Drgn V4karian, Alex2k.
 
+	Server only, after LMF preInit. One-shot call; no suspension required.
+
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
 		1: Patrol target <OBJECT, STRING or ARRAY> (default: [0, 0, 0])
@@ -15,7 +17,6 @@
 		private _grp = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] call lmf_ai_fnc_spawnPatrol;
 
 	Returns: Spawned group <GROUP>; grpNull on a non-spawner machine.
-	One-shot only. Call on the server after LMF preInit; no suspension is required.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
@@ -42,7 +43,6 @@ if (_patrolSpeed == "ATTACK") then {
 	_speed = "LIMITED";
 };
 
-// Prepare and spawn the group
 private _type = [_grpType] call _typeMaker;
 private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 [_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
@@ -52,7 +52,6 @@ _grp setVariable ["lmf_ai_joinableGroup", true];
 _grp setSpeedMode "FULL";
 _grp setCombatMode "RED";
 
-// Assign the patrol task.
 [_grp, _patrolTarget, _patrolRadius, _behaviour, _speed, _formation] call lmf_ai_fnc_taskPatrol;
 
 if (_patrolSpeed == "ATTACK") then {

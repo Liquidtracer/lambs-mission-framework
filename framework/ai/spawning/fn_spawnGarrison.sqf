@@ -1,9 +1,9 @@
 /*
 	Spawn garrison
 	Spawns a group of infantry that garrisons buildings.
-	Runs once on the server without suspension, after LMF preInit. Covered defenders reconsider stance on fire and detection events.
-	Suppression and group losses reduce exposure; releasing a defender ends stance control.
 	Author: nkenny. Contributor: Drgn V4karian, Alex2k.
+
+	Server only, after LMF preInit. One-shot call; no suspension required.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
@@ -16,7 +16,6 @@
 		private _grp = [garrison_1, "TEAM", 100, 1, false] call lmf_ai_fnc_spawnGarrison;
 
 	Returns: Spawned group <GROUP>; grpNull on a non-spawner machine.
-	One-shot only. Call on the server after LMF preInit; no suspension is required.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
@@ -27,7 +26,6 @@ if !(_spawner) exitWith {grpNull};
 params [["_spawnPos", [0, 0, 0]], ["_grpType", "TEAM"], ["_garrisonRadius", 100], ["_distribution", 1], ["_topDown", false]];
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 
-// Prepare and spawn the group
 private _type = [_grpType] call _typeMaker;
 private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 _grp deleteGroupWhenEmpty true;

@@ -111,7 +111,7 @@ private _boat = ["O_T_Boat_Armed_01_hmg_F"];
 private _boatCamo = [];
 
 // Drones
-private _drones = ["O_G_UAV_02_IED_lxWS", "O_UAV_RC40_HE_RF", "O_UAV_RC40_SmokeOrange_RF", "O_UGV_01_rcws_F"]; // UAVs and UGVs used by DRONE QRF.
+private _drones = ["O_UAV_RC40_HE_RF"]; // UAVs and UGVs used by DRONE QRF.
 
 // Miscellaneous
 private _flag = ""; // Path to flag texture

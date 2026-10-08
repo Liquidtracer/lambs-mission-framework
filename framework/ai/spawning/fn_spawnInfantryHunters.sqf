@@ -3,10 +3,7 @@
 	Spawns infantry that hunts targets within the configured radius.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
 
-	Server-owned; call after LMF preInit without tickets to return one delivery without suspension.
-	Supplying tickets selects runWaves, with startup wait and proximity checks even for one ticket.
-	Use spawn for managed waves; managed execution requires a scheduled context (also provided by ZEN remoteExec).
-	Managed execution returns no primary delivery; spawn returns its normal script handle.
+	Server only, after LMF preInit. One-shot call does not suspend; use spawn for managed waves.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
@@ -14,17 +11,15 @@
 		2: Hunting radius in meters <NUMBER> (default: 500)
 		3: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 
-	Examples:
+	Example:
 		private _grp = [spawn_1, "TEAM", 1500] call lmf_ai_fnc_spawnInfantryHunters;
-		[spawn_1, "TEAM", 500, 1] spawn lmf_ai_fnc_spawnInfantryHunters;
 
-	One-shot returns: Spawned GROUP; grpNull on a non-spawner machine. No respawn delay between tickets.
+	Returns (one-shot): Spawned GROUP; grpNull on a non-spawner machine.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
 if !(_spawner) exitWith {grpNull};
 
-// Argument presence selects the mode; managed execution requires suspension.
 private _managed = count _this > 3;
 if (_managed && {!canSuspend}) exitWith {};
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
@@ -34,9 +29,7 @@ if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 params [["_spawnPos", [0, 0, 0]], ["_grpType", "TEAM"], ["_radius", 500], ["_tickets", 1]];
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 
-// Create one delivery; the controller calls this in the current scope.
 private _spawnOnce = {
-	// Spawn and configure the group.
 	private _type = [_grpType] call _typeMaker;
 	private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 	[_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;

@@ -1,29 +1,24 @@
 /*
 	Spawn infantry QRF
-	Spawns an infantry QRF.
+	Spawns infantry with GUARD behavior.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
 
-	Server-owned; call after LMF preInit without tickets to return one delivery without suspension.
-	Supplying tickets selects runWaves, with startup wait and proximity checks even for one ticket.
-	Use spawn for managed waves; managed execution requires a scheduled context (also provided by ZEN remoteExec).
-	Managed execution returns no primary delivery; spawn returns its normal script handle.
+	Server only, after LMF preInit. One-shot call does not suspend; use spawn for managed waves.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
 		1: Group type or soldier count <STRING or NUMBER> (default: "TEAM"; "SQUAD", "TEAM", "SENTRY", "ATTEAM", "AATEAM" or "MGTEAM")
 		2: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 
-	Examples:
+	Example:
 		private _grp = [spawn_1, "TEAM"] call lmf_ai_fnc_spawnInfantryQrf;
-		[spawn_1, "TEAM", 1] spawn lmf_ai_fnc_spawnInfantryQrf;
 
-	One-shot returns: Spawned GROUP; grpNull on a non-spawner machine. No respawn delay between tickets.
+	Returns (one-shot): Spawned GROUP; grpNull on a non-spawner machine.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
 if !(_spawner) exitWith {grpNull};
 
-// Argument presence selects the mode; managed execution requires suspension.
 private _managed = count _this > 2;
 if (_managed && {!canSuspend}) exitWith {};
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
@@ -35,9 +30,7 @@ private _dir = random 360;
 if !(_spawnPos isEqualType []) then {_dir = getDir _spawnPos;};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 
-// Create one delivery; the controller calls this in the current scope.
 private _spawnOnce = {
-	// Spawn and configure the group.
 	private _type = [_grpType] call _typeMaker;
 	private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
 	[_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
