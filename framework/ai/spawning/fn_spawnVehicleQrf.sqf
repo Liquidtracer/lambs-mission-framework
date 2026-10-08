@@ -3,10 +3,11 @@
 	Spawns a vehicle QRF with additional infantry where configured.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
 	Player proximity is checked before every spawn, including when only one ticket is configured.
+	Scheduled, server-owned spawning. Drones use GUARD with capability-specific payload tasks.
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
-		1: Vehicle type <STRING> (default: "TRUCK"; "CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT" or "HELIATTACK")
+		1: Vehicle type <STRING> (default: "TRUCK"; "CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK" or "DRONE")
 		2: Spawn tickets <NUMBER> (default: 1)
 		3: Respawn delay in seconds <NUMBER> (default: 300)
 
@@ -26,6 +27,7 @@ private _dir = random 360;
 if !(_spawnPos isEqualType []) then {_dir = getDir _spawnPos;};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 _vicType = toUpper _vicType;
+if (_vicType == "DRONE" && {_drones isEqualTo []}) exitWith {};
 
 // Local functions for event handlers
 private _fncUnitKilledEh = {
@@ -401,27 +403,54 @@ while {_initTickets > 0} do {
 			_grp addEventHandler ["UnitKilled", _fncUnitKilledEh];
 		};
 
-		case "UAV": {
-			_veh = createVehicle [selectRandom _uav, _spawnPos, [], 0, if (surfaceIsWater _spawnPos) then {"FLY"} else {"NONE"}];
+		case "DRONE": {
+			private _class = selectRandom _drones;
+			private _isAir = _class isKindOf "Air";
+			_veh = createVehicle [_class, _spawnPos, [], 0, if (_isAir && {surfaceIsWater _spawnPos}) then {"FLY"} else {"NONE"}];
 			_veh setDir _dir;
 			private _vehType = getText (configFile >> "CfgVehicles" >> typeOf _veh >> "displayName");
 
 			createVehicleCrew _veh;
 			_grp = group (crew _veh # 0);
 			_grp deleteGroupWhenEmpty true;
-			_grp setGroupIdGlobal [format ["UAV: %1 (%2)", _vehType, groupId _grp]];
+			_grp setGroupIdGlobal [format ["Drone: %1 (%2)", _vehType, groupId _grp]];
 
 			_wp = _grp addWaypoint [getPosASL _veh, -1];
 			_wp setWaypointType "GUARD";
 
-			_veh flyInHeight [selectRandom [100, 115, 125], true];
+			if (_isAir) then {_veh flyInHeight [selectRandom [100, 115, 125], true];};
 
-			_grp addEventHandler ["EnemyDetected", {
-				params ["_group", "_newTarget"];
-				if (!isTouchingGround (vehicle _newTarget)) exitWith {};
-				[vehicle (leader _group), _newTarget] spawn lmf_ai_fnc_taskUavAttack;
-				_group removeEventHandler ["EnemyDetected", _thisEventHandler];
-			}];
+			private _iedPylons = configProperties [configFile >> "CfgVehicles" >> typeOf _veh >> "Components" >> "TransportPylonsComponent" >> "Pylons", "isClass _x && {'LXWS_IED_DRONE_PYLON' in getArray (_x >> 'hardpoints')}", true];
+			if (_isAir && {!(_iedPylons isEqualTo [])}) then {
+				_grp addEventHandler ["EnemyDetected", {
+					params ["_group", "_newTarget"];
+					private _veh = vehicle (leader _group);
+					if (!local _group || {!local _veh} || {!alive _veh} || {!alive _newTarget} || {!isTouchingGround (vehicle _newTarget)}) exitWith {};
+					_group removeEventHandler ["EnemyDetected", _thisEventHandler];
+					[_veh, _newTarget] spawn lmf_ai_fnc_taskUavAttack;
+				}];
+			} else {
+				if (_isAir && {"FakeDetonator_RF" in weapons _veh} && {!isNil "lxRF_fnc_RC40_attack"}) then {
+					_grp addEventHandler ["EnemyDetected", {
+						params ["_group", "_newTarget"];
+						private _veh = vehicle (leader _group);
+						if (!local _group || {!local _veh} || {!alive _veh} || {!alive _newTarget} || {!isTouchingGround (vehicle _newTarget)}) exitWith {};
+						// Reserve once before scheduling the takeoff wait.
+						_group removeEventHandler ["EnemyDetected", _thisEventHandler];
+						[_veh, _group, _newTarget] spawn {
+							params ["_veh", "_group", "_target"];
+							waitUntil {
+								sleep 1;
+								!alive _veh || {!local _veh} || {!local _group} || {!alive _target}
+								|| {isEngineOn _veh && {!isTouchingGround _veh}};
+							};
+							if (!alive _veh || {!local _veh} || {!local _group} || {!isEngineOn _veh} || {isTouchingGround _veh}
+								|| {!alive _target} || {!isTouchingGround (vehicle _target)}) exitWith {};
+							[_veh, _target] call lxRF_fnc_RC40_attack;
+						};
+					}];
+				};
+			};
 		};
 	};
 

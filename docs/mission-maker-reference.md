@@ -167,9 +167,21 @@ Spawns a QRF vehicle with crew and, where applicable, infantry passengers.
 * **2. Total spawn tickets** — Number. Default: 1.
 * **3. Delay after the replacement condition is met, seconds** — Number. Default: 300.
 
-**Categories:** CAR, CARARMED, TRUCK, APC, TANK, HELITRANSPORT, HELIATTACK, UAV.
+**Categories:** CAR, CARARMED, TRUCK, APC, TANK, HELITRANSPORT, HELIATTACK, DRONE.
 
-Use an LMF category, not a classname. The delay applies with multiple tickets. UAV uses the grenade-dropping task; destruction during its target wait ends the attack without spawning a grenade.
+Use an LMF category for argument 1. The delay applies with multiple tickets. In LMF 2.0, rename the old `_uav` pool to `_drones` and change `"UAV"` calls to `"DRONE"`; there is no legacy alias.
+
+Configure both air UAVs and ground UGVs in `_drones` in `settings/cfg_AI.hpp`. DRONE randomly selects from this pool for each spawn; use only classes available in your mission's mods/DLCs. Normal armed and unarmed drones use GUARD and Arma AI for movement, scouting and weapon use. Ground drones receive no flight commands. Empty pools spawn nothing; duplicate classnames retain their random selection weighting.
+
+IED UAVs with the `LXWS_IED_DRONE_PYLON` hardpoint use their real loaded payloads, with approximate target positioning, requested search/approach heights of 50–200 m, drop heights of 20–60 m and 30 seconds between drops. Once empty, the special task ends and the living drone retains GUARD as a scout. Destruction during the wait cancels further drops; there is no fake-grenade fallback.
+
+RF drones with `FakeDetonator_RF` use the native RF attack behavior after normal takeoff, against a detected ground target. RF handles the final HE/smoke effect. HE and smoke support were reported working in local runtime tests; the RF documentation itself describes HE. The complete QRF flow still needs dedicated-server/JIP testing.
+
+Zeus **LMF AI → Vehicle QRF → DRONE** exposes the category and randomly selects from `_drones`, using the same spawner as mission calls. Individual drone classnames are not selectable in Zeus:
+
+```sqf
+[spawn_1, "DRONE", 3, 300] spawn lmf_ai_fnc_spawnVehicleQrf;
+```
 
 
 

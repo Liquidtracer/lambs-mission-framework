@@ -8,12 +8,13 @@
 * **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
 * **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
 * **Improved:** Reworked AI helicopter landing searches and evacuation handling, and boat landing and follow-up tasks.
+* **Improved:** Unified UAV/UGV QRF in the configured `_drones`/`DRONE` pool, with native GUARD behavior, real IED payload drops, RF self-destruct attacks and category-based drone spawning in Zeus.
 * **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups.
 * **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Tweaked:** Garrison stance reactions now account for cover, suppression and group losses.
 * **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal/Available Optics; TO&E handles missing LMF roles.
-* **Fixed:** Garrison reactions handle empty building-position searches, and destroyed UAVs stop before dropping grenades.
+* **Fixed:** Garrison reactions handle empty building-position searches.
 * **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.

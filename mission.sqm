@@ -8,18 +8,18 @@ class EditorData
 	toggles=1;
 	class ItemIDProvider
 	{
-		nextID=152;
+		nextID=169;
 	};
 	class LayerIndexProvider
 	{
-		nextID=44;
+		nextID=55;
 	};
 	class Camera
 	{
-		pos[]={14552.968,131.80104,16787.541};
-		dir[]={0.52448058,-0.72414327,-0.44781318};
-		up[]={0.55071312,0.68964952,-0.47021109};
-		aside[]={-0.64933431,1.4901161e-08,-0.76050293};
+		pos[]={14592.711,79.690895,16643.93};
+		dir[]={0.4338347,-0.46122721,0.77398783};
+		up[]={0.22551607,0.88728207,0.40233457};
+		aside[]={0.87231314,1.4901161e-08,-0.48894787};
 	};
 };
 binarizationWanted=0;
@@ -1891,7 +1891,7 @@ class Mission
 						{
 							dataType="Trigger";
 							position[]={14634.396,17.91,16713.248};
-							angle=2.3410096;
+							angle=2.3410089;
 							class Attributes
 							{
 								name="RRR";
@@ -1911,7 +1911,7 @@ class Mission
 						{
 							dataType="Trigger";
 							position[]={14634.396,17.91,16713.248};
-							angle=2.3410096;
+							angle=2.3410089;
 							class Attributes
 							{
 								condition="(""Land"" countType thislist > 0) && {((getPosATL (thislist select 0)) select 2 < 1)}";

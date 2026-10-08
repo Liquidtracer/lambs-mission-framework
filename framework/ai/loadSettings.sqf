@@ -44,7 +44,7 @@ private _vehicleDefinitions = [
 	["HELIATTACK", _heliAttack],
 	["PARA_VEHICLE", _paraVehicle],
 	["BOAT", _boat],
-	["UAV", _uav]
+	["DRONE", _drones]
 ];
 private _vehicles = createHashMapFromArray _vehicleDefinitions;
 

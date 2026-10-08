@@ -16,7 +16,7 @@ private _heliTransport = _vehicles get "HELITRANSPORT";
 private _heliAttack = _vehicles get "HELIATTACK";
 private _paraVehicle = _vehicles get "PARA_VEHICLE";
 private _boat = _vehicles get "BOAT";
-private _uav = _vehicles get "UAV";
+private _drones = _vehicles get "DRONE";
 
 private _autorifleman = _roles get "AUTORIFLEMAN";
 private _crew = _roles get "CREW";

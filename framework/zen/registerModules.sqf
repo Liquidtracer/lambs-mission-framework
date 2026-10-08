@@ -148,7 +148,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 // Vehicle QRF
 ["LMF AI", "Vehicle QRF", {
-	private _options = ["CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK", "UAV"];
+	private _options = ["CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK", "DRONE"];
 	["Vehicle QRF", [
 
 		["COMBO", "Vehicle Type", [_options, _options, 2]]
