@@ -6,9 +6,6 @@
 
 #include "..\..\settings\cfg_Player.sqf"
 
-// Temporary conversion until cfg_Player uses string weapon keys.
-private _weaponKeys = ["FLARE_GUN", "PISTOL", "SMG", "CARBINE", "RIFLE", "RIFLE_GL", "DMR", "LMG", "MMG", "LAT", "MAT"];
-
 private _roleDefinitions = [
 	["RIFLEMAN", _rifleman, _rWeapon, [_rUniform, _rVest, _rHeadgear, _rGoggles, _rBackpack]],
 	["PLATOON_LEADER", _platoonLeader, _plWeapon, [_plUniform, _plVest, _plHeadgear, _plGoggles, _plBackpack]],
@@ -36,7 +33,7 @@ private _riflemanClothing = [_rUniform, _rVest, _rHeadgear, _rGoggles, _rBackpac
 private _roles = createHashMap;
 private _roleByClass = createHashMap;
 {
-	_x params ["_roleKey", "_definition", "_weaponId", "_clothingPools"];
+	_x params ["_roleKey", "_definition", "_weaponKey", "_clothingPools"];
 	_definition params ["_class", "_displayName", "_rank"];
 	private _clothing = createHashMap;
 	{
@@ -49,7 +46,7 @@ private _roleByClass = createHashMap;
 		["CLASS", _class],
 		["DISPLAY_NAME", _displayName],
 		["RANK", _rank],
-		["WEAPON", _weaponKeys select _weaponId],
+		["WEAPON", _weaponKey],
 		["CLOTHING", _clothing]
 	]];
 	if (_class isNotEqualTo "") then {_roleByClass set [toLower _class, _roleKey]};

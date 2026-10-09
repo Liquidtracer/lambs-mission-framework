@@ -77,7 +77,7 @@ for "_i" from 1 to 2 do {_unit addItem "ACE_tourniquet"};
 _unit addItem "ACE_morphine";
 
 // Sidearm
-if (lmf_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
+if (lmf_pistolAll) then {[_unit, "PISTOL"] call lmf_equipment_fnc_giveWeapon};
 
 // Grenades
 for "_i" from 1 to 2 do {[_unit, (selectRandom _grenade), true] call lmf_equipment_fnc_addItem};

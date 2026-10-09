@@ -1,34 +1,30 @@
 /*
 	Give weapon
-	Give weapon according to weapon type number or uppercase registry key.
+	Give weapon according to an exact uppercase registry key.
 	Run where the unit is local.
 	Author: G4rrus. Contributor: Alex2k.
 
 	Arguments:
 		0: Unit <OBJECT>
-		1: Weapon type <NUMBER|STRING> (0-10 or an exact uppercase WEAPONS registry key; default 3)
+		1: Weapon key <STRING> (exact uppercase WEAPONS registry key; default "CARBINE")
 
 	Examples:
-		[player, 4] call lmf_equipment_fnc_giveWeapon;  // Rifle
-		[player, 1] call lmf_equipment_fnc_giveWeapon;  // Pistol
+		[player, "PISTOL"] call lmf_equipment_fnc_giveWeapon;
 		[player, "RIFLE"] call lmf_equipment_fnc_giveWeapon;
 */
 
-params [["_unit", objNull, [objNull]], ["_weapon", 3, [123, ""]]];
+params [["_unit", objNull, [objNull]], ["_weapon", "CARBINE"]];
 
 if (isNull _unit || {!local _unit}) exitWith {false};
 
-// Temporary translation; remove dual-input support after all internal callers use strings.
-if (_weapon isEqualType "") then {
-	private _weaponKeys = ["FLARE_GUN", "PISTOL", "SMG", "CARBINE", "RIFLE", "RIFLE_GL", "DMR", "LMG", "MMG", "LAT", "MAT"];
-	_weapon = _weaponKeys find _weapon;
-};
+// Reject supplied non-string values instead of replacing them with the default.
+if !(_weapon isEqualType "") exitWith {};
 
 private _config = call lmf_equipment_fnc_getPlayerConfig;
 private _weapons = _config get "WEAPONS";
 
 switch (_weapon) do {
-	case 0: {
+	case "FLARE_GUN": {
 		private _weaponConfig = _weapons get "FLARE_GUN";
 		private _flareGun = (_weaponConfig get "CLASSES") select 0;
 		private _flareGunAmmo = (_weaponConfig get "AMMO") select 0;
@@ -37,7 +33,7 @@ switch (_weapon) do {
 		for "_i" from 1 to 4 do {[_unit, _flareGunAmmo, true] call lmf_equipment_fnc_addItem};
 
 	};
-	case 1: {
+	case "PISTOL": {
 		private _weaponConfig = _weapons get "PISTOL";
 		private _pistol = _weaponConfig get "CLASSES";
 		private _pistolAmmo = _weaponConfig get "AMMO";
@@ -50,7 +46,7 @@ switch (_weapon) do {
 		_unit addHandgunItem (selectRandom _pistolAttach1);
 		_unit addHandgunItem (selectRandom _pistolAttach2);
 	};
-	case 2: {
+	case "SMG": {
 		private _weaponConfig = _weapons get "SMG";
 		private _smg = _weaponConfig get "CLASSES";
 		private _smgAmmo = _weaponConfig get "AMMO";
@@ -67,7 +63,7 @@ switch (_weapon) do {
 		_unit addPrimaryWeaponItem (selectRandom _smgOptic);
 		_unit addPrimaryWeaponItem (selectRandom _smgBipod);
 	};
-	case 3: {
+	case "CARBINE": {
 		private _weaponConfig = _weapons get "CARBINE";
 		private _carbine = _weaponConfig get "CLASSES";
 		private _carbineAmmo = _weaponConfig get "AMMO";
@@ -86,7 +82,7 @@ switch (_weapon) do {
 		_unit addPrimaryWeaponItem (selectRandom _carbineOptic);
 		_unit addPrimaryWeaponItem (selectRandom _carbineBipod);
 	};
-	case 4: {
+	case "RIFLE": {
 		private _weaponConfig = _weapons get "RIFLE";
 		private _rifle = _weaponConfig get "CLASSES";
 		private _rifleAmmo = _weaponConfig get "AMMO";
@@ -105,7 +101,7 @@ switch (_weapon) do {
 		_unit addPrimaryWeaponItem (selectRandom _rifleOptic);
 		_unit addPrimaryWeaponItem (selectRandom _rifleBipod);
 	};
-	case 5: {
+	case "RIFLE_GL": {
 		private _weaponConfig = _weapons get "RIFLE_GL";
 		private _rifleGl = _weaponConfig get "CLASSES";
 		private _rifleGlAmmo = _weaponConfig get "AMMO";
@@ -133,7 +129,7 @@ switch (_weapon) do {
 		_unit addPrimaryWeaponItem (selectRandom _rifleGlOptic);
 		_unit addPrimaryWeaponItem (selectRandom _rifleGlBipod);
 	};
-	case 6: {
+	case "DMR": {
 		private _weaponConfig = _weapons get "DMR";
 		private _dmr = _weaponConfig get "CLASSES";
 		private _dmrAmmo = _weaponConfig get "AMMO";
@@ -150,7 +146,7 @@ switch (_weapon) do {
 		_unit addPrimaryWeaponItem (selectRandom _dmrOptic);
 		_unit addPrimaryWeaponItem (selectRandom _dmrBipod);
 	};
-	case 7: {
+	case "LMG": {
 		private _weaponConfig = _weapons get "LMG";
 		private _lmg = _weaponConfig get "CLASSES";
 		private _lmgAmmo = _weaponConfig get "AMMO";
@@ -169,7 +165,7 @@ switch (_weapon) do {
 		_unit addPrimaryWeaponItem (selectRandom _lmgOptic);
 		_unit addPrimaryWeaponItem (selectRandom _lmgBipod);
 	};
-	case 8: {
+	case "MMG": {
 		private _weaponConfig = _weapons get "MMG";
 		private _mmg = _weaponConfig get "CLASSES";
 		private _mmgAmmo = _weaponConfig get "AMMO";
@@ -186,7 +182,7 @@ switch (_weapon) do {
 		_unit addPrimaryWeaponItem (selectRandom _mmgOptic);
 		_unit addPrimaryWeaponItem (selectRandom _mmgBipod);
 	};
-	case 9: {
+	case "LAT": {
 		private _weaponConfig = _weapons get "LAT";
 		private _lat = _weaponConfig get "CLASSES";
 		private _latAmmo = _weaponConfig get "AMMO";
@@ -194,7 +190,7 @@ switch (_weapon) do {
 		_unit addWeapon (selectRandom _lat);
 		[_unit, selectRandom _latAmmo, true] call lmf_equipment_fnc_addItem
 	};
-	case 10: {
+	case "MAT": {
 		private _weaponConfig = _weapons get "MAT";
 		private _mat = _weaponConfig get "CLASSES";
 		private _matAmmo = _weaponConfig get "AMMO";
