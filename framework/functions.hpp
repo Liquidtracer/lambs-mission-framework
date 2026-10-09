@@ -92,6 +92,7 @@ class equipment {
 	tag = "lmf_equipment";
 	class functions {
 		file = "framework\equipment";
+		class getPlayerConfig {};
 		class applyRoleFromClass {};
 		class showRoleChangeMessage {};
 		class applyBaseLoadout {};

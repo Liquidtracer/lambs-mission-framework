@@ -31,5 +31,10 @@ lmf_admin_uids = [
 // Load AI settings into the internal configuration registry.
 call compile preprocessFileLineNumbers "framework\ai\loadSettings.sqf";
 
+// Keep cfg_Player optional during normal startup with custom gear disabled.
+if (lmf_playerGear) then {
+	call compile preprocessFileLineNumbers "framework\equipment\loadSettings.sqf";
+};
+
 // Define BFT helpers and register request and feedback handlers.
 call compile preprocessFileLineNumbers "framework\bft\initGroupState.sqf";
