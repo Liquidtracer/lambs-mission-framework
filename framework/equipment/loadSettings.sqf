@@ -1,7 +1,7 @@
 /*
 	Player equipment configuration
 	Builds the machine-local registry during preInit when custom player gear is enabled.
-	Existing consumers still include cfg_Player directly. Treat registry pools as read-only.
+	The only direct consumer of cfg_Player.sqf; other equipment systems access the Player registry. Treat registry pools as read-only.
 */
 
 #include "..\..\settings\cfg_Player.sqf"

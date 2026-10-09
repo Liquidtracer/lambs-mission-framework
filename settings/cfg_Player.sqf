@@ -2,7 +2,7 @@
 	Player equipment settings
 	Defines player equipment, also used in configured vehicles and supply crates.
 
-	Only required when custom player gear is enabled.
+	Loaded at startup when lmf_playerGear = true, or lazily for explicit equipment operations when lmf_playerGear = false.
 */
 
 // Radios

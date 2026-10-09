@@ -25,8 +25,8 @@ Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locall
 
 - `lmf_playerGear` applies the configured LMF loadouts. With `false`, starting Eden equipment is retained and its startup snapshot is restored on respawn. With custom gear enabled, `lmf_keepRole = true` restores the original slot role on respawn; `false` gives Rifleman.
 - `lmf_personalArsenal` enables warmup headgear/glasses selection and Available Optics; it requires both `lmf_playerGear` and `lmf_warmup`. Crew and pilot roles do not receive Available Optics.
-- `lmf_personalRadio` gives everyone the configured personal radio (AN/PRC-343 in the current player settings). `lmf_pistolAll` gives everyone a sidearm; disabling it retains role-specific sidearms. `lmf_riflemanLat` gives Rifleman the configured light anti-tank weapon. These gear switches require `lmf_playerGear`.
-- `lmf_playerMaps` and `lmf_playerGps`: `0` = everyone, `1` = configured leader and pilot roles, `2` = none. These follow loadout roles, not current group leadership. `lmf_playerNvg`: `0` = everyone, `1` = helicopter/plane pilots, `2` = none. These settings require `lmf_playerGear`.
+- `lmf_personalRadio` gives everyone the configured personal radio (AN/PRC-343 in the current player settings). `lmf_pistolAll` gives everyone a sidearm; disabling it retains role-specific sidearms. `lmf_riflemanLat` gives Rifleman the configured light anti-tank weapon. These switches are applied whenever an LMF role/base loadout is applied, including explicit calls with automatic custom gear disabled.
+- `lmf_playerMaps` and `lmf_playerGps`: `0` = everyone, `1` = configured leader and pilot roles, `2` = none. These follow loadout roles, not current group leadership. `lmf_playerNvg`: `0` = everyone, `1` = helicopter/plane pilots, `2` = none. These settings also apply to explicit LMF loadout calls with automatic custom gear disabled.
 - `lmf_camoCoef` sets the player's camouflage coefficient; higher values make players easier for AI to spot. `lmf_jipTp` enables one successful JIP teleport to a suitable friendly player within five minutes of offer initialization; leaving the 200 m start area, death or changing unit ends the offer.
 
 ### Map and BFT
@@ -45,6 +45,61 @@ Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locall
 - `lmf_supplyDropLimit` sets the shared mission request quota; `0` disables the player request module. Requests require an assigned map, a supported long-range radio and inactive warmup. Place a marker named `respawn` for the aircraft spawn-position calculation. Accepted requests share a 30-second cooldown.
 - `lmf_supplyDropAircraft` selects the transport classname; planes and helicopters use the same fly-over parachute delivery. `lmf_supplyDropVehicles` enables requests for nonempty `lmf_vic1`–`lmf_vic4` entries. Direct [Supply Drop calls](#supply-drop) bypass the player request quota and cooldown.
 - `lmf_forwardDeploy` enables group-leader registration during warmup and requires `lmf_warmup`. `lmf_forwardDeploy_height = 0` selects ground deployment; positive values select an airdrop in meters, with values below `100` raised to `100`. See [Forward Deploy](#forward-deploy) for required Eden asset registration and controls.
+
+## Player equipment
+
+Configure Player gear in `settings/cfg_Player.sqf` before mission start. The loader builds a machine-local registry; loadout functions, Role Selector, ZEN, Personal Arsenal and Supply Crates read it through the lazy accessor. Do not edit the registry directly or include the settings file in custom consumers. AI gear uses the separate `settings/cfg_AI.hpp` configuration.
+
+### Roles and clothing
+
+Each of the 20 role definitions is `[classname, display name, rank]`. Use a unique Eden unit classname per role; matching ignores classname case. An empty classname has no automatic assignment, and an unconfigured classname receives no automatic LMF role. The display name is used for the current role and selection menus. Explicit role selection does not change the unit's classname.
+
+The role's `*Uniform`, `*Vest`, `*Headgear`, `*Goggles` and `*Backpack` arrays provide selection pools. For example, `_medVest = [""]` inherits `_rVest`. Only the exact one-element array `[""]` inherits the corresponding Rifleman pool; this also applies to crew and pilot roles and direct `applyBaseLoadout` calls. `[]` does **not** inherit or provide fallback equipment. Mixed arrays and duplicate entries are retained; duplicates retain their random-selection weighting.
+
+Set each role's `*Weapon` value to one of these exact uppercase keys:
+
+`FLARE_GUN`, `PISTOL`, `SMG`, `CARBINE`, `RIFLE`, `RIFLE_GL`, `DMR`, `LMG`, `MMG`, `LAT`, `MAT`.
+
+For example, `_rWeapon = "RIFLE"` and `_gWeapon = "RIFLE_GL"`. Role-specific extras such as the AT gunner's MAT launcher remain part of the role function.
+
+### Weapon pools and supplies
+
+Edit each category's weapon, ammunition, optic, attachment and bipod pools in the Weapons section. For example, `_rifle` selects the rifle, `_rifleAmmo` and `_rifleAmmoT` select normal/tracer magazines, and `_rifleOptic`, `_rifleAttach1`, `_rifleAttach2`, `_rifleBipod` select its attachments. Selections are independent; use mutually compatible classes. Both pistol attachment pools are applied, MAT uses its optic in the secondary weapon slot, and `_rifleGlUgl1`–`_rifleGlUgl4` remain separate ammunition pools with fixed distribution quantities.
+
+Flare gun settings `_flareGun` and `_flareGunAmmo` remain scalar strings. Radio, binocular and NVG settings are also scalar strings. Grenades and `_availableOptics` are arrays. Clothing inheritance does not apply to weapon/attachment pools: `[""]` supplies an empty classname, and `[]` receives no fallback or validation.
+
+Supply Crates use the first classname in the relevant configured weapon/ammunition/grenade pool, not a random choice or every variant. A first entry of `""` skips that supply; keep a one-element `[""]` pool for an unused entry rather than `[]`. Crate quantities and fixed medical, explosive and vehicle supplies are defined by the existing crate initializer.
+
+### Assignment and respawn
+
+With `lmf_playerGear = true`, startup assigns the role matching the player's Eden classname. Place an object named `crateRoles` to offer the 20 roles through ACE interaction. It uses configured display names, applies the selected role to the interacting player and is not restricted to warmup.
+
+Run direct calls on the unit's owner after LMF initialization. For a local player:
+
+```sqf
+[player] call lmf_equipment_fnc_applyMedic;
+[player] call lmf_equipment_fnc_applyRoleFromClass;
+```
+
+The first call explicitly selects Medic; the second reapplies the classname role and requires an interface client. ZEN **LMF Utility → Apply New Loadout** sends the selected role to the unit's owner. **Reload Original Loadout** reapplies the classname role; it does not restore an inventory snapshot.
+
+Explicit role calls, the role crate and ZEN remain available with `lmf_playerGear = false`. PreInit then skips Player configuration, but consumers load it synchronously when needed. With custom gear enabled, `lmf_keepRole = true` reapplies the original slot role on respawn; false gives Rifleman. It does not preserve the last role selected manually or through ZEN. With custom gear disabled, respawn restores the startup Eden loadout snapshot regardless of `lmf_keepRole` or later manual equipment changes.
+
+Personal Arsenal and Available Optics require all three settings `lmf_playerGear`, `lmf_personalArsenal` and `lmf_warmup`, and are available only during active warmup. Headgear/glasses and crew/pilot optics exclusion follow the starting slot classname, not subsequent role changes. `_availableOptics = [""]` omits the optics menu. Joining after warmup does not offer these actions.
+
+### Give a configured weapon
+
+**Run on:** Unit owner · **Use:** call
+
+```sqf
+[player, "RIFLE"] call lmf_equipment_fnc_giveWeapon;
+[player, "PISTOL"] call lmf_equipment_fnc_giveWeapon;
+[player] call lmf_equipment_fnc_giveWeapon; // Uses CARBINE
+```
+
+Argument 0 is the unit (default `objNull`); argument 1 is an exact uppercase weapon key (default `"CARBINE"`). The function distributes that category's weapon, ammunition and attachments; it does not apply a complete role or clothing. Null/nonlocal units are rejected. Unknown keys and supplied non-string values distribute nothing. Numeric Player weapon IDs are no longer supported; update custom mission calls as well as role settings. Do not use the return value as a success indicator.
+
+For custom configuration readers, `call lmf_equipment_fnc_getPlayerConfig` takes no arguments and returns the existing registry by reference, loading it if absent even with custom gear disabled. Treat its maps and arrays as read-only. It does not apply equipment or reload an existing registry. The [architecture reference](architecture.md#player-setup-asset-spawners-and-service) describes its fields.
 
 ## AI spawning
 
