@@ -1,21 +1,28 @@
 /*
 	Give weapon
-	Give weapon according to weapon type number.
+	Give weapon according to weapon type number or uppercase registry key.
 	Run where the unit is local.
 	Author: G4rrus. Contributor: Alex2k.
 
 	Arguments:
 		0: Unit <OBJECT>
-		1: Weapon type <NUMBER> (0-10, see cfg_Player for weapon type definitions)
+		1: Weapon type <NUMBER|STRING> (0-10 or an exact uppercase WEAPONS registry key; default 3)
 
 	Examples:
 		[player, 4] call lmf_equipment_fnc_giveWeapon;  // Rifle
 		[player, 1] call lmf_equipment_fnc_giveWeapon;  // Pistol
+		[player, "RIFLE"] call lmf_equipment_fnc_giveWeapon;
 */
 
-params [["_unit", objNull, [objNull]], ["_weapon", 3, [123]]];
+params [["_unit", objNull, [objNull]], ["_weapon", 3, [123, ""]]];
 
 if (isNull _unit || {!local _unit}) exitWith {false};
+
+// Temporary translation; remove dual-input support after all internal callers use strings.
+if (_weapon isEqualType "") then {
+	private _weaponKeys = ["FLARE_GUN", "PISTOL", "SMG", "CARBINE", "RIFLE", "RIFLE_GL", "DMR", "LMG", "MMG", "LAT", "MAT"];
+	_weapon = _weaponKeys find _weapon;
+};
 
 private _config = call lmf_equipment_fnc_getPlayerConfig;
 private _weapons = _config get "WEAPONS";

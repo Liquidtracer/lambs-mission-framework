@@ -257,7 +257,8 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 // Apply new loadout
 ["LMF Utility", "Apply New Loadout", {
 
-	#include "..\..\settings\cfg_Player.sqf"
+	private _config = call lmf_equipment_fnc_getPlayerConfig;
+	private _roleConfig = _config get "ROLES";
 
 	private _infCommanderIcon = "\A3\ui_f\data\map\vehicleicons\iconmancommander_ca.paa";
 	private _infLeaderIcon = "\A3\ui_f\data\map\vehicleicons\iconmanleader_ca.paa";
@@ -269,35 +270,37 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 	private _roles = [
 		["", ""],
-		[_platoonLeader#1, _infCommanderIcon],
-		[_platoonSgt#1, _infLeaderIcon],
-		[_medic#1, _infMedicIcon],
-		[_rto#1, _infDefaultIcon],
-		[_jtac#1, _infDefaultIcon],
+		["PLATOON_LEADER", _infCommanderIcon],
+		["PLATOON_SERGEANT", _infLeaderIcon],
+		["MEDIC", _infMedicIcon],
+		["RTO", _infDefaultIcon],
+		["JTAC", _infDefaultIcon],
 		["", ""],
-		[_squadLeader#1, _infLeaderIcon],
-		[_teamLeader#1, _infLeaderIcon],
-		[_autorifleman#1, _infMgIcon],
-		[_grenadier#1 , _infDefaultIcon],
-		[_rifleman#1, _infDefaultIcon],
+		["SQUAD_LEADER", _infLeaderIcon],
+		["TEAM_LEADER", _infLeaderIcon],
+		["AUTORIFLEMAN", _infMgIcon],
+		["GRENADIER" , _infDefaultIcon],
+		["RIFLEMAN", _infDefaultIcon],
 		["", ""],
-		[_antiTankGunner#1, _infAtIcon],
-		[_antiTankAssistant#1, _infAtIcon],
-		[_machineGunner#1, _infMgIcon],
-		[_machineGunnerAssistant#1, _infMgIcon],
+		["ANTI_TANK_GUNNER", _infAtIcon],
+		["ANTI_TANK_ASSISTANT", _infAtIcon],
+		["MACHINE_GUNNER", _infMgIcon],
+		["MACHINE_GUNNER_ASSISTANT", _infMgIcon],
 		["", ""],
-		[_crewLeader#1, _vehCommanderIcon],
-		[_crewSgt#1, _infLeaderIcon],
-		[_crew#1, _infDefaultIcon],
+		["VEHICLE_PLATOON_LEADER", _vehCommanderIcon],
+		["VEHICLE_COMMANDER", _infLeaderIcon],
+		["VEHICLE_CREW", _infDefaultIcon],
 		["", ""],
-		[_heloPilot#1, _infDefaultIcon],
-		[_heloCrew#1, _infDefaultIcon],
-		[_pilot#1, _infDefaultIcon]
+		["HELICOPTER_PILOT", _infDefaultIcon],
+		["HELICOPTER_CREW", _infDefaultIcon],
+		["PILOT", _infDefaultIcon]
 	];
 
 	private _comboOptions = [];
 	for "_i" from 0 to (count _roles) - 1 do {
-		_comboOptions pushBack ([(_roles select _i) select 0, "", (_roles select _i) select 1]);
+		private _roleKey = (_roles select _i) select 0;
+		private _displayName = if (_roleKey isEqualTo "") then {""} else {(_roleConfig get _roleKey) get "DISPLAY_NAME"};
+		_comboOptions pushBack ([_displayName, "", (_roles select _i) select 1]);
 	};
 
 	["Apply New Loadout", [
@@ -312,32 +315,30 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		if (isNull _obj) exitWith {["Error: no unit"] call zen_common_fnc_showMessage};
 		if !(_obj isKindOf "Man") exitWith {["Error: not a soldier"] call zen_common_fnc_showMessage};
 
-		#include "..\..\settings\cfg_Player.sqf"
-
 		// Role selection
-		if (_type#0 isEqualTo _platoonLeader#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonLeader", _obj]; ["Applied: Platoon Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _platoonSgt#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonSergeant", _obj]; ["Applied: Platoon Sergeant"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _medic#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMedic", _obj]; ["Applied: Medic"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _rto#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRadioOperator", _obj]; ["Applied: RTO"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _jtac#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyJtac", _obj]; ["Applied: JTAC"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "PLATOON_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonLeader", _obj]; ["Applied: Platoon Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "PLATOON_SERGEANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonSergeant", _obj]; ["Applied: Platoon Sergeant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "MEDIC") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMedic", _obj]; ["Applied: Medic"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "RTO") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRadioOperator", _obj]; ["Applied: RTO"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "JTAC") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyJtac", _obj]; ["Applied: JTAC"] call zen_common_fnc_showMessage;};
 
-		if (_type#0 isEqualTo _squadLeader#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applySquadLeader", _obj]; ["Applied: Squad Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _teamLeader#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyTeamLeader", _obj]; ["Applied: Team Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _autorifleman#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAutorifleman", _obj]; ["Applied: Autorifleman"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _grenadier#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyGrenadier", _obj]; ["Applied: Grenadier"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _rifleman#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRifleman", _obj]; ["Applied: Rifleman"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "SQUAD_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applySquadLeader", _obj]; ["Applied: Squad Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "TEAM_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyTeamLeader", _obj]; ["Applied: Team Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "AUTORIFLEMAN") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAutorifleman", _obj]; ["Applied: Autorifleman"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "GRENADIER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyGrenadier", _obj]; ["Applied: Grenadier"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "RIFLEMAN") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRifleman", _obj]; ["Applied: Rifleman"] call zen_common_fnc_showMessage;};
 
-		if (_type#0 isEqualTo _antiTankGunner#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankGunner", _obj]; ["Applied: AT Gunner"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _antiTankAssistant#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankAssistant", _obj]; ["Applied: AT Assistant"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _machineGunner#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunner", _obj]; ["Applied: Machine Gunner"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _machineGunnerAssistant#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunnerAssistant", _obj]; ["Applied: MG Assistant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "ANTI_TANK_GUNNER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankGunner", _obj]; ["Applied: AT Gunner"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "ANTI_TANK_ASSISTANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankAssistant", _obj]; ["Applied: AT Assistant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "MACHINE_GUNNER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunner", _obj]; ["Applied: Machine Gunner"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "MACHINE_GUNNER_ASSISTANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunnerAssistant", _obj]; ["Applied: MG Assistant"] call zen_common_fnc_showMessage;};
 
-		if (_type#0 isEqualTo _crewLeader#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehiclePlatoonLeader", _obj]; ["Applied: Crew Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _crewSgt#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCommander", _obj]; ["Applied: Crew Sergeant"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _crew#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCrew", _obj]; ["Applied: Crewman"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _heloPilot#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterPilot", _obj]; ["Applied: Helo Pilot"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _heloCrew#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterCrew", _obj]; ["Applied: Helo Crew"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo _pilot#1) exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPilot", _obj]; ["Applied: Pilot"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "VEHICLE_PLATOON_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehiclePlatoonLeader", _obj]; ["Applied: Crew Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "VEHICLE_COMMANDER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCommander", _obj]; ["Applied: Crew Sergeant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "VEHICLE_CREW") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCrew", _obj]; ["Applied: Crewman"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "HELICOPTER_PILOT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterPilot", _obj]; ["Applied: Helo Pilot"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "HELICOPTER_CREW") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterCrew", _obj]; ["Applied: Helo Crew"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "PILOT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPilot", _obj]; ["Applied: Pilot"] call zen_common_fnc_showMessage;};
 
 	}, {}, _this#1] call zen_dialog_fnc_create;
 }, "\A3\ui_f\data\igui\cfg\actions\gear_ca.paa"] call zen_custom_modules_fnc_register;

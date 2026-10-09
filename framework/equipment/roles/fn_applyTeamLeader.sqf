@@ -8,12 +8,17 @@ params [["_unit", objNull, [objNull]]];
 
 if (isNull _unit || {!local _unit}) exitWith {};
 
-#include "..\..\..\settings\cfg_Player.sqf"
+private _config = call lmf_equipment_fnc_getPlayerConfig;
+private _role = (_config get "ROLES") get "TEAM_LEADER";
+private _clothing = _role get "CLOTHING";
+private _radioL = (_config get "RADIOS") get "L";
+private _grenadeSmoke = (_config get "GRENADES") get "SMOKE";
+private _grenadeSmokeClr = (_config get "GRENADES") get "SMOKE_COLOR";
 
-_unit setRank _teamLeader#2;
-_unit setVariable ["lmf_currentRole", _teamLeader#1, true];
+_unit setRank (_role get "RANK");
+_unit setVariable ["lmf_currentRole", (_role get "DISPLAY_NAME"), true];
 
-[_unit, _tlUniform, _tlVest, _tlHeadgear, _tlGoggles, _tlBackpack] call lmf_equipment_fnc_applyBaseLoadout;
+[_unit, _clothing get "UNIFORM", _clothing get "VEST", _clothing get "HEADGEAR", _clothing get "GOGGLES", _clothing get "BACKPACK"] call lmf_equipment_fnc_applyBaseLoadout;
 
 [_unit, _radioL, false] call lmf_equipment_fnc_addItem;
 
@@ -22,6 +27,6 @@ for "_i" from 1 to 2 do {
 	[_unit, (selectRandom _grenadeSmokeClr), false] call lmf_equipment_fnc_addItem;
 };
 
-[_unit, _tlWeapon] call lmf_equipment_fnc_giveWeapon;
+[_unit, (_role get "WEAPON")] call lmf_equipment_fnc_giveWeapon;
 
 if (time > 10) then {[_unit getVariable "lmf_currentRole"] call lmf_equipment_fnc_showRoleChangeMessage};

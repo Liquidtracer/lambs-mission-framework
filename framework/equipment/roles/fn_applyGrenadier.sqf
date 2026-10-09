@@ -8,13 +8,15 @@ params [["_unit", objNull, [objNull]]];
 
 if (isNull _unit || {!local _unit}) exitWith {};
 
-#include "..\..\..\settings\cfg_Player.sqf"
+private _config = call lmf_equipment_fnc_getPlayerConfig;
+private _role = (_config get "ROLES") get "GRENADIER";
+private _clothing = _role get "CLOTHING";
 
-_unit setVariable ["lmf_currentRole", _grenadier#1, true];
-_unit setRank _grenadier#2;
+_unit setVariable ["lmf_currentRole", (_role get "DISPLAY_NAME"), true];
+_unit setRank (_role get "RANK");
 
-[_unit, _gUniform, _gVest, _gHeadgear, _gGoggles, _gBackpack] call lmf_equipment_fnc_applyBaseLoadout;
+[_unit, _clothing get "UNIFORM", _clothing get "VEST", _clothing get "HEADGEAR", _clothing get "GOGGLES", _clothing get "BACKPACK"] call lmf_equipment_fnc_applyBaseLoadout;
 
-[_unit, _gWeapon] call lmf_equipment_fnc_giveWeapon;
+[_unit, (_role get "WEAPON")] call lmf_equipment_fnc_giveWeapon;
 
 if (time > 10) then {[_unit getVariable "lmf_currentRole"] call lmf_equipment_fnc_showRoleChangeMessage};

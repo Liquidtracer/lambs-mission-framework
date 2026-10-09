@@ -8,12 +8,16 @@ params [["_unit", objNull, [objNull]]];
 
 if (isNull _unit || {!local _unit}) exitWith {};
 
-#include "..\..\..\settings\cfg_Player.sqf"
+private _config = call lmf_equipment_fnc_getPlayerConfig;
+private _role = (_config get "ROLES") get "VEHICLE_COMMANDER";
+private _clothing = _role get "CLOTHING";
+private _radioL = (_config get "RADIOS") get "L";
+private _binocular = (_config get "ITEMS") get "BINOCULAR";
 
-_unit setVariable ["lmf_currentRole", _crewSgt#1, true];
-_unit setRank _crewSgt#2;
+_unit setVariable ["lmf_currentRole", (_role get "DISPLAY_NAME"), true];
+_unit setRank (_role get "RANK");
 
-[_unit, _vpsgUniform, _vpsgVest, _vpsgHeadgear, _vpsgGoggles, _vpsgBackpack] call lmf_equipment_fnc_applyBaseLoadout;
+[_unit, _clothing get "UNIFORM", _clothing get "VEST", _clothing get "HEADGEAR", _clothing get "GOGGLES", _clothing get "BACKPACK"] call lmf_equipment_fnc_applyBaseLoadout;
 
 [_unit, _radioL, false] call lmf_equipment_fnc_addItem;
 
@@ -25,7 +29,7 @@ if (lmf_playerMaps == 1) then {
 };
 if (lmf_playerGps == 1) then {_unit linkItem "ItemGPS"};
 
-if (!lmf_pistolAll) then {[_unit, 1] call lmf_equipment_fnc_giveWeapon};
-[_unit, _vpsgWeapon] call lmf_equipment_fnc_giveWeapon;
+if (!lmf_pistolAll) then {[_unit, "PISTOL"] call lmf_equipment_fnc_giveWeapon};
+[_unit, (_role get "WEAPON")] call lmf_equipment_fnc_giveWeapon;
 
 if (time > 10) then {[_unit getVariable "lmf_currentRole"] call lmf_equipment_fnc_showRoleChangeMessage};
