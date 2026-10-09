@@ -8,254 +8,19 @@
 if (!lmf_playerGear || {!lmf_personalArsenal} || {!lmf_warmup}) exitWith {};
 ["Preload"] call BIS_fnc_arsenal;
 
-#include "..\..\settings\cfg_Player.sqf"
+private _config = call lmf_equipment_fnc_getPlayerConfig;
+private _availableOptics = _config get "AVAILABLE_OPTICS";
 
 waitUntil {sleep 1; !isNil "lmf_warmup_isActive"};
 waitUntil {uiSleep 0.2; missionNamespace getVariable ["lmf_player_introComplete", false]};
 if !(lmf_warmup_isActive) exitWith {};
 
-// Add gear based on roles
-private _role = typeOf player;
-// Infantry roles
-// Rifleman
-if (_role == _rifleman#0) then {
-	[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-};
-// Platoon leader
-if (_role == _platoonLeader#0) then {
-	if (_plHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _plHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_plGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _plGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Platoon sergeant
-if (_role == _platoonSgt#0) then {
-	if (_psgHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _psgHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_psgGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _psgGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Medic
-if (_role == _medic#0) then {
-	if (_medHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _medHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_medGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _medGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Squad leader
-if (_role == _squadLeader#0) then {
-	if (_slHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _slHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_slGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _slGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Team leader
-if (_role == _teamLeader#0) then {
-	if (_tlHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _tlHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_tlGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _tlGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Autorifleman
-if (_role == _autorifleman#0) then {
-	if (_arHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _arHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_arGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _arGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// AT specialist
-if (_role == _antiTankGunner#0) then {
-	if (_atHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _atHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_atGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _atGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// AT assistant
-if (_role == _antiTankAssistant#0) then {
-	if (_ataHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _ataHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_ataGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _ataGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Machine gunner
-if (_role == _machineGunner#0) then {
-	if (_mgHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _mgHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_mgGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _mgGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Assistant machine gunner
-if (_role == _machineGunnerAssistant#0) then {
-	if (_mgaHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _mgaHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_mgaGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _mgaGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Grenadier
-if (_role == _grenadier#0) then {
-	if (_gHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _gHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_gGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _gGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// RTO
-if (_role == _rto#0) then {
-	if (_rtoHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _rtoHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_rtoGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _rtoGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// JTAC
-if (_role == _jtac#0) then {
-	if (_jtacHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _jtacHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_jtacGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _jtacGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-
-// Aircrew roles
-// Helicopter pilot
-if (_role == _heloPilot#0) then {
-	[player, [_hpHeadgear, _rHeadgear] select (_hpHeadgear isEqualTo [""]), false, false] call BIS_fnc_addVirtualItemCargo;
-	[player, [_hpGoggles, _rGoggles] select (_hpGoggles isEqualTo [""]), false, false] call BIS_fnc_addVirtualItemCargo;
-};
-// Helicopter crew
-if (_role == _heloCrew#0) then {
-	if (_hcHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _hcHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_hcGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _hcGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Plane pilot
-if (_role == _pilot#0) then {
-	if (_pHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _pHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_pGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _pGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-
-// Ground vehicle roles
-// Vehicle platoon leader
-if (_role == _crewLeader#0) then {
-	[player, [_vplHeadgear, _rHeadgear] select (_vplHeadgear isEqualTo [""]), false, false] call BIS_fnc_addVirtualItemCargo;
-	[player, [_vplGoggles, _rGoggles] select (_vplGoggles isEqualTo [""]), false, false] call BIS_fnc_addVirtualItemCargo;
-};
-// Vehicle platoon sergeant / vehicle commander
-if (_role == _crewSgt#0) then {
-	if (_vpsgHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _vpsgHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_vpsgGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _vpsgGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-};
-// Vehicle crew
-if (_role == _crew#0) then {
-	if (_vcHeadgear isEqualTo [""]) then {
-		[player, _rHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _vcHeadgear, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
-	if (_vcGoggles isEqualTo [""]) then {
-		[player, _rGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	} else {
-		[player, _vcGoggles, false, false] call BIS_fnc_addVirtualItemCargo;
-	};
+// Add gear based on the starting slot; clothing inheritance is resolved by the registry.
+private _roleKey = (_config get "ROLE_BY_CLASS") getOrDefault [toLower (typeOf player), ""];
+if (_roleKey isNotEqualTo "") then {
+	private _clothing = ((_config get "ROLES") get _roleKey) get "CLOTHING";
+	[player, _clothing get "HEADGEAR", false, false] call BIS_fnc_addVirtualItemCargo;
+	[player, _clothing get "GOGGLES", false, false] call BIS_fnc_addVirtualItemCargo;
 };
 
 // Remove ability to randomize/save/load/export/import loadouts
@@ -326,8 +91,8 @@ if (_role == _crew#0) then {
 private _personalArsenal = ["lmf_equipment_personalArsenal", "Personal Arsenal", ["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa", LMF_MAIN_COLOR], {["Open", [false, player, player]] spawn bis_fnc_arsenal; player action ["SwitchWeapon", player, player, 100];}, {lmf_warmup_isActive}] call ace_interact_menu_fnc_createAction;
 [player, 1, ["ACE_SelfActions", "ACE_Equipment"], _personalArsenal] call ace_interact_menu_fnc_addActionToObject;
 
-private _specialRoles = [_crew#0, _heloPilot#0, _heloCrew#0, _pilot#0, _crewLeader#0, _crewSgt#0];
-if (_specialRoles findIf {_x == _role} != -1) exitWith {};
+private _specialRoles = ["VEHICLE_CREW", "HELICOPTER_PILOT", "HELICOPTER_CREW", "PILOT", "VEHICLE_PLATOON_LEADER", "VEHICLE_COMMANDER"];
+if (_roleKey in _specialRoles) exitWith {};
 
 // Available optics action
 if (isNil "_availableOptics") exitWith {};

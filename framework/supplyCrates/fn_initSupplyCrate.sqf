@@ -12,7 +12,25 @@
 params [["_supp", objNull, [objNull]]];
 if (isNull _supp) exitWith {};
 
-#include "..\..\settings\cfg_Player.sqf"
+private _config = call lmf_equipment_fnc_getPlayerConfig;
+private _weapons = _config get "WEAPONS";
+private _rifleGlConfig = _weapons get "RIFLE_GL";
+private _grenades = _config get "GRENADES";
+private _lat = (_weapons get "LAT") get "CLASSES";
+private _lmgAmmo = (_weapons get "LMG") get "AMMO";
+private _mmgAmmo = (_weapons get "MMG") get "AMMO";
+private _rifleAmmo = (_weapons get "RIFLE") get "AMMO";
+private _carbineAmmo = (_weapons get "CARBINE") get "AMMO";
+private _rifleGlAmmo = _rifleGlConfig get "AMMO";
+private _smgAmmo = (_weapons get "SMG") get "AMMO";
+private _matAmmo = (_weapons get "MAT") get "AMMO";
+private _rifleGlUgl1 = _rifleGlConfig get "GL_AMMO_1";
+private _rifleGlUgl2 = _rifleGlConfig get "GL_AMMO_2";
+private _rifleGlUgl3 = _rifleGlConfig get "GL_AMMO_3";
+private _rifleGlUgl4 = _rifleGlConfig get "GL_AMMO_4";
+private _grenade = _grenades get "FRAG";
+private _grenadeSmoke = _grenades get "SMOKE";
+private _grenadeSmokeClr = _grenades get "SMOKE_COLOR";
 
 // Apply loadout
 clearWeaponCargoGlobal _supp;
