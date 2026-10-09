@@ -2,7 +2,7 @@
 	Supply-drop requests
 	Registers supply-drop requests and ACE actions for selecting a delivery location.
 	Server publishes a shared 30-second deadline; clients reject cooldown attempts before map selection.
-	Request events carry the drop position, crate classname and requesting player for server feedback.
+	Requests carry position, category (or vehicle classname), requester and an actual-vehicle flag.
 	Author: Alex2k. Contributor: G4rrus.
 */
 
@@ -20,7 +20,24 @@ if (isServer) then {
 	publicVariable "lmf_supplyDrop_nextRequest";
 
 	["lmf_supplyDrop_request", {
-		params ["_dropPos", "_crate", "_requester"];
+		params ["_dropPos", "_selection", "_requester", ["_isVehicle", false, [true]]];
+		private _category = "";
+		private _crate = "";
+		if (_isVehicle) then {
+			if (lmf_supplyDropVehicles && {_selection in lmf_groundVehicles} && {_selection != ""} && {isClass (configFile >> "CfgVehicles" >> _selection)}) then {
+				_crate = _selection;
+			};
+		} else {
+			private _definition = [_selection] call lmf_supplyCrates_fnc_getDefinition;
+			if (_definition isNotEqualTo []) then {
+				_definition params ["_resolvedCategory", "_classname"];
+				_category = _resolvedCategory;
+				_crate = _classname;
+			};
+		};
+		if (_crate isEqualTo "") exitWith {
+			["lmf_supplyDrop_response", ["Requested supplies are unavailable.", true], _requester] call CBA_fnc_targetEvent;
+		};
 		// The server decides availability, including requests from already open dialogs.
 		if (lmf_remainingSuppDrops <= 0) exitWith {
 			["lmf_supplyDrop_response", ["No supply drops remaining.", true], _requester] call CBA_fnc_targetEvent;
@@ -46,7 +63,7 @@ if (isServer) then {
 		lmf_remainingSuppDrops = lmf_remainingSuppDrops - 1;
 		publicVariable "lmf_remainingSuppDrops";
 
-		[_spawnPos, _dropPos, _plane, _crate] spawn lmf_supplyDrop_fnc_deliverSupplies;
+		[_spawnPos, _dropPos, _plane, _crate, _category] spawn lmf_supplyDrop_fnc_deliverSupplies;
 
 		if (lmf_remainingSuppDrops <= 0) then {
 			["lmf_supplyDrop_availability", []] call CBA_fnc_globalEvent;
@@ -109,7 +126,7 @@ lmf_supplyDrop_fnc_registerMenu = {
 			};
 		};
 		if (!_claimed) exitWith {};
-		[_player, _params select 0] spawn lmf_supplyDrop_fnc_selectDropPosition;
+		[_player, _params select 0, _params select 1] spawn lmf_supplyDrop_fnc_selectDropPosition;
 	};
 
 	// Availability belongs to the client; the statement receives ACE's current player.
@@ -121,17 +138,13 @@ lmf_supplyDrop_fnc_registerMenu = {
 	private _suppliesMenu = ["lmf_supplyDrop_supplies", "Supplies", ["\A3\ui_f\data\IGUI\Cfg\simpleTasks\types\rearm_ca.paa", LMF_MAIN_COLOR], {true}, {true}] call ace_interact_menu_fnc_createAction;
 	["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu"], _suppliesMenu, true] call ace_interact_menu_fnc_addActionToClass;
 
-	private _dropLarge = ["lmf_supplyDrop_ammoLarge", "Large Ammo Crate", "", _statement, {true}, {}, [lmf_supLarge]] call ace_interact_menu_fnc_createAction;
-	private _dropSquad = ["lmf_supplyDrop_ammoSquad", "Small Ammo Crate", "", _statement, {true}, {}, [lmf_supSquad]] call ace_interact_menu_fnc_createAction;
-	private _dropExplo = ["lmf_supplyDrop_ammoExplosive", "Explosives Crate", "", _statement, {true}, {}, [lmf_supExplosives]] call ace_interact_menu_fnc_createAction;
-	private _dropMed = ["lmf_supplyDrop_ammoMedic", "Medical Crate", "", _statement, {true}, {}, [lmf_supMedical]] call ace_interact_menu_fnc_createAction;
-	private _dropVehicle = ["lmf_supplyDrop_ammoVehicle", "Vehicle Supplies (RRR)", "", _statement, {true}, {}, [lmf_supVehicle]] call ace_interact_menu_fnc_createAction;
-
-	if !(lmf_supLarge isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _dropLarge, true] call ace_interact_menu_fnc_addActionToClass;};
-	if !(lmf_supSquad isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _dropSquad, true] call ace_interact_menu_fnc_addActionToClass;};
-	if !(lmf_supExplosives isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _dropExplo, true] call ace_interact_menu_fnc_addActionToClass;};
-	if !(lmf_supMedical isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _dropMed, true] call ace_interact_menu_fnc_addActionToClass;};
-	if !(lmf_supVehicle isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _dropVehicle, true] call ace_interact_menu_fnc_addActionToClass;};
+	{
+		_x params ["_category", "_classname", "_displayName"];
+		if (_classname != "") then {
+			private _action = [format ["lmf_supplyDrop_supply%1", _category], _displayName, "", _statement, {true}, {}, [_category, false]] call ace_interact_menu_fnc_createAction;
+			["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _action, true] call ace_interact_menu_fnc_addActionToClass;
+		};
+	} forEach lmf_supplyCrates_definitions;
 
 	private _groundVehicles = lmf_groundVehicles select {_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}};
 	if (lmf_supplyDropLimit > 0 && lmf_supplyDropVehicles && {count _groundVehicles > 0}) then {
@@ -140,7 +153,7 @@ lmf_supplyDrop_fnc_registerMenu = {
 
 		{
 			private _displayName = getText (configFile >> "CfgVehicles" >> _x >> "displayName");
-			private _action = [format ["lmf_supplyDrop_ground%1", _forEachIndex], _displayName, "", _statement, {true}, {}, [_x]] call ace_interact_menu_fnc_createAction;
+			private _action = [format ["lmf_supplyDrop_ground%1", _forEachIndex], _displayName, "", _statement, {true}, {}, [_x, true]] call ace_interact_menu_fnc_createAction;
 			["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_vehicles"], _action, true] call ace_interact_menu_fnc_addActionToClass;
 		} forEach _groundVehicles;
 	};

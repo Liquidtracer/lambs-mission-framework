@@ -54,11 +54,12 @@ lmf_airVehicles = [
 	"B_Heli_Transport_01_pylons_F"
 ];
 
-lmf_supSquad = "Box_IND_Ammo_F"; // Supply spawnpad squad supplies
-lmf_supLarge = "I_supplyCrate_F"; // Supply spawnpad large supplies
-lmf_supExplosives = "Box_IND_AmmoOrd_F"; // Supply spawnpad explosives supplies
-lmf_supMedical = "ACE_medicalSupplyCrate"; // Supply spawnpad medical supplies
-lmf_supVehicle = "Box_IND_AmmoVeh_F"; // Vehicle supply crate
+// Shared supply crates: spawnpad, Player/ZEN drops and automatic initialization.
+lmf_supLarge = "I_supplyCrate_F"; // Large Supplies; "" disables this category.
+lmf_supSmall = "Box_IND_Ammo_F"; // Small Supplies; "" disables this category.
+lmf_supExplosives = "Box_IND_AmmoOrd_F"; // Explosives; "" disables this category.
+lmf_supMedical = "ACE_medicalSupplyCrate"; // Medical; "" disables this category.
+lmf_supVehicle = "Box_IND_AmmoVeh_F"; // Vehicle Supplies (RRR); "" disables this category.
 
 // Supply drop
 lmf_supplyDropLimit = 3; // Number of available supply drops.

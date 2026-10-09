@@ -136,6 +136,7 @@ class supplyCrates {
 	tag = "lmf_supplyCrates";
 	class functions {
 		file = "framework\supplyCrates";
+		class getDefinition {};
 		class initSupplyCrate {};
 	};
 };

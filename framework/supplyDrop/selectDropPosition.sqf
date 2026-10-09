@@ -1,13 +1,13 @@
 /*
 	Supply-drop position selection
-	Scheduled client-only selection for a requesting player and a crate classname.
+	Scheduled client-only selection for a requester, category/vehicle classname and vehicle flag.
 	The caller reserves lmf_supplyDrop_selecting before spawning this script; this script releases it.
 	An already open map stays open. Closing the map cancels selection, never an accepted request.
 	Quota and cooldown are rechecked before sending the existing server event.
 	Author: Alex2k. Contributor: G4rrus.
 */
 
-params ["_requester", "_crate"];
+params ["_requester", "_selection", ["_isVehicle", false]];
 private _mapWasOpen = visibleMap;
 lmf_supplyDrop_selectedPosition = [];
 lmf_supplyDrop_selectionCancelled = false;
@@ -50,7 +50,7 @@ while {!_finished && {!lmf_supplyDrop_selectionCancelled} && {visibleMap} && {al
 				if (_remaining > 0) then {
 					["Supply Drop", format ["Supply drop available in %1 seconds.", _remaining], "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa", 3, 10, "addItemFailed", 1, true] call lmf_notifications_fnc_showAceMessage;
 				} else {
-					["lmf_supplyDrop_request", [_pos, _crate, _requester]] call CBA_fnc_serverEvent;
+					["lmf_supplyDrop_request", [_pos, _selection, _requester, _isVehicle]] call CBA_fnc_serverEvent;
 					_sent = true;
 				};
 			};

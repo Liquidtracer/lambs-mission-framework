@@ -9,7 +9,9 @@
 		0: Spawn position <MARKER, OBJECT, LOCATION, GROUP, TASK or POSITION>
 		1: Drop position <MARKER, OBJECT, LOCATION, GROUP, TASK or POSITION>
 		2: Aircraft classname <STRING>
-		3: Crate <STRING>
+		3: Crate or vehicle classname <STRING>
+		4: Optional enabled Supply Crate category, overriding argument 3 <STRING>
+		   Omit or use "" for classname fallback; ambiguous crates keep their cargo.
 
 	Example:
 		["mrk_supplySpawn", "mrk_supplyDrop", "C_Plane_Civil_01_F", "B_supplyCrate_F"] spawn lmf_supplyDrop_fnc_deliverSupplies;
@@ -22,8 +24,15 @@ params [
 	["_spawnPos", objNull, [objNull, grpNull, "", locationNull, taskNull, [], 123]],
 	["_dropPos", objNull, [objNull, grpNull, "", locationNull, taskNull, [], 123]],
 	["_type", "C_Plane_Civil_01_F", [""]],
-	["_crate", "B_supplyCrate_F", [""]]
+	["_crate", "B_supplyCrate_F", [""]],
+	["_category", ""]
 ];
+
+if !(_category isEqualTo "") then {
+	private _definition = [_category] call lmf_supplyCrates_fnc_getDefinition;
+	_crate = if (_definition isEqualTo []) then {""} else {_definition select 1};
+};
+if (_crate isEqualTo "") exitWith {};
 
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 _dropPos = _dropPos call CBA_fnc_getPos;
@@ -88,16 +97,28 @@ _exitWaypoint setWaypointCompletionRadius 500;
 
 // Load cargo
 [_veh, 1000] call ace_cargo_fnc_setSpace;
-private _crate = createVehicle [_crate, [0, 0, 1000]];
+// Creation and tagging must not be suspended before CBA's next-frame InitPost.
+private _crateClass = _crate;
+private _crate = objNull;
+isNil {
+	_crate = createVehicle [_crateClass, [0, 0, 1000]];
+	if !(_category isEqualTo "") then {
+		_crate setVariable ["lmf_supplyCrate_category", _category, true];
+	};
+};
 _crate allowDamage false;
 _crate setDamage 0;
 
 // Clear cargo in case of vehicle drop
-if (_crate isKindOf "LandVehicle" || _crate isKindOf "Ship") then {
+if (_category isEqualTo "" && {_crate isKindOf "LandVehicle" || _crate isKindOf "Ship"}) then {
 	clearWeaponCargoGlobal _crate;
 	clearMagazineCargoGlobal _crate;
 	clearItemCargoGlobal _crate;
 	clearBackpackCargoGlobal _crate;
+};
+
+if (lmf_playerGear && {!(_category isEqualTo "")}) then {
+	[_crate, _category] call lmf_supplyCrates_fnc_initSupplyCrate;
 };
 
 private _cargoSize = [_crate] call ace_cargo_fnc_getSizeItem;

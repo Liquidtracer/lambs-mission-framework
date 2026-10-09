@@ -6,6 +6,30 @@
 #include "..\settings\cfg_Mission.sqf"
 #include "colors.hpp"
 
+// Internal ordered definitions; mission makers configure only the five classname settings.
+lmf_supplyCrates_definitions = [
+	["LARGE", lmf_supLarge, "Large Supplies"],
+	["SMALL", lmf_supSmall, "Small Supplies"],
+	["EXPLOSIVES", lmf_supExplosives, "Explosives"],
+	["MEDICAL", lmf_supMedical, "Medical"],
+	["VEHICLE", lmf_supVehicle, "Vehicle Supplies (RRR)"]
+];
+
+// One server diagnostic per ambiguous classname, rather than one warning per object/JIP.
+if (isServer) then {
+	private _checkedClasses = [];
+	{
+		private _classname = _x select 1;
+		if (_classname != "" && {!(_classname in _checkedClasses)}) then {
+			_checkedClasses pushBack _classname;
+			private _matches = lmf_supplyCrates_definitions select {(_x select 1) isEqualTo _classname};
+			if (count _matches > 1) then {
+				diag_log format ["[LMF] Supply classname %1 is shared by %2. Untagged crates keep their cargo; set lmf_supplyCrate_category in Eden. LMF menus pass the selected category explicitly.", _classname, _matches apply {_x select 0}];
+			};
+		};
+	} forEach lmf_supplyCrates_definitions;
+};
+
 // Validate player respawn once per machine/session, before any consumers start.
 private _respawnError = "";
 if (isNil "lmf_respawnType" || {!(lmf_respawnType in ["OFF", "WAVE", "TICKETS"])}) then {

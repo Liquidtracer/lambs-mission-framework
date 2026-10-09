@@ -51,8 +51,33 @@ Use `[]` to disable either category independently. Empty strings and classnames 
 - Asset Spawner and ZEN Vehicle Spawn offer these lists in configured order, with names from `CfgVehicles`. Spawnpad menus require Eden objects named `groundSpawner` / `groundPad` or `airSpawner` / `airPad` respectively; configuring a classname alone does not spawn an asset.
 - Supply Drop vehicle requests and ZEN Supply Drop use only `lmf_groundVehicles`. ZEN delivery remains independent of the player request toggle, quota and cooldown.
 - These are vehicle class lists, separate from the BFT callsign arrays `lmf_bftGroundVehicles` and `lmf_bftAirVehicles`.
-- `lmf_supSquad`, `lmf_supLarge`, `lmf_supExplosives`, `lmf_supMedical` and `lmf_supVehicle` select supply crate classnames. All five are offered by Supply Drop when nonempty; the `ammoSpawner` / `ammoPad` menu offers squad, explosives and medical crates. `""` omits the corresponding choice.
-- The vehicle arrays select exact classnames for local Player ground/air vehicle initialization through CBA InitPost, for both Eden-placed and newly created vehicles. Supply crate classnames independently select supply-crate initialization. Both require `lmf_playerGear`; menu availability itself does not.
+- The vehicle arrays select exact classnames for local Player ground/air vehicle initialization through CBA InitPost, for both Eden-placed and newly created vehicles. Automatic vehicle and Supply Crate initialization require `lmf_playerGear`; menu availability itself does not.
+
+### Supply Crates
+
+Configure five independent classname strings in `settings/cfg_Mission.sqf`. Supply Spawner (`ammoSpawner` / `ammoPad`), Player Supply Drop and ZEN Supply Drop offer the enabled categories in this order, using the same labels:
+
+| Category | Setting | Default classname | Display name |
+| --- | --- | --- | --- |
+| LARGE | `lmf_supLarge` | `I_supplyCrate_F` | Large Supplies |
+| SMALL | `lmf_supSmall` | `Box_IND_Ammo_F` | Small Supplies |
+| EXPLOSIVES | `lmf_supExplosives` | `Box_IND_AmmoOrd_F` | Explosives |
+| MEDICAL | `lmf_supMedical` | `ACE_medicalSupplyCrate` | Medical |
+| VEHICLE | `lmf_supVehicle` | `Box_IND_AmmoVeh_F` | Vehicle Supplies (RRR) |
+
+`""` disables a category in all three menus and prevents initialization through that category. Disabling all five leaves Spare Wheel and Spare Track available at Supply Spawner. These are independent utility objects. VEHICLE is a supply crate; actual vehicle deliveries remain separate choices from `lmf_groundVehicles`.
+
+Category selects contents; classname selects the physical model. Categories may share a classname: LMF menus pass the selected category explicitly. Untagged Eden crates deriving from `ReammoBox_F` initialize automatically through CBA InitPost only when exactly one enabled category matches their exact classname. Ambiguous crates keep their cargo; the server logs each ambiguous configured classname once at startup. Set an override in the Eden object's **Init** field when needed:
+
+```sqf
+this setVariable ["lmf_supplyCrate_category", "LARGE", true];
+```
+
+Only enabled, uppercase canonical categories are valid. An invalid, empty or disabled object tag blocks classname fallback and leaves cargo untouched. A valid explicit initializer argument takes precedence over the object tag. Automatic initialization, including LMF menu spawns, requires `lmf_playerGear`; with it disabled, menus still spawn the configured objects with their original cargo. A crate is filled only once, so repeat initialization and JIP do not refill inventories.
+
+For explicit scripted initialization, call `[crate_1, "SMALL"] call lmf_supplyCrates_fnc_initSupplyCrate` on the object's owner. Omit the second argument (or use `""`) to resolve the object tag, then unambiguous classname. Explicit calls are independent of `lmf_playerGear`. When scripting creation, create and tag the object together in unscheduled code before CBA's next-frame InitPost.
+
+**LMF 2.0 migration:** SQUAD is renamed to SMALL and `lmf_supSquad` to `lmf_supSmall`, without aliases. SMALL retains the former SQUAD contents and quantities. Player roles such as `SQUAD_LEADER` are unaffected. The shared definitions array is internal; mission makers configure only these five strings.
 
 ### Supply Drop and Forward Deploy
 
@@ -330,8 +355,15 @@ lmf\_supplyDropAircraft configures the aircraft used by player requests. Both pl
 * **1. Drop position** — String / Object / Location / Group / Task / Array. Default: objNull.
 * **2. Transport classname** — String. Default: "C\_Plane\_Civil\_01\_F".
 * **3. Crate or vehicle classname** — String. Default: "B\_supplyCrate\_F".
+* **4. Optional Supply Crate category** — String. Default: `""`. An enabled canonical category overrides argument 3 with its configured classname. Unknown/disabled categories abort delivery before spawning an aircraft.
 
 Supply valid positions, such as marker names or \[x,y,z]. Delivery uses ACE Cargo and parachutes. Direct calls bypass the player menu's quota and request cooldown.
+
+Existing four-argument calls remain supported. Without a category, an unambiguous configured crate classname can initialize automatically; an ambiguous classname keeps its original cargo. Automatic filling still requires `lmf_playerGear`. For a category-specific delivery:
+
+```sqf
+["mrk_supplySpawn", "mrk_supplyDrop", lmf_supplyDropAircraft, "", "SMALL"] spawn lmf_supplyDrop_fnc_deliverSupplies;
+```
 
 If the aircraft is destroyed before cargo release, the delivery is lost and undelivered cargo is deleted. There is no refund, retry or emergency drop. The aircraft, wreck and crew remain for Arma's normal cleanup; LMF only cleans up living aircraft after a completed delivery. Cargo already released continues its landing sequence independently.
 

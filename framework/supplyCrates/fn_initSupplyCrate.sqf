@@ -1,16 +1,32 @@
 /*
 	Supply crate equipment
 	Fills configured supply crates with player equipment.
+	Run on the crate owner. Repeated calls do not refill an initialized crate.
+	Automatic callers require lmf_playerGear; explicit calls may initialize without it.
 
 	Arguments:
 		0: Supply crate <OBJECT>
+		1: Optional canonical category; "" resolves object tag/classname <STRING>
 
 	Example:
 		[crate_1] call lmf_supplyCrates_fnc_initSupplyCrate;
 */
 
-params [["_supp", objNull, [objNull]]];
-if (isNull _supp) exitWith {};
+params [["_supp", objNull, [objNull]], ["_category", ""]];
+if (isNull _supp || {!local _supp}) exitWith {};
+
+// Validate before touching cargo; claim atomically even when called from scheduled code.
+private _claimed = false;
+isNil {
+	if (_supp getVariable ["lmf_supplyCrate_initialized", false]) exitWith {};
+	private _definition = [_category, _supp] call lmf_supplyCrates_fnc_getDefinition;
+	if (_definition isEqualTo []) exitWith {};
+	_category = _definition select 0;
+	_supp setVariable ["lmf_supplyCrate_category", _category, true];
+	_supp setVariable ["lmf_supplyCrate_initialized", true, true];
+	_claimed = true;
+};
+if (!_claimed) exitWith {};
 
 private _config = call lmf_equipment_fnc_getPlayerConfig;
 private _weapons = _config get "WEAPONS";
@@ -38,7 +54,7 @@ clearMagazineCargoGlobal _supp;
 clearItemCargoGlobal _supp;
 clearBackpackCargoGlobal _supp;
 
-if (typeOf _supp == lmf_supVehicle) exitWith {
+if (_category isEqualTo "VEHICLE") exitWith {
 	[_supp, 20] call ace_cargo_fnc_setSpace;
 	for "_i" from 1 to 3 do {
 		["ACE_Track", _supp, true] call ace_cargo_fnc_loadItem;
@@ -48,7 +64,7 @@ if (typeOf _supp == lmf_supVehicle) exitWith {
 	_supp addItemCargoGlobal ["Toolkit", 3];
 };
 
-if (typeOf _supp == lmf_supSquad) exitWith {
+if (_category isEqualTo "SMALL") exitWith {
 	_supp addItemCargoGlobal ["ACE_CableTie", 10];
 	_supp addItemCargoGlobal ["ACE_Wirecutter", 1];
 	if (_lat#0 != "") then {_supp addWeaponCargoGlobal [_lat#0, 2];};
@@ -65,7 +81,7 @@ if (typeOf _supp == lmf_supSquad) exitWith {
 	if (_rifleGlUgl4#0 != "") then {_supp addMagazineCargoGlobal [_rifleGlUgl4#0, 4];};
 };
 
-if (typeOf _supp == lmf_supLarge) exitWith {
+if (_category isEqualTo "LARGE") exitWith {
 	_supp addItemCargoGlobal ["ACE_CableTie", 20];
 	if (_carbineAmmo#0 != "") then {_supp addMagazineCargoGlobal [_carbineAmmo#0, 40];};
 	if (_rifleAmmo#0 != "") then {_supp addMagazineCargoGlobal [_rifleAmmo#0, 40];};
@@ -86,7 +102,7 @@ if (typeOf _supp == lmf_supLarge) exitWith {
 	// _supp addItemCargoGlobal ["ACE_IR_Strobe_Item",30];
 };
 
-if (typeOf _supp == lmf_supMedical) exitWith {
+if (_category isEqualTo "MEDICAL") exitWith {
 	_supp addItemCargoGlobal ["ACE_morphine", 15];
 	_supp addItemCargoGlobal ["ACE_epinephrine", 15];
 	_supp addItemCargoGlobal ["ACE_tourniquet", 10];
@@ -96,7 +112,7 @@ if (typeOf _supp == lmf_supMedical) exitWith {
 	_supp addItemCargoGlobal ["ACE_bodyBag", 10];
 };
 
-if (typeOf _supp == lmf_supExplosives) exitWith {
+if (_category isEqualTo "EXPLOSIVES") exitWith {
 	_supp addItemCargoGlobal ["DemoCharge_Remote_Mag", 10];
 	_supp addItemCargoGlobal ["SatchelCharge_Remote_Mag", 5];
 	_supp addItemCargoGlobal ["ACE_M26_Clacker", 2];

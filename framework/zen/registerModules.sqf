@@ -208,20 +208,13 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 // Supply drop
 ["LMF Utility", "Supply Drop", {
 
-	private _boxes = [
-		[lmf_supSquad, "Small Ammo Crate"],
-		[lmf_supLarge, "Large Ammo Crate"],
-		[lmf_supExplosives, "Explosives Crate"],
-		[lmf_supMedical, "Medical Crate"],
-		[lmf_supVehicle, "Vehicle Supplies (RRR)"]
-	];
-	_boxes = _boxes select {_x#0 != ""};
+	private _boxes = (lmf_supplyCrates_definitions select {_x#1 != ""}) apply {[_x#1, _x#2, _x#0]};
 	private _groundVehicles = lmf_groundVehicles select {_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}};
 	if (count _boxes > 0 && {count _groundVehicles > 0}) then {
 		_boxes pushBack ["", "--- Vehicles ---"];
 	};
 	{
-		_boxes pushBack [_x, getText (configFile >> "CfgVehicles" >> _x >> "displayName")];
+		_boxes pushBack [_x, getText (configFile >> "CfgVehicles" >> _x >> "displayName"), ""];
 	} forEach _groundVehicles;
 	if (_boxes isEqualTo []) exitWith {["No supplies or ground vehicles configured."] call zen_common_fnc_showMessage;};
 
@@ -251,7 +244,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_spawnPos = _initPos getPos [5000, _dir];
 		};
 
-		[_spawnPos, _pos, lmf_supplyDropAircraft, _type#0] remoteExec ["lmf_supplyDrop_fnc_deliverSupplies"];
+		[_spawnPos, _pos, lmf_supplyDropAircraft, _type#0, _type#2] remoteExec ["lmf_supplyDrop_fnc_deliverSupplies", 2];
 		["Supply Drop spawned: %1", _type#1] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
