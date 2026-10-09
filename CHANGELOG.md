@@ -25,6 +25,7 @@
 * **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg_AI.sqf`.
 * **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
 * **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
+* **Removed:** Numeric and custom-string player respawn modes. Only `OFF`, `WAVE` and `TICKETS` are supported; invalid configuration falls back to `OFF`, and wave intervals display as `MM:SS`.
 
 
 

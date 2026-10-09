@@ -6,6 +6,27 @@
 #include "..\settings\cfg_Mission.sqf"
 #include "colors.hpp"
 
+// Validate player respawn once per machine/session, before any consumers start.
+private _respawnError = "";
+if (isNil "lmf_respawnType" || {!(lmf_respawnType in ["OFF", "WAVE", "TICKETS"])}) then {
+	_respawnError = "lmf_respawnType must be exactly OFF, WAVE or TICKETS";
+} else {
+	if (lmf_respawnType in ["WAVE", "TICKETS"]) then {
+		if (isNil "lmf_respawnTime" || {!(lmf_respawnTime isEqualType 0)} || {!finite lmf_respawnTime} || {lmf_respawnTime <= 0}) then {
+			_respawnError = "lmf_respawnTime must be a positive finite number for WAVE/TICKETS";
+		};
+	};
+	if (lmf_respawnType isEqualTo "TICKETS") then {
+		if (isNil "lmf_respawnTickets" || {!(lmf_respawnTickets isEqualType 0)} || {!finite lmf_respawnTickets} || {lmf_respawnTickets < 0} || {lmf_respawnTickets != floor lmf_respawnTickets}) then {
+			_respawnError = "lmf_respawnTickets must be a non-negative finite integer for TICKETS";
+		};
+	};
+};
+if (_respawnError isNotEqualTo "") then {
+	diag_log format ["[LMF] Invalid player respawn configuration: %1. Falling back to OFF. Check settings/cfg_Mission.sqf.", _respawnError];
+	lmf_respawnType = "OFF";
+};
+
 LMF_VERSION = "2.0.0";
 
 LMF_MAIN_COLOR = LMF_PALETTE_BLUE_HEX;

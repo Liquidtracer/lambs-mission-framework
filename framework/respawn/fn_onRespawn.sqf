@@ -51,7 +51,7 @@ setCurrentChannel 3;
 player setUnitTrait ["camouflageCoef", lmf_camoCoef];
 cutText  ["", "BLACK IN", 5, true];
 
-if (lmf_respawnType isEqualType "" && {lmf_respawnType == "TICKETS"}) then {
+if (lmf_respawnType isEqualTo "TICKETS") then {
 	private _ticketColor = if (lmf_respawnTickets > 0) then {LMF_STATUS_GOOD_COLOR} else {LMF_STATUS_CRITICAL_COLOR};
 	["Respawn", format ["Respawn tickets remaining:<br/><t color='%2'>%1</t>", lmf_respawnTickets, _ticketColor],
 		"\A3\modules_f\data\portraitrespawn_ca.paa", 3, 12, "", 1.1] call lmf_notifications_fnc_showAceMessage;

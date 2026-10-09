@@ -14,9 +14,9 @@ lmf_warmup = true; // Starts the mission with warmup.
 lmf_maxWarmupTime = ""; // Maximum warmup duration as "MM:SS"; "" disables the deadline.
 
 // Respawn
-lmf_respawnType = "OFF"; // "OFF", "WAVE", "TICKETS", delay in seconds or custom display text.
-lmf_respawnTime = 900; // Respawn delay in seconds for "WAVE" or "TICKETS".
-lmf_respawnTickets = 0; // Tickets per player when using "TICKETS".
+lmf_respawnType = "OFF"; // Exactly "OFF", "WAVE" or "TICKETS".
+lmf_respawnTime = 900; // Positive mission-time wave interval in seconds for "WAVE" or "TICKETS".
+lmf_respawnTickets = 0; // Non-negative integer allowance per client session for "TICKETS"; consumed on death.
 
 // Players
 lmf_playerGear = true; // Applies custom player gear; false retains starting Eden equipment and restores it on respawn.

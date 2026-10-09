@@ -84,27 +84,19 @@ lmf_briefing_fnc_refreshRoster = {
 }, []] call CBA_fnc_waitUntilAndExecute;
 
 // Technical
-private _respawnLabel = lmf_respawnType;
-private _respawnDescription = "Mission-specific respawn rules.";
-private _respawnColor = LMF_TEXT_COLOR;
-if (typeName lmf_respawnType == "SCALAR") then {
-	_respawnLabel = format ["Delay (%1s)", lmf_respawnType];
-	_respawnDescription = "Configured delay before returning after death.";
-} else {
-	switch (lmf_respawnType) do {
-		case "OFF": {
-			_respawnLabel = "Disabled";
-			_respawnDescription = "Automatic respawn is disabled.";
-			_respawnColor = LMF_TEXT_COLOR_DARK;
-		};
-		case "WAVE": {
-			_respawnLabel = format ["Wave (%1m)", [lmf_respawnTime, "MM"] call BIS_fnc_secondsToString];
-			_respawnDescription = "Players return together at the next respawn wave.";
-		};
-		case "TICKETS": {
-			_respawnLabel = format ["Tickets (%1x)", lmf_respawnTickets];
-			_respawnDescription = "Respawn waves with a limited number of respawns per player.";
-		};
+private _respawnLabel = "Disabled";
+private _respawnDescription = "Automatic respawn is disabled.";
+private _respawnColor = LMF_TEXT_COLOR_DARK;
+switch (lmf_respawnType) do {
+	case "WAVE": {
+		_respawnLabel = format ["Wave (%1)", [lmf_respawnTime, "MM:SS"] call BIS_fnc_secondsToString];
+		_respawnDescription = "Mission-time waves (MM:SS), with a minimum delay of 10 seconds after death.";
+		_respawnColor = LMF_TEXT_COLOR;
+	};
+	case "TICKETS": {
+		_respawnLabel = format ["Tickets (%1x / %2)", lmf_respawnTickets, [lmf_respawnTime, "MM:SS"] call BIS_fnc_secondsToString];
+		_respawnDescription = "Per-player session allowance, consumed on death; mission-time waves (MM:SS) with a minimum delay of 10 seconds.";
+		_respawnColor = LMF_TEXT_COLOR;
 	};
 };
 private _technicalRows = [

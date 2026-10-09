@@ -123,25 +123,19 @@ private _radiosOptions = [
 _radios = _radiosOptions select lmf_personalRadio;
 
 // Respawn type
-private _respawn = "";
-if (typeName lmf_respawnType == "SCALAR") then {
-	_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Delay (%2s)</t><br/>", LMF_MAIN_COLOR, lmf_respawnType, LMF_TEXT_COLOR];
-} else {
-	if (lmf_respawnType == "OFF") then {
-		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%2' size='0.9'align='right'>Disabled</t><br/>", LMF_MAIN_COLOR, LMF_TEXT_COLOR_DARK];
+private _respawnLabel = "Disabled";
+private _respawnColor = LMF_TEXT_COLOR_DARK;
+switch (lmf_respawnType) do {
+	case "WAVE": {
+		_respawnLabel = format ["Wave (%1)", [lmf_respawnTime, "MM:SS"] call BIS_fnc_secondsToString];
+		_respawnColor = LMF_TEXT_COLOR;
 	};
-	if (lmf_respawnType == "WAVE") then {
-		private _respTime = format ["<t shadow='2' color='%2'>%1", [lmf_respawnTime, "MM"] call BIS_fnc_secondsToString, LMF_MAIN_COLOR];
-		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Wave (%2m)</t><br/>", LMF_MAIN_COLOR, _respTime, LMF_TEXT_COLOR];
-	};
-	if (lmf_respawnType == "TICKETS") then {
-		private _respTime = format ["<t shadow='2' color='%2'>%1", [lmf_respawnTime, "MM"] call BIS_fnc_secondsToString, LMF_MAIN_COLOR];
-		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>Tickets (%2x)</t><br/>", LMF_MAIN_COLOR, lmf_respawnTickets, LMF_TEXT_COLOR];
-	};
-	if (lmf_respawnType != "WAVE" && lmf_respawnType != "OFF" && lmf_respawnType != "TICKETS") then {
-		_respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn: </t> <t shadow='2' color='%3' size='0.9'align='right'>%2</t><br/>", LMF_MAIN_COLOR, lmf_respawnType, LMF_TEXT_COLOR];
+	case "TICKETS": {
+		_respawnLabel = format ["Tickets (%1x / %2)", lmf_respawnTickets, [lmf_respawnTime, "MM:SS"] call BIS_fnc_secondsToString];
+		_respawnColor = LMF_TEXT_COLOR;
 	};
 };
+private _respawn = format ["<t shadow='2' color='%1' size='0.9'align='left'>Respawn:  </t> <t shadow='2' color='%3' size='0.9'align='right'>%2</t><br/>", LMF_MAIN_COLOR, _respawnLabel, _respawnColor];
 
 // Static information
 private _staticInfo = (_br + _br + _maps + _mapMode + _bft + _radios + _respawn);
