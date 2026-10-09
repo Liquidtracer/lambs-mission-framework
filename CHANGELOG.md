@@ -12,6 +12,7 @@
 * **Improved:** AI spawners return primary groups or objects for one-shot calls; explicit tickets use shared wave management. Vehicle waves follow their primary infantry or vehicle, and Paradrop now takes drop zone, height and payload before optional tickets and delay.
 * **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups.
 * **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.
+* **Improved:** Player roles, weapon distribution, Role Selector, Personal Arsenal, Supply Crates and ZEN now share one equipment configuration registry; Player weapon keys are strings instead of numeric IDs.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Tweaked:** Garrison stance reactions now account for cover, suppression and group losses.
 * **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal/Available Optics; TO&E handles missing LMF roles.
@@ -20,7 +21,7 @@
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
 * **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
-* **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg\\\_AI.hpp`.
+* **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg_AI.sqf`.
 * **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
 * **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
 

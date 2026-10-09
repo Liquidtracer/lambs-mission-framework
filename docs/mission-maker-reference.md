@@ -8,7 +8,7 @@ The canonical practical mission-maker reference for mission scripts and triggers
 
 ## Mission settings
 
-Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locally on every machine during preInit; it is not a server-synchronized runtime settings interface. Player loadout details belong in `settings/cfg_Player.sqf`, AI classes and gear in `settings/cfg_AI.hpp`, and briefing content in `settings/cfg_Briefing.sqf`.
+Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locally on every machine during preInit; it is not a server-synchronized runtime settings interface. Player loadout details belong in `settings/cfg_Player.sqf`, AI classes and gear in `settings/cfg_AI.sqf`, and briefing content in `settings/cfg_Briefing.sqf`.
 
 ### Mission info and enemy side
 
@@ -48,7 +48,7 @@ Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locall
 
 ## Player equipment
 
-Configure Player gear in `settings/cfg_Player.sqf` before mission start. The loader builds a machine-local registry; loadout functions, Role Selector, ZEN, Personal Arsenal and Supply Crates read it through the lazy accessor. Do not edit the registry directly or include the settings file in custom consumers. AI gear uses the separate `settings/cfg_AI.hpp` configuration.
+Configure Player gear in `settings/cfg_Player.sqf` before mission start. The loader builds a machine-local registry; loadout functions, Role Selector, ZEN, Personal Arsenal and Supply Crates read it through the lazy accessor. Do not edit the registry directly or include the settings file in custom consumers. AI gear uses the separate `settings/cfg_AI.sqf` configuration.
 
 ### Roles and clothing
 
@@ -99,11 +99,11 @@ Personal Arsenal and Available Optics require all three settings `lmf_playerGear
 
 Argument 0 is the unit (default `objNull`); argument 1 is an exact uppercase weapon key (default `"CARBINE"`). The function distributes that category's weapon, ammunition and attachments; it does not apply a complete role or clothing. Null/nonlocal units are rejected. Unknown keys and supplied non-string values distribute nothing. Numeric Player weapon IDs are no longer supported; update custom mission calls as well as role settings. Do not use the return value as a success indicator.
 
-For custom configuration readers, `call lmf_equipment_fnc_getPlayerConfig` takes no arguments and returns the existing registry by reference, loading it if absent even with custom gear disabled. Treat its maps and arrays as read-only. It does not apply equipment or reload an existing registry. The [architecture reference](architecture.md#player-setup-asset-spawners-and-service) describes its fields.
+Custom scripts should normally use the documented equipment functions above and configure equipment in `settings/cfg_Player.sqf`. The Player registry and its accessor are internal LMF implementation details, not supported custom-script APIs.
 
 ## AI spawning
 
-Enemy side: settings/cfg\_Mission.sqf · AI classes and equipment: settings/cfg\_AI.hpp
+Enemy side: settings/cfg\_Mission.sqf · AI classes and equipment: settings/cfg_AI.sqf
 
 
 
@@ -251,7 +251,7 @@ private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
 
 Use an LMF category for argument 1. The delay applies with multiple tickets. In LMF 2.0, rename the old `_uav` pool to `_drones` and change `"UAV"` calls to `"DRONE"`; there is no legacy alias.
 
-Configure both air UAVs and ground UGVs in `_drones` in `settings/cfg_AI.hpp`. DRONE randomly selects from this pool for each spawn; use only classes available in your mission's mods/DLCs. Normal armed and unarmed drones use GUARD and Arma AI for movement, scouting and weapon use. Ground drones receive no flight commands. Empty pools spawn nothing; duplicate classnames retain their random selection weighting.
+Configure both air UAVs and ground UGVs in `_drones` in `settings/cfg_AI.sqf`. DRONE randomly selects from this pool for each spawn; use only classes available in your mission's mods/DLCs. Normal armed and unarmed drones use GUARD and Arma AI for movement, scouting and weapon use. Ground drones receive no flight commands. Empty pools spawn nothing; duplicate classnames retain their random selection weighting.
 
 IED UAVs with the `LXWS_IED_DRONE_PYLON` hardpoint use their real loaded payloads, with approximate target positioning, requested search/approach heights of 50–200 m, drop heights of 20–60 m and 30 seconds between drops. Once empty, the special task ends and the living drone retains GUARD as a scout. Destruction during the wait cancels further drops; there is no fake-grenade fallback.
 

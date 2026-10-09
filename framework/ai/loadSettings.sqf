@@ -3,7 +3,7 @@
 	Loads mission AI settings once and exposes them to the internal LMF systems.
 */
 
-#include "..\..\settings\cfg_AI.hpp"
+#include "..\..\settings\cfg_AI.sqf"
 
 private _clothing = createHashMapFromArray [
 	["UNIFORM", _uniform],

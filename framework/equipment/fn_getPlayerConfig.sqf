@@ -1,5 +1,6 @@
 /*
 	Get Player equipment configuration
+	Internal LMF helper; not a supported custom-script API.
 	Returns the machine-local registry, loading it synchronously if absent.
 	Works regardless of lmf_playerGear. Treat the returned registry as read-only.
 
