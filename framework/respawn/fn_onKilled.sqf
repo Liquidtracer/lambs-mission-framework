@@ -15,7 +15,7 @@ if (isNull _unit || {alive player} || {_unit isNotEqualTo player}) exitWith {};
 // Black out
 cutText ["", "BLACK OUT", 0.001, true];
 
-// Configuration is validated in preInit; preserve mission-time waves and the minimum below.
+// Configuration is validated in preInit; use mission-time wave boundaries.
 switch (lmf_respawnType) do {
 	case "WAVE": {
 		setPlayerRespawnTime (lmf_respawnTime - ((floor CBA_missionTime) % lmf_respawnTime));
@@ -34,10 +34,6 @@ switch (lmf_respawnType) do {
 		setPlayerRespawnTime (lmf_respawnTime - ((floor CBA_missionTime) % lmf_respawnTime));
 		lmf_respawnTickets = lmf_respawnTickets - 1;
 	};
-};
-
-if (playerRespawnTime < 10) then {
-	setPlayerRespawnTime 10;
 };
 
 // Death feed
@@ -108,7 +104,7 @@ lmf_entityKilledEh = addMissionEventHandler ["EntityKilled", {
 
 sleep 9;
 
-// A short respawn override can finish before this scheduled function wakes up.
+// A short wave delay or respawn override can finish before this scheduled function wakes up.
 if (alive player || {_unit isNotEqualTo player}) exitWith {};
 
 // ACE spectator interface
