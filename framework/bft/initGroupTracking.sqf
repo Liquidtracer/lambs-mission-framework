@@ -129,9 +129,9 @@ lmf_bft_fnc_registerMenu = {
 
 	private _vehicleIcon = "\A3\ui_f\data\map\markers\nato\b_motor_inf.paa";
 	private _categories = [
-		["lmf_bft_infantry", "Infantry", lmf_bftInfantry, "b_inf", "\A3\ui_f\data\map\markers\nato\b_inf.paa", true],
-		["lmf_bft_vehicles", "Vehicles", lmf_bftGroundVehicles, "b_armor", "\A3\ui_f\data\map\markers\nato\b_armor.paa", false],
-		["lmf_bft_air", "Air", lmf_bftAirVehicles, "b_air", "\A3\ui_f\data\map\markers\nato\b_air.paa", false]
+		["lmf_bft_infantry", "Infantry", lmf_bftInfantryCallsigns, "b_inf", "\A3\ui_f\data\map\markers\nato\b_inf.paa", true],
+		["lmf_bft_vehicles", "Vehicles", lmf_bftGroundCallsigns, "b_armor", "\A3\ui_f\data\map\markers\nato\b_armor.paa", false],
+		["lmf_bft_air", "Air", lmf_bftAirCallsigns, "b_air", "\A3\ui_f\data\map\markers\nato\b_air.paa", false]
 	];
 
 	// Hide the selection menu when all lists are empty, but keep the tracker and map handlers running.

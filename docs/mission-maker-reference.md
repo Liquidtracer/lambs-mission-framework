@@ -35,7 +35,7 @@ Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locall
 ### Map and BFT
 
 - `lmf_oldSchoolMap` disables sharing map markers/drawings and hides newly created nonlocal markers, including script markers. `lmf_bft` independently enables Blue Force Tracking.
-- With BFT enabled, `lmf_bftInfantry` supplies name families such as `["FOX"]`, producing `FOX/6`, `FOX/1`–`FOX/4` and `FOX/1V`–`FOX/4V`. `lmf_bftGroundVehicles` and `lmf_bftAirVehicles` produce `NAME1`–`NAME4`. An empty array hides that selection category; all three empty hides callsign selection without disabling tracking. See [Blue Force Tracking](#blue-force-tracking) for scripted setup.
+- With BFT enabled, `lmf_bftInfantryCallsigns` supplies name families such as `["FOX"]`, producing `FOX/6`, `FOX/1`–`FOX/4` and `FOX/1V`–`FOX/4V`. `lmf_bftGroundCallsigns` and `lmf_bftAirCallsigns` produce `NAME1`–`NAME4`. An empty array hides that selection category; all three empty hides callsign selection without disabling tracking. See [Blue Force Tracking](#blue-force-tracking) for scripted setup.
 
 ### Configured assets
 
@@ -50,7 +50,7 @@ Use `[]` to disable either category independently. Empty strings and classnames 
 
 - Asset Spawner and ZEN Vehicle Spawn offer these lists in configured order, with names from `CfgVehicles`. Spawnpad menus require Eden objects named `groundSpawner` / `groundPad` or `airSpawner` / `airPad` respectively; configuring a classname alone does not spawn an asset.
 - Supply Drop vehicle requests and ZEN Supply Drop use only `lmf_groundVehicles`. ZEN delivery remains independent of the player request toggle, quota and cooldown.
-- These are vehicle class lists, separate from the BFT callsign arrays `lmf_bftGroundVehicles` and `lmf_bftAirVehicles`.
+- These are vehicle class lists, separate from the BFT callsign arrays `lmf_bftGroundCallsigns` and `lmf_bftAirCallsigns`.
 - The vehicle arrays select exact classnames for local Player ground/air vehicle initialization through CBA InitPost, for both Eden-placed and newly created vehicles. Automatic vehicle and Supply Crate initialization require `lmf_playerGear`; menu availability itself does not.
 
 ### Supply Crates

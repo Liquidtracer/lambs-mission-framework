@@ -33,7 +33,7 @@ if (lmf_warmup_isActive && {lmf_playerGear} && {lmf_personalArsenal}) then {
 	};
 };
 
-if (lmf_bft && {count (lmf_bftInfantry + lmf_bftGroundVehicles + lmf_bftAirVehicles) > 0}) then {
+if (lmf_bft && {count (lmf_bftInfantryCallsigns + lmf_bftGroundCallsigns + lmf_bftAirCallsigns) > 0}) then {
 	["Blue Force Tracker", "Group leaders select their group's callsign and icon.",
 		" Self-Interact » Blue Force Tracker"] call _addEntry;
 };

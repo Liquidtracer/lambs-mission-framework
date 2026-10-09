@@ -38,9 +38,9 @@ lmf_oldSchoolMap = false; // Disables sharing of markers and drawings on the map
 lmf_bft = true; // Enables blue force tracking.
 
 // Available BFT callsigns (only relevant if lmf_bft = true)
-lmf_bftInfantry = ["FOX"]; // Infantry: NAME/6, NAME/1-4 and NAME/1V-4V.
-lmf_bftGroundVehicles = []; // Vehicles: NAME1-4.
-lmf_bftAirVehicles = []; // Air: NAME1-4.
+lmf_bftInfantryCallsigns = ["FOX"]; // Infantry: NAME/6, NAME/1-4 and NAME/1V-4V.
+lmf_bftGroundCallsigns = []; // Vehicles: NAME1-4.
+lmf_bftAirCallsigns = []; // Air: NAME1-4.
 
 // Ground vehicle classnames.
 lmf_groundVehicles = [
