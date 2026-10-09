@@ -29,13 +29,17 @@ params [
 
 if (isNull _unit || {!local _unit}) exitWith {false};
 
-#include "..\..\settings\cfg_Player.sqf"
+private _config = call lmf_equipment_fnc_getPlayerConfig;
+private _riflemanClothing = ((_config get "ROLES") get "RIFLEMAN") get "CLOTHING";
+private _radioR = (_config get "RADIOS") get "R";
+private _nvg = (_config get "ITEMS") get "NVG";
+private _grenade = (_config get "GRENADES") get "FRAG";
 
-if (_uniform isEqualTo [""]) then {_uniform = _rUniform};
-if (_vest isEqualTo [""]) then {_vest = _rVest};
-if (_headgear isEqualTo [""]) then {_headgear = _rHeadgear};
-if (_goggles isEqualTo [""]) then {_goggles = _rGoggles};
-if (_backpack isEqualTo [""]) then {_backpack = _rBackpack};
+if (_uniform isEqualTo [""]) then {_uniform = _riflemanClothing get "UNIFORM"};
+if (_vest isEqualTo [""]) then {_vest = _riflemanClothing get "VEST"};
+if (_headgear isEqualTo [""]) then {_headgear = _riflemanClothing get "HEADGEAR"};
+if (_goggles isEqualTo [""]) then {_goggles = _riflemanClothing get "GOGGLES"};
+if (_backpack isEqualTo [""]) then {_backpack = _riflemanClothing get "BACKPACK"};
 
 removeAllWeapons _unit;
 removeAllItems _unit;
