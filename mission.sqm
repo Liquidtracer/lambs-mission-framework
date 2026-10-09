@@ -16,10 +16,10 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={14592.711,79.690895,16643.93};
-		dir[]={0.4338347,-0.46122721,0.77398783};
-		up[]={0.22551607,0.88728207,0.40233457};
-		aside[]={0.87231314,1.4901161e-08,-0.48894787};
+		pos[]={14636.975,56.469296,16769.029};
+		dir[]={0.54527241,-0.77929002,-0.30885807};
+		up[]={0.67807138,0.62665933,-0.38407922};
+		aside[]={-0.4928579,1.3224781e-07,-0.87011379};
 	};
 };
 binarizationWanted=0;
@@ -1574,14 +1574,14 @@ class Mission
 							dataType="Object";
 							class PositionInfo
 							{
-								position[]={14677.609,17.91,16754.92};
-								angles[]={0,2.3410194,0};
+								position[]={14677.61,17.91,16754.92};
+								angles[]={0,2.3410275,0};
 							};
 							side="Empty";
 							flags=4;
 							class Attributes
 							{
-								name="ammoPad";
+								name="supplyPad";
 								disableSimulation=1;
 							};
 							id=38;
@@ -1609,18 +1609,18 @@ class Mission
 							dataType="Object";
 							class PositionInfo
 							{
-								position[]={14671.149,18.879078,16761.188};
-								angles[]={0,5.4826121,0};
+								position[]={14671.15,18.879072,16761.188};
+								angles[]={0,5.4826202,0};
 							};
 							side="Empty";
-							flags=4;
 							class Attributes
 							{
-								name="ammoSpawner";
+								name="supplySpawner";
 								disableSimulation=1;
 							};
 							id=39;
 							type="Land_Laptop_device_F";
+							atlOffset=0.81299973;
 							class CustomAttributes
 							{
 								class Attribute0
@@ -1641,7 +1641,7 @@ class Mission
 						};
 					};
 					id=36;
-					atlOffset=0.40650177;
+					atlOffset=0.40649986;
 				};
 				class Item3
 				{
