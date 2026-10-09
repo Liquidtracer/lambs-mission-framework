@@ -27,7 +27,7 @@ Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locall
 ### Player gear and equipment
 
 - `lmf_playerGear` applies the configured LMF loadouts. With `false`, starting Eden equipment is retained and its startup snapshot is restored on respawn. With custom gear enabled, `lmf_keepRole = true` restores the original slot role on respawn; `false` gives Rifleman.
-- `lmf_personalArsenal` enables warmup headgear/glasses selection and Available Optics; it requires both `lmf_playerGear` and `lmf_warmup`. Crew and pilot roles do not receive Available Optics.
+- `lmf_personalArsenal` enables role-aware ACE customization during warmup; it requires both `lmf_playerGear` and `lmf_warmup`.
 - `lmf_personalRadio` gives everyone the configured personal radio (AN/PRC-343 in the current player settings). `lmf_pistolAll` gives everyone a sidearm; disabling it retains role-specific sidearms. `lmf_riflemanLat` gives Rifleman the configured light anti-tank weapon. These switches are applied whenever an LMF role/base loadout is applied, including explicit calls with automatic custom gear disabled.
 - `lmf_playerMaps` and `lmf_playerGps`: `0` = everyone, `1` = configured leader and pilot roles, `2` = none. These follow loadout roles, not current group leadership. `lmf_playerNvg`: `0` = everyone, `1` = helicopter/plane pilots, `2` = none. These settings also apply to explicit LMF loadout calls with automatic custom gear disabled.
 - `lmf_camoCoef` sets the player's camouflage coefficient; higher values make players easier for AI to spot. `lmf_jipTp` enables one successful JIP teleport to a suitable friendly player within five minutes of offer initialization; leaving the 200 m start area, death or changing unit ends the offer.
@@ -120,7 +120,9 @@ The first call explicitly selects Medic; the second reapplies the classname role
 
 Explicit role calls, the role crate and ZEN remain available with `lmf_playerGear = false`. PreInit then skips Player configuration, but consumers load it synchronously when needed. With custom gear enabled, `lmf_keepRole = true` reapplies the original slot role on respawn; false gives Rifleman. It does not preserve the last role selected manually or through ZEN. With custom gear disabled, respawn restores the startup Eden loadout snapshot regardless of `lmf_keepRole` or later manual equipment changes.
 
-Personal Arsenal and Available Optics require all three settings `lmf_playerGear`, `lmf_personalArsenal` and `lmf_warmup`, and are available only during active warmup. Headgear/glasses and crew/pilot optics exclusion follow the starting slot classname, not subsequent role changes. `_availableOptics = [""]` omits the optics menu. Joining after warmup does not offer these actions.
+Personal Arsenal requires `lmf_playerGear`, `lmf_personalArsenal` and `lmf_warmup`, and is available only during active warmup after the intro, including after respawn. It reads the current `lmf_currentRoleKey` on each opening, so Role Selector, ZEN and explicit role calls change its clothing and weapon/attachment options. Missing/invalid roles cannot open it. Optics use the current role's weapon pool; `_availableOptics` is retained but unused. Joining after warmup does not offer the action.
+
+This experimental ACE customization does not whitelist supplies. Existing inventory uses ACE unique-item handling, while loadout/import and cargo-add UI paths are restricted locally. These restrictions need testing with the installed ACE version and are not an inventory enforcement system. ACE may collapse weapon variants and discard incompatible magazines during weapon switching; test repeated switches and smaller containers before using the MVP in a mission.
 
 ### Give a configured weapon
 

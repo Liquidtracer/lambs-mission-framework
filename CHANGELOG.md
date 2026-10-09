@@ -2,6 +2,8 @@
 
 ## LMF 2.0.0 - Unreleased
 
+* **Added:** Experimental role-aware ACE Personal Arsenal for warmup clothing, weapons and attachments, replacing the separate Available Optics action.
+
 * **Added:** Startup mission information and group-arrival notifications for leaders.
 * **Added:** Zeus Infantry Patrol can target a living player's position at confirmation while spawning at the clicked position.
 * **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.

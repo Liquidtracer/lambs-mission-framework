@@ -24,13 +24,8 @@ private _addEntry = {
 };
 
 if (lmf_warmup_isActive && {lmf_playerGear} && {lmf_personalArsenal}) then {
-	["Personal Arsenal", "Customize your personal equipment.",
+	["Personal Arsenal", "Customize clothing, weapons and attachments for your current role.",
 		" Self-Interact » Equipment » Personal Arsenal"] call _addEntry;
-
-	if (count (missionNamespace getVariable ["lmf_player_availableOptics", []]) > 0) then {
-		["Available Optics", "Choose an optic for your primary weapon.",
-			" Self-Interact » Equipment » Available Optics"] call _addEntry;
-	};
 };
 
 if (lmf_bft && {count (lmf_bftInfantryCallsigns + lmf_bftGroundCallsigns + lmf_bftAirCallsigns) > 0}) then {

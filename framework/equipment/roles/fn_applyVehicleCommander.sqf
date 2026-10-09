@@ -15,6 +15,7 @@ private _radioL = (_config get "RADIOS") get "L";
 private _binocular = (_config get "ITEMS") get "BINOCULAR";
 
 _unit setVariable ["lmf_currentRole", (_role get "DISPLAY_NAME"), true];
+_unit setVariable ["lmf_currentRoleKey", "VEHICLE_COMMANDER", true];
 _unit setRank (_role get "RANK");
 
 [_unit, _clothing get "UNIFORM", _clothing get "VEST", _clothing get "HEADGEAR", _clothing get "GOGGLES", _clothing get "BACKPACK"] call lmf_equipment_fnc_applyBaseLoadout;

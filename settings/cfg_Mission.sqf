@@ -23,7 +23,7 @@ lmf_playerGear = true; // Applies custom player gear; false retains starting Ede
 lmf_keepRole = false; // Role after respawn: true restores the slot's original role; false gives Rifleman.
 lmf_camoCoef = 1; // Higher values make players easier for AI to spot.
 lmf_jipTp = true; // Enables JIP teleport to friendlies.
-lmf_personalArsenal = true; // Enables Personal Arsenal and Available Optics during warmup; requires lmf_playerGear.
+lmf_personalArsenal = true; // Enables role-aware ACE Personal Arsenal during warmup; requires lmf_playerGear.
 
 // Player gear (only relevant if lmf_playerGear = true)
 lmf_personalRadio = true; // Gives everyone an AN/PRC-343.

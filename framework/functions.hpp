@@ -93,6 +93,7 @@ class equipment {
 	class functions {
 		file = "framework\equipment";
 		class getPlayerConfig {};
+		class openPersonalArsenal {};
 		class applyRoleFromClass {};
 		class showRoleChangeMessage {};
 		class applyBaseLoadout {};
