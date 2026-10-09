@@ -54,7 +54,7 @@ lmf_airVehicles = [
 	"B_Heli_Transport_01_pylons_F"
 ];
 
-// Shared supply crates: spawnpad, Player/ZEN drops and automatic initialization.
+// Shared supply crates: enabled categories must use unique classnames (case-insensitive).
 lmf_supLarge = "I_supplyCrate_F"; // Large Supplies; "" disables this category.
 lmf_supSmall = "Box_IND_Ammo_F"; // Small Supplies; "" disables this category.
 lmf_supExplosives = "Box_IND_AmmoOrd_F"; // Explosives; "" disables this category.

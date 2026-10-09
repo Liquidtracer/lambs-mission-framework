@@ -7,7 +7,7 @@
 * **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
 * **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
 * **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
-* **Improved:** Supply Spawner, Player and ZEN Supply Drop share five category-based Supply Crates, supporting shared classnames and explicit Eden categories without refilling initialized crates. SMALL / `lmf_supSmall` replaces SQUAD / `lmf_supSquad`; empty classnames disable categories consistently.
+* **Improved:** Supply Spawner, Player and ZEN Supply Drop share LARGE, SMALL, EXPLOSIVES, MEDICAL and VEHICLE crates with unique configured classnames and one-time initialization. Empty classnames disable categories; duplicate configuration disables conflicting categories with an RPT diagnostic. Supply Spawner uses the Eden names `supplySpawner` / `supplyPad`.
 * **Improved:** Reworked AI helicopter landing searches and evacuation handling, and boat landing and follow-up tasks.
 * **Improved:** Unified UAV/UGV QRF in the configured `_drones`/`DRONE` pool, with native GUARD behavior, real IED payload drops, RF self-destruct attacks and category-based drone spawning in Zeus.
 * **Improved:** AI spawners return primary groups or objects for one-shot calls; explicit tickets use shared wave management. Vehicle waves follow their primary infantry or vehicle, and Paradrop now takes drop zone, height and payload before optional tickets and delay.

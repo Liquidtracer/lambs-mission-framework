@@ -6,23 +6,22 @@
 
 	Arguments:
 		0: Supply crate <OBJECT>
-		1: Optional canonical category; "" resolves object tag/classname <STRING>
 
 	Example:
 		[crate_1] call lmf_supplyCrates_fnc_initSupplyCrate;
 */
 
-params [["_supp", objNull, [objNull]], ["_category", ""]];
+params [["_supp", objNull, [objNull]]];
 if (isNull _supp || {!local _supp}) exitWith {};
 
 // Validate before touching cargo; claim atomically even when called from scheduled code.
+private _category = "";
 private _claimed = false;
 isNil {
 	if (_supp getVariable ["lmf_supplyCrate_initialized", false]) exitWith {};
-	private _definition = [_category, _supp] call lmf_supplyCrates_fnc_getDefinition;
+	private _definition = ["", _supp] call lmf_supplyCrates_fnc_getDefinition;
 	if (_definition isEqualTo []) exitWith {};
 	_category = _definition select 0;
-	_supp setVariable ["lmf_supplyCrate_category", _category, true];
 	_supp setVariable ["lmf_supplyCrate_initialized", true, true];
 	_claimed = true;
 };

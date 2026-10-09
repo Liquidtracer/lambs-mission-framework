@@ -3,8 +3,8 @@
 	Creates markers for configured asset spawners; included by createMissionMarkers.sqf.
 */
 
-if !(isNil "ammoSpawner") then {
-	_crateSpawnMkr = createMarker ["lmf_assetSpawner_supplyMarker", getPosASL ammoSpawner];
+if !(isNil "supplySpawner") then {
+	_crateSpawnMkr = createMarker ["lmf_assetSpawner_supplyMarker", getPosASL supplySpawner];
 	_crateSpawnMkr setMarkerType "b_service";
 	_crateSpawnMkr setMarkerSize [0.75, 0.75];
 	_crateSpawnMkr setMarkerColor "ColorBlack";

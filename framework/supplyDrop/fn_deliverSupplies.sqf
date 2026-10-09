@@ -11,7 +11,7 @@
 		2: Aircraft classname <STRING>
 		3: Crate or vehicle classname <STRING>
 		4: Optional enabled Supply Crate category, overriding argument 3 <STRING>
-		   Omit or use "" for classname fallback; ambiguous crates keep their cargo.
+		   Omit or use "" to deliver the supplied classname directly.
 
 	Example:
 		["mrk_supplySpawn", "mrk_supplyDrop", "C_Plane_Civil_01_F", "B_supplyCrate_F"] spawn lmf_supplyDrop_fnc_deliverSupplies;
@@ -97,15 +97,7 @@ _exitWaypoint setWaypointCompletionRadius 500;
 
 // Load cargo
 [_veh, 1000] call ace_cargo_fnc_setSpace;
-// Creation and tagging must not be suspended before CBA's next-frame InitPost.
-private _crateClass = _crate;
-private _crate = objNull;
-isNil {
-	_crate = createVehicle [_crateClass, [0, 0, 1000]];
-	if !(_category isEqualTo "") then {
-		_crate setVariable ["lmf_supplyCrate_category", _category, true];
-	};
-};
+_crate = createVehicle [_crate, [0, 0, 1000]];
 _crate allowDamage false;
 _crate setDamage 0;
 
@@ -118,7 +110,7 @@ if (_category isEqualTo "" && {_crate isKindOf "LandVehicle" || _crate isKindOf 
 };
 
 if (lmf_playerGear && {!(_category isEqualTo "")}) then {
-	[_crate, _category] call lmf_supplyCrates_fnc_initSupplyCrate;
+	[_crate] call lmf_supplyCrates_fnc_initSupplyCrate;
 };
 
 private _cargoSize = [_crate] call ace_cargo_fnc_getSizeItem;

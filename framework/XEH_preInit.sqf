@@ -15,19 +15,15 @@ lmf_supplyCrates_definitions = [
 	["VEHICLE", lmf_supVehicle, "Vehicle Supplies (RRR)"]
 ];
 
-// One server diagnostic per ambiguous classname, rather than one warning per object/JIP.
-if (isServer) then {
-	private _checkedClasses = [];
-	{
-		private _classname = _x select 1;
-		if (_classname != "" && {!(_classname in _checkedClasses)}) then {
-			_checkedClasses pushBack _classname;
-			private _matches = lmf_supplyCrates_definitions select {(_x select 1) isEqualTo _classname};
-			if (count _matches > 1) then {
-				diag_log format ["[LMF] Supply classname %1 is shared by %2. Untagged crates keep their cargo; set lmf_supplyCrate_category in Eden. LMF menus pass the selected category explicitly.", _classname, _matches apply {_x select 0}];
-			};
-		};
-	} forEach lmf_supplyCrates_definitions;
+// Enabled categories require unique classnames. Disable conflicts on every machine.
+private _supplyClasses = lmf_supplyCrates_definitions apply {toLower (_x select 1)};
+private _supplyConflicts = lmf_supplyCrates_definitions select {
+	private _classname = toLower (_x select 1);
+	_classname != "" && {{_x isEqualTo _classname} count _supplyClasses > 1}
+};
+if (_supplyConflicts isNotEqualTo []) then {
+	diag_log format ["[LMF] Supply Crate categories require unique classnames. Disabled conflicting definitions: %1. Their crates keep existing cargo. Check settings/cfg_Mission.sqf.", _supplyConflicts];
+	{_x set [1, ""]} forEach _supplyConflicts;
 };
 
 // Validate player respawn once per machine/session, before any consumers start.

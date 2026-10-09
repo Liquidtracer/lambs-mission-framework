@@ -55,7 +55,7 @@ Use `[]` to disable either category independently. Empty strings and classnames 
 
 ### Supply Crates
 
-Configure five independent classname strings in `settings/cfg_Mission.sqf`. Supply Spawner (`ammoSpawner` / `ammoPad`), Player Supply Drop and ZEN Supply Drop offer the enabled categories in this order, using the same labels:
+Configure five independent classname strings in `settings/cfg_Mission.sqf`. Supply Spawner (`supplySpawner` / `supplyPad`), Player Supply Drop and ZEN Supply Drop offer the enabled categories in this order, using the same labels:
 
 | Category | Setting | Default classname | Display name |
 | --- | --- | --- | --- |
@@ -67,17 +67,13 @@ Configure five independent classname strings in `settings/cfg_Mission.sqf`. Supp
 
 `""` disables a category in all three menus and prevents initialization through that category. Disabling all five leaves Spare Wheel and Spare Track available at Supply Spawner. These are independent utility objects. VEHICLE is a supply crate; actual vehicle deliveries remain separate choices from `lmf_groundVehicles`.
 
-Category selects contents; classname selects the physical model. Categories may share a classname: LMF menus pass the selected category explicitly. Untagged Eden crates deriving from `ReammoBox_F` initialize automatically through CBA InitPost only when exactly one enabled category matches their exact classname. Ambiguous crates keep their cargo; the server logs each ambiguous configured classname once at startup. Set an override in the Eden object's **Init** field when needed:
+Every enabled category must use a unique classname (case-insensitive). Classname identifies the canonical crate type and its contents. Duplicate configuration produces an RPT diagnostic during preInit and disables all conflicting categories in menus and initialization; their crates keep existing cargo. Other categories remain available. Use a different model or `""` to resolve a conflict.
 
-```sqf
-this setVariable ["lmf_supplyCrate_category", "LARGE", true];
-```
+Configured Eden/direct-spawn crates deriving from `ReammoBox_F` initialize automatically through CBA InitPost. Automatic initialization, including LMF menu spawns, requires `lmf_playerGear`; with it disabled, menus still spawn the configured objects with their original cargo. A crate is filled only once; repeated calls and JIP must not refill inventories. There are no object category tags or Eden category overrides.
 
-Only enabled, uppercase canonical categories are valid. An invalid, empty or disabled object tag blocks classname fallback and leaves cargo untouched. A valid explicit initializer argument takes precedence over the object tag. Automatic initialization, including LMF menu spawns, requires `lmf_playerGear`; with it disabled, menus still spawn the configured objects with their original cargo. A crate is filled only once, so repeat initialization and JIP do not refill inventories.
+For explicit scripted initialization, call `[crate_1] call lmf_supplyCrates_fnc_initSupplyCrate` on the object's owner. The crate must have an enabled configured classname. Explicit calls are independent of `lmf_playerGear`; there is no category argument or refill operation.
 
-For explicit scripted initialization, call `[crate_1, "SMALL"] call lmf_supplyCrates_fnc_initSupplyCrate` on the object's owner. Omit the second argument (or use `""`) to resolve the object tag, then unambiguous classname. Explicit calls are independent of `lmf_playerGear`. When scripting creation, create and tag the object together in unscheduled code before CBA's next-frame InitPost.
-
-**LMF 2.0 migration:** SQUAD is renamed to SMALL and `lmf_supSquad` to `lmf_supSmall`, without aliases. SMALL retains the former SQUAD contents and quantities. Player roles such as `SQUAD_LEADER` are unaffected. The shared definitions array is internal; mission makers configure only these five strings.
+**LMF 2.0 integration:** Use SMALL / `lmf_supSmall` and the Eden variable names `supplySpawner` / `supplyPad`, without legacy aliases. Update existing spawner/pad variable names manually in Eden. The shared definitions array is internal; mission makers configure only the five classname settings.
 
 ### Supply Drop and Forward Deploy
 
@@ -359,7 +355,7 @@ lmf\_supplyDropAircraft configures the aircraft used by player requests. Both pl
 
 Supply valid positions, such as marker names or \[x,y,z]. Delivery uses ACE Cargo and parachutes. Direct calls bypass the player menu's quota and request cooldown.
 
-Existing four-argument calls remain supported. Without a category, an unambiguous configured crate classname can initialize automatically; an ambiguous classname keeps its original cargo. Automatic filling still requires `lmf_playerGear`. For a category-specific delivery:
+Existing four-argument calls remain supported. Without a category, an enabled configured crate classname initializes automatically through CBA InitPost; disabled or conflicting classnames keep their original cargo. Automatic filling still requires `lmf_playerGear`. For a category-specific delivery:
 
 ```sqf
 ["mrk_supplySpawn", "mrk_supplyDrop", lmf_supplyDropAircraft, "", "SMALL"] spawn lmf_supplyDrop_fnc_deliverSupplies;
