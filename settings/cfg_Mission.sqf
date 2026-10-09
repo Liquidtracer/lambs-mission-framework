@@ -43,16 +43,16 @@ lmf_bftGroundVehicles = []; // Vehicles: NAME1-4.
 lmf_bftAirVehicles = []; // Air: NAME1-4.
 
 // Ground vehicle classnames.
-lmf_vic1 = "CUP_M1240_OGPK_M240_NATO";
-lmf_vic2 = "B_Quadbike_01_F";
-lmf_vic3 = "";
-lmf_vic4 = "";
+lmf_groundVehicles = [
+	"CUP_M1240_OGPK_M240_NATO",
+	"B_Quadbike_01_F"
+];
 
 // Aircraft classnames.
-lmf_air1 = "B_Heli_Light_01_dynamicLoadout_F";
-lmf_air2 = "B_Heli_Transport_01_pylons_F";
-lmf_air3 = "";
-lmf_air4 = "";
+lmf_airVehicles = [
+	"B_Heli_Light_01_dynamicLoadout_F",
+	"B_Heli_Transport_01_pylons_F"
+];
 
 lmf_supSquad = "Box_IND_Ammo_F"; // Supply spawnpad squad supplies
 lmf_supLarge = "I_supplyCrate_F"; // Supply spawnpad large supplies

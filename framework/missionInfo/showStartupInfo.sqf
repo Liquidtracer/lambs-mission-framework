@@ -39,7 +39,7 @@ if (lmf_bft && {count (lmf_bftInfantry + lmf_bftGroundVehicles + lmf_bftAirVehic
 };
 
 if (lmf_supplyDropLimit > 0 && {lmf_remainingSuppDrops > 0}) then {
-	private _body = if (lmf_supplyDropVehicles && {lmf_vic1 != "" || lmf_vic2 != "" || lmf_vic3 != "" || lmf_vic4 != ""}) then {
+	private _body = if (lmf_supplyDropVehicles && {(lmf_groundVehicles findIf {_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}}) >= 0}) then {
 		"Request supplies or vehicles. Requires a map and long-range radio."
 	} else {
 		"Request supplies. Requires a map and long-range radio."

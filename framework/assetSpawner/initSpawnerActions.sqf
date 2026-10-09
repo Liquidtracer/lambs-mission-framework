@@ -28,37 +28,29 @@ if !(isNil "ammoSpawner") then {
 
 // Ground vehicle spawner
 if !(isNil "groundSpawner") then {
-	private _vehType1 = getText (configFile >> "CfgVehicles" >> lmf_vic1 >> "displayName");
-	private _vehType2 = getText (configFile >> "CfgVehicles" >> lmf_vic2 >> "displayName");
-	private _vehType3 = getText (configFile >> "CfgVehicles" >> lmf_vic3 >> "displayName");
-	private _vehType4 = getText (configFile >> "CfgVehicles" >> lmf_vic4 >> "displayName");
-
-	private _groundVeh1 = ["lmf_assetSpawner_veh1", _vehType1, "", {[lmf_vic1, groundPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-	private _groundVeh2 = ["lmf_assetSpawner_veh2", _vehType2, "", {[lmf_vic2, groundPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-	private _groundVeh3 = ["lmf_assetSpawner_veh3", _vehType3, "", {[lmf_vic3, groundPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-	private _groundVeh4 = ["lmf_assetSpawner_veh4", _vehType4, "", {[lmf_vic4, groundPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-
-	if (lmf_vic1 != "") then {[groundSpawner, 0, ["ACE_MainActions"], _groundVeh1] call ace_interact_menu_fnc_addActionToObject;};
-	if (lmf_vic2 != "") then {[groundSpawner, 0, ["ACE_MainActions"], _groundVeh2] call ace_interact_menu_fnc_addActionToObject;};
-	if (lmf_vic3 != "") then {[groundSpawner, 0, ["ACE_MainActions"], _groundVeh3] call ace_interact_menu_fnc_addActionToObject;};
-	if (lmf_vic4 != "") then {[groundSpawner, 0, ["ACE_MainActions"], _groundVeh4] call ace_interact_menu_fnc_addActionToObject;};
+	{
+		if (_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}) then {
+			private _displayName = getText (configFile >> "CfgVehicles" >> _x >> "displayName");
+			private _action = [format ["lmf_assetSpawner_ground%1", _forEachIndex], _displayName, "", {
+				params ["_target", "_player", "_params"];
+				[_params select 0, groundPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;
+			}, {true}, {}, [_x]] call ace_interact_menu_fnc_createAction;
+			[groundSpawner, 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToObject;
+		};
+	} forEach lmf_groundVehicles;
 };
 
 // Air vehicle spawner
 if !(isNil "airSpawner") then {
-	private _heliType1 = getText (configFile >> "CfgVehicles" >> lmf_air1 >> "displayName");
-	private _heliType2 = getText (configFile >> "CfgVehicles" >> lmf_air2 >> "displayName");
-	private _heliType3 = getText (configFile >> "CfgVehicles" >> lmf_air3 >> "displayName");
-	private _heliType4 = getText (configFile >> "CfgVehicles" >> lmf_air4 >> "displayName");
-
-	private _airVeh1 = ["lmf_assetSpawner_heli1", _heliType1, "", {[lmf_air1, airPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-	private _airVeh2 = ["lmf_assetSpawner_heli2", _heliType2, "", {[lmf_air2, airPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-	private _airVeh3 = ["lmf_assetSpawner_heli3", _heliType3, "", {[lmf_air3, airPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-	private _airVeh4 = ["lmf_assetSpawner_heli4", _heliType4, "", {[lmf_air4, airPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;}, {true}] call ace_interact_menu_fnc_createAction;
-
-	if (lmf_air1 != "") then {[airSpawner, 0, ["ACE_MainActions"], _airVeh1] call ace_interact_menu_fnc_addActionToObject;};
-	if (lmf_air2 != "") then {[airSpawner, 0, ["ACE_MainActions"], _airVeh2] call ace_interact_menu_fnc_addActionToObject;};
-	if (lmf_air3 != "") then {[airSpawner, 0, ["ACE_MainActions"], _airVeh3] call ace_interact_menu_fnc_addActionToObject;};
-	if (lmf_air4 != "") then {[airSpawner, 0, ["ACE_MainActions"], _airVeh4] call ace_interact_menu_fnc_addActionToObject;};
+	{
+		if (_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}) then {
+			private _displayName = getText (configFile >> "CfgVehicles" >> _x >> "displayName");
+			private _action = [format ["lmf_assetSpawner_air%1", _forEachIndex], _displayName, "", {
+				params ["_target", "_player", "_params"];
+				[_params select 0, airPad] call lmf_assetSpawner_fnc_spawnObjectAtPad;
+			}, {true}, {}, [_x]] call ace_interact_menu_fnc_createAction;
+			[airSpawner, 0, ["ACE_MainActions"], _action] call ace_interact_menu_fnc_addActionToObject;
+		};
+	} forEach lmf_airVehicles;
 };
 

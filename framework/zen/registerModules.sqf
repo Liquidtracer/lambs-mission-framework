@@ -209,19 +209,21 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 ["LMF Utility", "Supply Drop", {
 
 	private _boxes = [
-		[".", ""],
 		[lmf_supSquad, "Small Ammo Crate"],
 		[lmf_supLarge, "Large Ammo Crate"],
 		[lmf_supExplosives, "Explosives Crate"],
 		[lmf_supMedical, "Medical Crate"],
-		[lmf_supVehicle, "Vehicle Supplies (RRR)"],
-		[".", ""],
-		[lmf_vic1, getText (configFile >> "CfgVehicles" >> lmf_vic1 >> "displayName")],
-		[lmf_vic2, getText (configFile >> "CfgVehicles" >> lmf_vic2 >> "displayName")],
-		[lmf_vic3, getText (configFile >> "CfgVehicles" >> lmf_vic3 >> "displayName")],
-		[lmf_vic4, getText (configFile >> "CfgVehicles" >> lmf_vic4 >> "displayName")]
+		[lmf_supVehicle, "Vehicle Supplies (RRR)"]
 	];
 	_boxes = _boxes select {_x#0 != ""};
+	private _groundVehicles = lmf_groundVehicles select {_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}};
+	if (count _boxes > 0 && {count _groundVehicles > 0}) then {
+		_boxes pushBack ["", "--- Vehicles ---"];
+	};
+	{
+		_boxes pushBack [_x, getText (configFile >> "CfgVehicles" >> _x >> "displayName")];
+	} forEach _groundVehicles;
+	if (_boxes isEqualTo []) exitWith {["No supplies or ground vehicles configured."] call zen_common_fnc_showMessage;};
 
 	private _comboOptions = [];
 	for "_i" from 0 to (count _boxes) - 1 do {
@@ -235,6 +237,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		params ["_dialog", "_pos"];
 		_dialog params ["_type"];
+		if (_type#0 isEqualTo "") exitWith {};
 
 		_pos = ASLToATL _pos;
 		_dropPos = _pos;
@@ -346,19 +349,19 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 // Spawn vehicles
 ["LMF Utility", "Vehicle Spawn", {
 
-	_vehicles = [
-		[".", ""],
-		[lmf_vic1, getText (configFile >> "CfgVehicles" >> lmf_vic1 >> "displayName")],
-		[lmf_vic2, getText (configFile >> "CfgVehicles" >> lmf_vic2 >> "displayName")],
-		[lmf_vic3, getText (configFile >> "CfgVehicles" >> lmf_vic3 >> "displayName")],
-		[lmf_vic4, getText (configFile >> "CfgVehicles" >> lmf_vic4 >> "displayName")],
-		[".", ""],
-		[lmf_air1, getText (configFile >> "CfgVehicles" >> lmf_air1 >> "displayName")],
-		[lmf_air2, getText (configFile >> "CfgVehicles" >> lmf_air2 >> "displayName")],
-		[lmf_air3, getText (configFile >> "CfgVehicles" >> lmf_air3 >> "displayName")],
-		[lmf_air4, getText (configFile >> "CfgVehicles" >> lmf_air4 >> "displayName")]
-	];
-	_vehicles = _vehicles select {_x#0 != ""};
+	private _groundVehicles = lmf_groundVehicles select {_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}};
+	private _airVehicles = lmf_airVehicles select {_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}};
+	private _vehicles = [];
+	{
+		_vehicles pushBack [_x, getText (configFile >> "CfgVehicles" >> _x >> "displayName")];
+	} forEach _groundVehicles;
+	if (count _groundVehicles > 0 && {count _airVehicles > 0}) then {
+		_vehicles pushBack ["", "--- Aircraft ---"];
+	};
+	{
+		_vehicles pushBack [_x, getText (configFile >> "CfgVehicles" >> _x >> "displayName")];
+	} forEach _airVehicles;
+	if (_vehicles isEqualTo []) exitWith {["No vehicles configured."] call zen_common_fnc_showMessage;};
 
 	private _comboOptions = [];
 	for "_i" from 0 to (count _vehicles) - 1 do {
@@ -372,6 +375,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		params ["_dialog", "_pos"];
 		_dialog params ["_type"];
+		if (_type#0 isEqualTo "") exitWith {};
 
 		_pos = ASLToATL _pos;
 		private _vehicle = _type#0 createVehicle _pos;

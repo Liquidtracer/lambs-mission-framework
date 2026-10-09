@@ -13,6 +13,7 @@
 * **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups.
 * **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.
 * **Improved:** Player roles, weapon distribution, Role Selector, Personal Arsenal, Supply Crates and ZEN now share one equipment configuration registry; Player weapon keys are strings instead of numeric IDs.
+* **Improved:** Breaking configuration change: replaced the four ground and four air Player vehicle slots with scalable `lmf_groundVehicles` and `lmf_airVehicles` arrays.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Tweaked:** Garrison stance reactions now account for cover, suppression and group losses.
 * **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal/Available Optics; TO&E handles missing LMF roles.

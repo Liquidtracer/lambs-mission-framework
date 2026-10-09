@@ -133,23 +133,15 @@ lmf_supplyDrop_fnc_registerMenu = {
 	if !(lmf_supMedical isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _dropMed, true] call ace_interact_menu_fnc_addActionToClass;};
 	if !(lmf_supVehicle isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_supplies"], _dropVehicle, true] call ace_interact_menu_fnc_addActionToClass;};
 
-	if (lmf_supplyDropLimit > 0 && lmf_supplyDropVehicles && {lmf_vic1 != "" || lmf_vic2 != "" || lmf_vic3 != "" || lmf_vic4 != ""}) then {
+	private _groundVehicles = lmf_groundVehicles select {_x != "" && {isClass (configFile >> "CfgVehicles" >> _x)}};
+	if (lmf_supplyDropLimit > 0 && lmf_supplyDropVehicles && {count _groundVehicles > 0}) then {
 		private _vicMenu = ["lmf_supplyDrop_vehicles", "Vehicles", ["\A3\ui_f\data\Map\VehicleIcons\iconCrateVeh_ca.paa", LMF_MAIN_COLOR], {lmf_supplyDropVehicles}, {true}] call ace_interact_menu_fnc_createAction;
 		["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu"], _vicMenu, true] call ace_interact_menu_fnc_addActionToClass;
 
-		private _vehType1 = getText (configFile >> "CfgVehicles" >> lmf_vic1 >> "displayName");
-		private _vehType2 = getText (configFile >> "CfgVehicles" >> lmf_vic2 >> "displayName");
-		private _vehType3 = getText (configFile >> "CfgVehicles" >> lmf_vic3 >> "displayName");
-		private _vehType4 = getText (configFile >> "CfgVehicles" >> lmf_vic4 >> "displayName");
-
-		private _dropVic1 = ["lmf_supplyDrop_vic1", _vehType1, "", _statement, {true}, {}, [lmf_vic1]] call ace_interact_menu_fnc_createAction;
-		private _dropVic2 = ["lmf_supplyDrop_vic2", _vehType2, "", _statement, {true}, {}, [lmf_vic2]] call ace_interact_menu_fnc_createAction;
-		private _dropVic3 = ["lmf_supplyDrop_vic3", _vehType3, "", _statement, {true}, {}, [lmf_vic3]] call ace_interact_menu_fnc_createAction;
-		private _dropVic4 = ["lmf_supplyDrop_vic4", _vehType4, "", _statement, {true}, {}, [lmf_vic4]] call ace_interact_menu_fnc_createAction;
-
-		if !(lmf_vic1 isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_vehicles"], _dropVic1, true] call ace_interact_menu_fnc_addActionToClass;};
-		if !(lmf_vic2 isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_vehicles"], _dropVic2, true] call ace_interact_menu_fnc_addActionToClass;};
-		if !(lmf_vic3 isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_vehicles"], _dropVic3, true] call ace_interact_menu_fnc_addActionToClass;};
-		if !(lmf_vic4 isEqualTo "") then {["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_vehicles"], _dropVic4, true] call ace_interact_menu_fnc_addActionToClass;};
+		{
+			private _displayName = getText (configFile >> "CfgVehicles" >> _x >> "displayName");
+			private _action = [format ["lmf_supplyDrop_ground%1", _forEachIndex], _displayName, "", _statement, {true}, {}, [_x]] call ace_interact_menu_fnc_createAction;
+			["CAManBase", 1, ["ACE_SelfActions", "lmf_supplyDrop_menu", "lmf_supplyDrop_vehicles"], _action, true] call ace_interact_menu_fnc_addActionToClass;
+		} forEach _groundVehicles;
 	};
 };

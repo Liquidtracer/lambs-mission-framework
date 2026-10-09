@@ -36,14 +36,25 @@ Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locall
 
 ### Configured assets
 
-- `lmf_vic1`, `lmf_vic2`, `lmf_vic3`, `lmf_vic4` select ground vehicle classnames; `lmf_air1`, `lmf_air2`, `lmf_air3`, `lmf_air4` select aircraft classnames. `""` omits a menu choice. Spawnpad menus require Eden objects named `groundSpawner` / `groundPad` or `airSpawner` / `airPad` respectively; configuring a classname alone does not spawn an asset.
+`lmf_groundVehicles` and `lmf_airVehicles` are ordered arrays of vehicle classname strings with no fixed entry limit:
+
+```sqf
+lmf_groundVehicles = ["CUP_M1240_OGPK_M240_NATO", "B_Quadbike_01_F"];
+lmf_airVehicles = ["B_Heli_Light_01_dynamicLoadout_F", "B_Heli_Transport_01_pylons_F"];
+```
+
+Use `[]` to disable either category independently. Empty strings and classnames absent from `CfgVehicles` are omitted from vehicle menus; the configured arrays are not modified. Use canonical classname spelling, including case, for exact Player vehicle initialization matching.
+
+- Asset Spawner and ZEN Vehicle Spawn offer these lists in configured order, with names from `CfgVehicles`. Spawnpad menus require Eden objects named `groundSpawner` / `groundPad` or `airSpawner` / `airPad` respectively; configuring a classname alone does not spawn an asset.
+- Supply Drop vehicle requests and ZEN Supply Drop use only `lmf_groundVehicles`. ZEN delivery remains independent of the player request toggle, quota and cooldown.
+- These are vehicle class lists, separate from the BFT callsign arrays `lmf_bftGroundVehicles` and `lmf_bftAirVehicles`.
 - `lmf_supSquad`, `lmf_supLarge`, `lmf_supExplosives`, `lmf_supMedical` and `lmf_supVehicle` select supply crate classnames. All five are offered by Supply Drop when nonempty; the `ammoSpawner` / `ammoPad` menu offers squad, explosives and medical crates. `""` omits the corresponding choice.
-- These classnames also identify objects for LMF player-vehicle and supply-crate initialization, including Eden-placed objects. That initialization requires `lmf_playerGear`; menu availability itself does not.
+- The vehicle arrays select exact classnames for local Player ground/air vehicle initialization through CBA InitPost, for both Eden-placed and newly created vehicles. Supply crate classnames independently select supply-crate initialization. Both require `lmf_playerGear`; menu availability itself does not.
 
 ### Supply Drop and Forward Deploy
 
 - `lmf_supplyDropLimit` sets the shared mission request quota; `0` disables the player request module. Requests require an assigned map, a supported long-range radio and inactive warmup. Place a marker named `respawn` for the aircraft spawn-position calculation. Accepted requests share a 30-second cooldown.
-- `lmf_supplyDropAircraft` selects the transport classname; planes and helicopters use the same fly-over parachute delivery. `lmf_supplyDropVehicles` enables requests for nonempty `lmf_vic1`–`lmf_vic4` entries. Direct [Supply Drop calls](#supply-drop) bypass the player request quota and cooldown.
+- `lmf_supplyDropAircraft` independently selects the delivery transport classname; it does not use `lmf_airVehicles`. Planes and helicopters use the same fly-over parachute delivery. `lmf_supplyDropVehicles` enables requests for usable `lmf_groundVehicles` entries; the vehicle submenu is omitted when none exist. Direct [Supply Drop calls](#supply-drop) bypass the player request quota and cooldown.
 - `lmf_forwardDeploy` enables group-leader registration during warmup and requires `lmf_warmup`. `lmf_forwardDeploy_height = 0` selects ground deployment; positive values select an airdrop in meters, with values below `100` raised to `100`. See [Forward Deploy](#forward-deploy) for required Eden asset registration and controls.
 
 ## Player equipment

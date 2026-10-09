@@ -21,6 +21,6 @@ if (_vehicleKey in ["CAR", "CARARMED", "TRUCK", "APC", "TANK"]) then {[_vic] cal
 
 // Configured player vehicles
 if !(lmf_playerGear) exitWith {};
-if (_type == lmf_vic1 || {_type == lmf_vic2 || {_type == lmf_vic3 || {_type == lmf_vic4}}}) then {
+if (_type in lmf_groundVehicles) then {
 	[_vic] call lmf_playerVehicles_fnc_initGroundVehicle;
 };

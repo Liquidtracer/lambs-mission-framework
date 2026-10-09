@@ -21,6 +21,6 @@ if (_vehicleKey in ["HELITRANSPORT", "HELIATTACK"]) then {[_air] call lmf_ai_fnc
 
 // Player vehicles
 if !(lmf_playerGear) exitWith {};
-if (_type == lmf_air1 || {_type == lmf_air2 || {_type == lmf_air3 || {_type == lmf_air4}}}) then {
+if (_type in lmf_airVehicles) then {
 	[_air] call lmf_playerVehicles_fnc_initAirVehicle;
 };
