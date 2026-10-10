@@ -2,10 +2,9 @@
 
 ## LMF 2.0.0 - Unreleased
 
-* **Improved:** Rebuilt Personal Arsenal with role-aware clothing, weapon and attachment customization during warmup, replacing the separate Available Optics action and restricting manual inventory management.
-
 * **Added:** Startup mission information and group-arrival notifications for leaders.
 * **Added:** Zeus Infantry Patrol can target a living player's position at confirmation while spawning at the clicked position.
+* **Improved:** Rebuilt Personal Arsenal with role-aware clothing, weapon and attachment customization during warmup, replacing the separate Available Optics action and restricting manual inventory management.
 * **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
 * **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
 * **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
