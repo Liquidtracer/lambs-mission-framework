@@ -19,11 +19,11 @@ private _availableOptics = ["JCA_optic_MRCS_black"]; // Available during warmup 
 // DMR, LMG, MMG, LAT, MAT.
 
 // Rifleman
-private _rUniform = ["LAMBS_U_CombatUniformB_full"];
-private _rVest = ["LAMBS_CarrierRigKBT_01_light_Brown_F"];
+private _rUniform = ["LAMBS_U_CombatUniformB_full", "LAMBS_U_CombatUniformB"];
+private _rVest = ["LAMBS_CarrierRigKBT_01_light_Brown_F", "LAMBS_CarrierRigKBT_01_light_Green_F"];
 private _rHeadgear = ["CUP_H_OpsCore_Black", "CUP_H_OpsCore_Black_NoHS", "CUP_H_OpsCore_Black_SF", "CUP_H_OpsCore_Grey", "CUP_H_OpsCore_Grey_NoHS", "CUP_H_OpsCore_Grey_SF"];
 private _rGoggles = ["G_Balaclava_TI_blk_F"];
-private _rBackpack = ["B_AssaultPack_blk"];
+private _rBackpack = ["B_AssaultPack_blk", "B_AssaultPack_rgr"];
 private _rWeapon = "RIFLE";
 
 // Platoon commander
