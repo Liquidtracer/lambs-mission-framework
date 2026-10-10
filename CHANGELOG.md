@@ -2,7 +2,7 @@
 
 ## LMF 2.0.0 - Unreleased
 
-* **Added:** Experimental role-aware ACE Personal Arsenal for warmup clothing, weapons and attachments, replacing the separate Available Optics action.
+* **Improved:** Rebuilt Personal Arsenal with role-aware clothing, weapon and attachment customization during warmup, replacing the separate Available Optics action and restricting manual inventory management.
 
 * **Added:** Startup mission information and group-arrival notifications for leaders.
 * **Added:** Zeus Infantry Patrol can target a living player's position at confirmation while spawning at the clicked position.
@@ -19,7 +19,7 @@
 * **Improved:** Breaking configuration change: replaced the four ground and four air Player vehicle slots with scalable `lmf_groundVehicles` and `lmf_airVehicles` arrays.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Tweaked:** Garrison stance reactions now account for cover, suppression and group losses.
-* **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal/Available Optics; TO&E handles missing LMF roles.
+* **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal; TO&E handles missing LMF roles.
 * **Fixed:** Garrison reactions handle empty building-position searches.
 * **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
