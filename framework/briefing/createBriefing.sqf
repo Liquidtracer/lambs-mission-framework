@@ -90,12 +90,12 @@ private _respawnColor = LMF_TEXT_COLOR_DARK;
 switch (lmf_respawnType) do {
 	case "WAVE": {
 		_respawnLabel = format ["Wave (%1)", [lmf_respawnTime, "MM:SS"] call BIS_fnc_secondsToString];
-		_respawnDescription = "Mission-time waves (MM:SS), with a minimum delay of 10 seconds after death.";
+		_respawnDescription = "Mission-time waves (MM:SS).";
 		_respawnColor = LMF_TEXT_COLOR;
 	};
 	case "TICKETS": {
 		_respawnLabel = format ["Tickets (%1x / %2)", lmf_respawnTickets, [lmf_respawnTime, "MM:SS"] call BIS_fnc_secondsToString];
-		_respawnDescription = "Per-player session allowance, consumed on death; mission-time waves (MM:SS) with a minimum delay of 10 seconds.";
+		_respawnDescription = "Per-player session allowance, consumed on death; mission-time waves (MM:SS).";
 		_respawnColor = LMF_TEXT_COLOR;
 	};
 };
