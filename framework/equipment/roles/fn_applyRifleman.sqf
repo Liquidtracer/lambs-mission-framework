@@ -13,7 +13,7 @@ private _role = (_config get "ROLES") get "RIFLEMAN";
 private _clothing = _role get "CLOTHING";
 
 _unit setVariable ["lmf_currentRole", (_role get "DISPLAY_NAME"), true];
-_unit setVariable ["lmf_currentRoleKey", "RIFLEMAN", true];
+_unit setVariable ["lmf_currentRoleKey", "RIFLEMAN"];
 _unit setRank (_role get "RANK");
 
 [_unit, _clothing get "UNIFORM", _clothing get "VEST", _clothing get "HEADGEAR", _clothing get "GOGGLES", _clothing get "BACKPACK"] call lmf_equipment_fnc_applyBaseLoadout;

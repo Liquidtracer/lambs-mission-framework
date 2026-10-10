@@ -34,7 +34,7 @@ private _items = [];
 } forEach [["UNIFORM", "CfgWeapons"], ["VEST", "CfgWeapons"], ["HEADGEAR", "CfgWeapons"], ["GOGGLES", "CfgGlasses"], ["BACKPACK", "CfgVehicles"]];
 
 private _weapon = (_config get "WEAPONS") getOrDefault [_role get "WEAPON", createHashMap];
-// Remove CLASSES here to stop offering alternative weapons; attachments remain available.
+// Offer the role's configured weapon variants and attachments in Personal Arsenal.
 // ACE addVirtualItems performs its own baseWeapon normalization and filters unsupported classes.
 {
 	{

@@ -14,7 +14,7 @@ private _clothing = _role get "CLOTHING";
 private _grenadeSmoke = (_config get "GRENADES") get "SMOKE";
 
 _unit setVariable ["lmf_currentRole", (_role get "DISPLAY_NAME"), true];
-_unit setVariable ["lmf_currentRoleKey", "MEDIC", true];
+_unit setVariable ["lmf_currentRoleKey", "MEDIC"];
 _unit setRank (_role get "RANK");
 
 [_unit, _clothing get "UNIFORM", _clothing get "VEST", _clothing get "HEADGEAR", _clothing get "GOGGLES", _clothing get "BACKPACK"] call lmf_equipment_fnc_applyBaseLoadout;
