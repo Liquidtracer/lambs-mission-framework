@@ -147,7 +147,6 @@ lmf_player_config = createHashMapFromArray [
 		["L", _radioL],
 		["R", _radioR]
 	]],
-	["AVAILABLE_OPTICS", _availableOptics],
 	["GRENADES", createHashMapFromArray [
 		["FRAG", _grenade],
 		["SMOKE", _grenadeSmoke],

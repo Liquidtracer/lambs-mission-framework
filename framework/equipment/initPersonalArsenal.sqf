@@ -79,6 +79,50 @@ lmf_equipment_fnc_restrictArsenalPanel = {
 		_control ctrlSetTooltip "Unavailable in Personal Arsenal";
 	} forEach [2033, 2035, 2037, 2026, 2022, 2031, 2029, 2024, 1006];
 
+	private _isWeapon = _leftPanel in [2002, 2004, 2006];
+	private _isContainer = _leftPanel in [2010, 2012, 2014];
+	private _hideRightPanel = _isContainer || {_leftPanel == 2020};
+	if (_isWeapon || {_hideRightPanel}) then {
+		// Cargo controls/backgrounds, loaded magazines (including secondary muzzle), and load bar.
+		private _hidden = [7, 15, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 101, 102, 3001, 3002, 3003, 3004];
+		for "_idc" from 60 to 79 do {_hidden pushBack _idc}; // ACE custom cargo categories.
+		if (_hideRightPanel) then {
+			// Entire right panel, including attachment tabs, sorting and search.
+			_hidden append [5, 6, 14, 17, 171, 19, 42, 21, 22, 23, 24, 25, 26, 27, 28];
+		};
+		{
+			private _control = _display displayCtrl _x;
+			_control ctrlShow false;
+			_control ctrlEnable false;
+		} forEach _hidden;
+	};
+	if (_listId == -1) exitWith {}; // Visibility refresh after ACE's Hide/Show UI toggle.
+	if (_isContainer && {_listId == 14}) then {
+		// ACE's later updateRightPanel can show Remove All again, after rightPanelFilled.
+		[{
+			params ["_display", "_leftPanel"];
+			if (isNull _display || {(missionNamespace getVariable ["ace_arsenal_currentLeftPanel", -1]) != _leftPanel}) exitWith {};
+			[_display, _leftPanel, -1, -1] call lmf_equipment_fnc_restrictArsenalPanel;
+		}, [_display, _leftPanel]] call CBA_fnc_execNextFrame;
+	};
+
+	// Left filling precedes selection: do not carry a binocular's loaded-magazine tab into weapons.
+	if (_isWeapon && {_listId == 13} && {(missionNamespace getVariable ["ace_arsenal_currentRightPanel", -1]) in [3002, 3004]}) then {
+		ace_arsenal_currentRightPanel = 22;
+	};
+	if (_isWeapon && {_listId == 14} && {!(_rightPanel in [22, 24, 26, 28])}) exitWith {
+		// An internal refresh can still request a hidden tab. Empty its UI list before ACE's
+		// final selection, then reopen optics after that fill completes (no nested panel fill).
+		lbClear (_display displayCtrl 14);
+		[{
+			params ["_display", "_leftPanel", "_rightPanel"];
+			if (isNull _display) exitWith {};
+			if ((missionNamespace getVariable ["ace_arsenal_currentBox", objNull]) isNotEqualTo lmf_equipment_personalArsenalBox) exitWith {};
+			if (ace_arsenal_currentLeftPanel != _leftPanel || {ace_arsenal_currentRightPanel != _rightPanel}) exitWith {};
+			[_display, _display displayCtrl 22, false] call ace_arsenal_fnc_fillRightPanel;
+		}, [_display, _leftPanel, _rightPanel]] call CBA_fnc_execNextFrame;
+	};
+
 	// Right-side Empty exists only in weapon/binocular attachment and loaded-magazine lists.
 	// Container cargo uses listnbox 15, has no Empty row, and keeps its existing cargo restrictions.
 	if (_listId == 14 && {!(_leftPanel in [2002, 2004, 2006, 2020]) || {!(_rightPanel in [22, 24, 26, 28, 3002, 3004])}}) exitWith {};
@@ -118,6 +162,12 @@ lmf_equipment_fnc_restrictArsenalPanel = {
 ["ace_arsenal_rightPanelFilled", {
 	params ["_display", "_leftPanel", "_rightPanel"];
 	[_display, _leftPanel, _rightPanel, 14] call lmf_equipment_fnc_restrictArsenalPanel;
+}] call CBA_fnc_addEventHandler;
+
+["ace_arsenal_showToggle", {
+	params ["_display", "_shown"];
+	if (!_shown) exitWith {};
+	[_display, missionNamespace getVariable ["ace_arsenal_currentLeftPanel", -1], -1, -1] call lmf_equipment_fnc_restrictArsenalPanel;
 }] call CBA_fnc_addEventHandler;
 
 private _action = ["lmf_equipment_personalArsenal", "Personal Arsenal", ["A3\ui_f_orange\Data\CfgOrange\Missions\orange_escape_ca.paa", LMF_MAIN_COLOR], {

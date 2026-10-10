@@ -10,8 +10,6 @@ private _radioB = "ACRE_PRC148";
 private _radioL = "ACRE_PRC148";
 private _radioR = "ACRE_PRC343";
 
-private _availableOptics = ["JCA_optic_MRCS_black"]; // Available during warmup (ACE self-interaction)
-
 // --- Infantry roles ---------------------------------------------------------------------------
 // Clothing arrays set to [""] inherit the rifleman configuration.
 
@@ -212,7 +210,7 @@ private _carbineBipod = [""];
 private _rifle = ["CUP_arifle_Mk17_CQC_Black", "CUP_arifle_Mk17_CQC_AFG_black", "CUP_arifle_Mk17_CQC_FG_black"];
 private _rifleAmmo = ["CUP_30Rnd_762x51_2_B_SCAR"];
 private _rifleAmmoT = ["CUP_30Rnd_TE1_Red_Tracer_762x51_1_SCAR"];
-private _rifleOptic = _availableOptics;
+private _rifleOptic = ["JCA_optic_MRCS_black"];
 private _rifleAttach1 = ["acc_pointer_IR"];
 private _rifleAttach2 = ["JCA_muzzle_snds_762_tactical_black"];
 private _rifleBipod = [""];
@@ -225,7 +223,7 @@ private _rifleGlUgl1 = ["ACE_40mm_Flare_red"];
 private _rifleGlUgl2 = ["1Rnd_HE_Grenade_shell"];
 private _rifleGlUgl3 = ["ACE_40mm_Flare_red"];
 private _rifleGlUgl4 = ["1Rnd_HE_Grenade_shell"];
-private _rifleGlOptic = _availableOptics;
+private _rifleGlOptic = ["JCA_optic_MRCS_black"];
 private _rifleGlAttach1 = ["acc_pointer_IR"];
 private _rifleGlAttach2 = ["JCA_muzzle_snds_762_tactical_black"];
 private _rifleGlBipod = [""];
@@ -242,7 +240,7 @@ private _dmrBipod = [""];
 private _lmg = ["CUP_lmg_Mk48"];
 private _lmgAmmo = ["CUP_100Rnd_TE4_LRT4_Red_Tracer_762x51_Belt_M"];
 private _lmgAmmoT = ["CUP_100Rnd_TE4_LRT4_Red_Tracer_762x51_Belt_M"];
-private _lmgOptic = _availableOptics;
+private _lmgOptic = ["JCA_optic_MRCS_black"];
 private _lmgAttach1 = ["acc_pointer_IR"];
 private _lmgAttach2 = [""];
 private _lmgBipod = [""];
