@@ -17,9 +17,8 @@
 * **Improved:** Player roles, weapon distribution, Role Selector, Personal Arsenal, Supply Crates and ZEN now share one equipment configuration registry; Player weapon keys are strings instead of numeric IDs.
 * **Improved:** Breaking configuration change: replaced the four ground and four air Player vehicle slots with scalable `lmf_groundVehicles` and `lmf_airVehicles` arrays.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
-* **Tweaked:** Garrison stance reactions now account for cover, suppression and group losses.
+* **Tweaked:** Simplified infantry AI: random garrison release without surrender, native GUARD QRF, permanent Patrol-to-QRF transitions, 15-second individual hunter pursuit with last-survivor reassignment, and close-contact weapon-light/IR chances. Converge cancels hunting and patrol takeover before retasking.
 * **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal; TO&E handles missing LMF roles.
-* **Fixed:** Garrison reactions handle empty building-position searches.
 * **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.

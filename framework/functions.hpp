@@ -55,7 +55,6 @@ class ai {
 		class assignCallsign {};
 		class findJoinableGroups {};
 		class reassignSurvivor {};
-		class clearGarrisonStance {};
 	};
 	class spawning {
 		file = "framework\ai\spawning";

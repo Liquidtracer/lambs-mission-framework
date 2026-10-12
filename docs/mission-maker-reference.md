@@ -171,9 +171,11 @@ Managed QRF/hunter calls retain the mission-start wait and proximity checks thro
 
 A wave follows only its primary delivery: a group finishes with no living members; an object finishes when dead/deleted. Infantry QRF/hunters have no added respawn delay; Vehicle/Para QRF default to **300 seconds** before a replacement. Null, empty or already-dead initial deliveries end the source without retrying. The controller exits immediately after spawning the final ticket; it waits for delivery completion only when another replacement ticket remains. Transport flight and cleanup continue independently.
 
+Garrison, Patrol, Infantry QRF and Hunters start with weapon lights and IR lasers off. A detection within 75 meters can allow group weapon lights (30%, Auto) and individual nearby IR lasers (25%). Hunter tracking alone does not activate lights. No recurring distance check or automatic switch-off is used. Normal LAMBS assault tactics can still override IR-laser discipline outside hunting.
+
 ### Garrison
 
-Spawns infantry to occupy buildings and available gunner seats in nearby vehicles or static weapons.
+Spawns infantry to occupy buildings and available gunner seats in nearby vehicles or static weapons. EnemyDetected randomizes held stances; within 75 meters each defender has a 10% chance to leave ACE Garrison. No surrender routine is used. Dynamic Simulation and last-survivor reassignment remain.
 
 **Run on:** Server · **Use:** call · **Returns:** GROUP
 
@@ -195,7 +197,7 @@ private _grp = [garrison_1, "TEAM", 100, 1, false] call lmf_ai_fnc_spawnGarrison
 
 ### Patrol
 
-Spawns infantry to patrol an area and react to detected threats. Spawning over water creates a boat group.
+Spawns infantry to patrol an area. Relevant ground contact on land permanently changes the same group to QRF with GUARD and AWARE/FULL; it does not resume patrolling. Its new group name contains QRF but not Patrol. The separate light/IR reaction remains active after transition or convergence. Spawning over water creates a boat group using the shared landing flow.
 
 **Run on:** Server · **Use:** call · **Returns:** GROUP
 
@@ -215,13 +217,13 @@ private _grp = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] call 
 * **5. Formation** — String. Default: "STAG COLUMN".
 * "SLOW" — SAFE / LIMITED.
 * "FAST" — AWARE / NORMAL.
-* "ATTACK" — AWARE / LIMITED; Faster leader animation.
+* "ATTACK" — AWARE / LIMITED; no animation-speed override.
 
 
 
 ### Infantry QRF
 
-Returns an infantry GROUP with a GUARD task and reactions to detected ground targets. Additional tickets provide replacement groups after losses. Spawning over water creates a boat group.
+Returns an infantry GROUP with a GUARD task; Arma and LAMBS handle combat without LMF moving its waypoints on contact. Additional tickets provide replacement groups after losses. Spawning over water creates a boat group.
 
 **Run on:** Server · **Use:** call without tickets / spawn with tickets
 
@@ -242,7 +244,7 @@ private _grp = [spawn_1, "TEAM"] call lmf_ai_fnc_spawnInfantryQrf;
 
 ### Infantry hunter
 
-Returns an infantry GROUP that actively hunts players within range without needing to detect them first. Spawning over water creates a boat group.
+Returns an infantry GROUP that actively hunts the nearest living non-civilian player within range without prior detection. Individual movement orders use the player's 3D position every 15 seconds, including upper floors; actual navigation depends on the building. Hunters use FULL speed and normal Arma combat AI while LAMBS group and individual reactions are disabled during hunting. When casualties leave one survivor, hunting stops and the soldier joins an eligible friendly group or receives GUARD. An initially single-soldier spawn still hunts. Airborne aircraft are excluded. Spawning over water creates a boat group using the shared landing flow.
 
 **Run on:** Server · **Use:** call without tickets / spawn with tickets
 
@@ -405,7 +407,7 @@ Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, re
 * **1. Group-name keywords; case-insensitive. "ALL" or \["ALL"] selects all eligible groups** — String / Array of String. Required.
 * **2. Boat shoreline search radius, metres; not a group-selection radius** — Number. Default: 2000.
 
-Only processes groups local to the calling machine.
+Only processes groups local to the calling machine. Stops hunter orders and removes patrol contact takeover before assigning the new task. Land groups can receive another convergence task later; boats remain temporarily reserved while landing/dismounting.
 
 
 

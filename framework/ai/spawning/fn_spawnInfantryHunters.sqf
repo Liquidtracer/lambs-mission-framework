@@ -35,42 +35,51 @@ private _spawnOnce = {
 	[_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
 	_grp deleteGroupWhenEmpty true;
 	_grp setGroupIdGlobal [format ["Infantry Hunter (%1)", groupId _grp]];
-	_grp setVariable ["lmf_ai_joinableGroupHunter", true];
-	_grp setVariable ["lambs_danger_dangerAI", "disabled"];
+	// Keep Arma combat AI active; LAMBS movement reactions must not interrupt pursuit.
 	_grp setVariable ["lambs_danger_disableGroupAI", true];
-	{_x setVariable ["lambs_danger_disableAI", true]} forEach (units _grp);
-	// {_x disableAI "AUTOCOMBAT"} forEach (units _grp);
+	{_x setVariable ["lambs_danger_disableAI", true]} forEach units _grp;
 	_grp enableAttack false;
-	_grp setBehaviour "SAFE";
+	_grp setBehaviour "AWARE";
+	_grp setSpeedMode "FULL";
 	_grp allowFleeing 0;
+	_grp enableIRLasers false;
+	_grp enableGunLights "ForceOff";
+	_grp addEventHandler ["EnemyDetected", {
+		params ["_group", "_newTarget"];
+		if (!local _group || {isNull _newTarget} || {leader _group distance _newTarget >= 75}) exitWith {};
+		if (random 1 < 0.3) then {_group enableGunLights "Auto"};
+		{
+			if (alive _x && {local _x} && {_x distance _newTarget < 75} && {random 1 < 0.25}) then {_x enableIRLasers true};
+		} forEach units _group;
+	}];
 
-	// Store the script handle before casualty handling can interrupt startup.
+	// Install casualty handling and store the handle before scheduled hunting can run.
 	isNil {
 		_grp addEventHandler ["UnitKilled", {
-			params ["_group", "_unit", "_killer", "_instigator", "_useEffects"];
+			params ["_group"];
+			if (!local _group) exitWith {};
 			private _aliveUnits = units _group select {alive _x};
 			if (count _aliveUnits > 1) exitWith {};
-			// Stop even a suspended hunt before issuing GUARD or transferring the survivor.
 			terminate (_group getVariable ["lmf_ai_huntScript", scriptNull]);
 			_group setVariable ["lmf_ai_huntScript", nil];
-			_group setVariable ["lambs_danger_dangerAI", nil];
 			_group setVariable ["lambs_danger_disableGroupAI", nil];
-			if (_aliveUnits isNotEqualTo []) then {
-				private _survivor = _aliveUnits # 0;
-				_survivor setVariable ["lambs_danger_disableAI", nil];
-				[_survivor, _group] spawn {
-					params ["_survivor", "_oldGroup"];
-					if (!alive _survivor) exitWith {};
-					_survivor doMove getPosATL _survivor;
-					[_survivor] call lmf_ai_fnc_reassignSurvivor;
-					if (group _survivor != _oldGroup) then {
-						_survivor doFollow leader group _survivor;
-					};
-				};
-			};
+			{if (local _x) then {_x setVariable ["lambs_danger_disableAI", nil]}} forEach units _group;
+			_group enableAttack true;
+			_group allowFleeing 1;
+			_group setBehaviour "AWARE";
+			_group setSpeedMode "NORMAL";
+			_group setCombatMode "RED";
 			_group removeEventHandler [_thisEvent, _thisEventHandler];
+			if (_aliveUnits isEqualTo []) exitWith {};
+			private _survivor = _aliveUnits # 0;
+			if (!local _survivor) exitWith {};
+			_group selectLeader _survivor;
+			_survivor forceSpeed -1;
+			_survivor setUnitPos "AUTO";
+			_survivor doFollow leader _group;
+			[_survivor] call lmf_ai_fnc_reassignSurvivor;
+			_survivor doFollow leader group _survivor;
 		}];
-
 		_grp setVariable ["lmf_ai_huntScript", [_grp, _radius] spawn lmf_ai_fnc_taskHunt];
 	};
 

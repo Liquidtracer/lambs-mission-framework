@@ -1,6 +1,7 @@
 /*
 	AI patrol
 	Assigns patrol behavior to an AI group.
+	Call where the group is local. No suspension required.
 	Author: Alex2k.
 
 	Arguments:
@@ -17,7 +18,10 @@
 
 params ["_group", "_patrolTarget", "_patrolRadius", "_behaviour", "_speed", "_formation"];
 
-{[_x] call lmf_ai_fnc_clearGarrisonStance} forEach units _group;
+if (!local _group) exitWith {};
+private _garrisoned = units _group select {_x getVariable ["ace_ai_garrisonned", false]};
+[_garrisoned] call ace_ai_fnc_unGarrison;
+{_x setUnitPos "AUTO"} forEach _garrisoned;
 
 {deleteWaypoint _x} forEachReversed (waypoints _group);
 
@@ -39,25 +43,6 @@ private _wpCycle = _group addWaypoint [_randomCyclePos, 0];
 _wpCycle setWaypointType "CYCLE";
 _wpCycle setWaypointTimeout _waypointTimeoutArray;
 
-_group setBehaviour "AWARE";
-[{params ["_group", "_behaviour"]; _group setBehaviour _behaviour;}, [_group, _behaviour], 5] call CBA_fnc_waitAndExecute; // Delay for them not to get stuck
+_group setBehaviour _behaviour;
 _group setSpeedMode _speed;
 _group setFormation _formation;
-
-_group addEventHandler ["CommandChanged", {
-	params ["_group", "_newCommand"];
-	if ((isNull (leader _group)) || !alive (leader _group) || (behaviour (leader _group) == "COMBAT")) exitWith {
-		{_x enableAI "PATH"; _x setUnitPos "AUTO"} forEach (units _group);
-		_group removeEventHandler [_thisEvent, _thisEventHandler];
-	};
-
-	if (_newCommand != "MOVE") then {
-		(leader _group) setUnitPos "MIDDLE";
-		{
-			_x disableAI "PATH";
-			_x setUnitPos (["DOWN", "MIDDLE"] select (count (nearestTerrainObjects [_x, ["House"], 50, false]) > 4));
-		} forEach (units _group) - [(leader _group)];
-	} else {
-		{_x setUnitPos "AUTO"; _x enableAI "PATH"} forEach (units _group);
-	};
-}];

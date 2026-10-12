@@ -56,62 +56,56 @@ private _groups = allGroups select {
 	}
 };
 
-// Assign task
+// Cancel old tasking and assign new orders without scheduler interleaving.
 {
-	private _group = _x;
-	private _leader = leader _group;
-	private _vehicle = vehicle _leader;
+	isNil {
+		private _group = _x;
+		if (!local _group || {_group getVariable ["lmf_taskConverge_active", false]} ||
+			{!([_group] call _transportAllowsTask)}) exitWith {};
+		private _leader = leader _group;
+		private _vehicle = vehicle _leader;
 
-	// The group may have started landing or dismounting after selection.
-	if !(_group getVariable ["lmf_taskConverge_active", false]) then {
-
-		// Reserve boat tasking before any waypoint changes, without scheduler suspension.
-		if (_vehicle isKindOf "Ship") then {
-			isNil {
-				if (!local _group || {_group getVariable ["lmf_taskConverge_active", false]}) exitWith {};
-				_group setVariable ["lmf_taskConverge_active", true];
-				[_group, _vehicle, _position, _radius] spawn lmf_ai_fnc_landBoatGroup;
-			};
-		} else {
-			if (_vehicle isKindOf "Air") then {
-				// EnemyDetected can start landing after selection. Recheck and assign
-				// aircraft orders together, without changing other tasking's execution context.
-				isNil {
-					if (!local _group || {!([_group] call _transportAllowsTask)}) exitWith {};
-					{deleteWaypoint _x} forEachReversed waypoints _group;
-					private _wp = _group addWaypoint [_position, 0];
-					_wp setWaypointType "GUARD";
+		if (!isNil {_group getVariable "lmf_ai_huntScript"}) then {
+			terminate (_group getVariable "lmf_ai_huntScript");
+			_group setVariable ["lmf_ai_huntScript", nil];
+			_group setVariable ["lambs_danger_disableGroupAI", nil];
+			_group enableAttack true;
+			_group allowFleeing 1;
+			{
+				if (local _x) then {
+					_x setVariable ["lambs_danger_disableAI", nil];
+					_x forceSpeed -1;
 				};
-			} else {
-
-				{deleteWaypoint _x} forEachReversed waypoints _group;
-
-				// Infantry
-				if (_vehicle == _leader) then {
-
-					if ((toLower groupId _group) find "garrison" > -1) then {
-						{[_x] call lmf_ai_fnc_clearGarrisonStance} forEach units _group;
-						[units _group] call ace_ai_fnc_unGarrison;
-					};
-
-					{
-						_x setUnitPos "AUTO";
-						_x enableAI "PATH";
-						_x enableAI "MOVE";
-					} forEach units _group;
-
-					private _wp = _group addWaypoint [_position, 0];
-					_wp setWaypointType "GUARD";
-
-					_group setBehaviour "AWARE";
-					_group setSpeedMode "NORMAL";
-
-				// Land vehicles
-				} else {
-					private _wp = _group addWaypoint [_position, 0];
-					_wp setWaypointType "GUARD";
-				};
-			};
+			} forEach units _group;
 		};
+		private _patrolEh = _group getVariable ["lmf_ai_patrolContactEh", -1];
+		if (_patrolEh >= 0) then {
+			_group removeEventHandler ["EnemyDetected", _patrolEh];
+			_group setVariable ["lmf_ai_patrolContactEh", nil];
+		};
+
+		// Only boats reserve this flag; land groups remain available for later calls.
+		if (_vehicle isKindOf "Ship") exitWith {
+			_group setVariable ["lmf_taskConverge_active", true];
+			[_group, _vehicle, _position, _radius] spawn lmf_ai_fnc_landBoatGroup;
+		};
+
+		{deleteWaypoint _x} forEachReversed waypoints _group;
+		if (_vehicle == _leader) then {
+			private _garrisoned = units _group select {_x getVariable ["ace_ai_garrisonned", false]};
+			[_garrisoned] call ace_ai_fnc_unGarrison;
+			{
+				_x setUnitPos "AUTO";
+				_x enableAI "PATH";
+				_x enableAI "MOVE";
+			} forEach units _group;
+			// Replace individual hunt/ACE orders before following the new waypoint.
+			(units _group) doFollow _leader;
+			_group setBehaviour "AWARE";
+			_group setSpeedMode "NORMAL";
+		};
+
+		private _wp = _group addWaypoint [_position, 0];
+		_wp setWaypointType "GUARD";
 	};
 } forEach _groups;

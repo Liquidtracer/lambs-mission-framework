@@ -26,8 +26,6 @@ if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 #include "spawnDefinitions.sqf"
 
 params [["_spawnPos", [0, 0, 0]], ["_grpType", "TEAM"], ["_tickets", 1]];
-private _dir = random 360;
-if !(_spawnPos isEqualType []) then {_dir = getDir _spawnPos;};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 
 private _spawnOnce = {
@@ -44,29 +42,21 @@ private _spawnOnce = {
 	private _wp = _grp addWaypoint [getPosASL (vehicle (leader _grp)), -1];
 	_wp setWaypointType "GUARD";
 
+	_grp enableIRLasers false;
+	_grp enableGunLights "ForceOff";
 	_grp addEventHandler ["EnemyDetected", {
 		params ["_group", "_newTarget"];
-
-		private _leader = leader _group;
-		private _veh = vehicle _leader;
-
-		if (
-			(_group getVariable ["lmf_taskConverge_active", false]) ||
-			{_veh isKindOf "Ship"} ||
-			{!isTouchingGround (vehicle _newTarget)} ||
-			{_veh distance2D _newTarget > 300} ||
-			{surfaceIsWater (getPos _leader)}
-		) exitWith {};
-
-		{_x setWaypointPosition [getPosASL _newTarget, -1]} forEach (waypoints _group);
-		_group enableIRLasers true;
-		_group enableGunLights "Auto";
-		_group removeEventHandler [_thisEvent, _thisEventHandler];
+		if (!local _group || {isNull _newTarget} || {leader _group distance _newTarget >= 75}) exitWith {};
+		if (random 1 < 0.3) then {_group enableGunLights "Auto"};
+		{
+			if (alive _x && {local _x} && {_x distance _newTarget < 75} && {random 1 < 0.25}) then {_x enableIRLasers true};
+		} forEach units _group;
 	}];
 
 	_grp addEventHandler ["UnitKilled", {
 		params ["_group", "_unit", "_killer", "_instigator", "_useEffects"];
-		_aliveUnits = ((units _group) select {alive _x});
+		if (!local _group) exitWith {};
+		private _aliveUnits = units _group select {alive _x};
 		if (count _aliveUnits != 1) exitWith {};
 		[_aliveUnits#0] spawn lmf_ai_fnc_reassignSurvivor;
 		_group removeEventHandler [_thisEvent, _thisEventHandler];

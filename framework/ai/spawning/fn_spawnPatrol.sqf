@@ -54,36 +54,37 @@ _grp setCombatMode "RED";
 
 [_grp, _patrolTarget, _patrolRadius, _behaviour, _speed, _formation] call lmf_ai_fnc_taskPatrol;
 
-if (_patrolSpeed == "ATTACK") then {
-	(leader _grp) setAnimSpeedCoef 1.6;
-};
-
+_grp enableIRLasers false;
+_grp enableGunLights "ForceOff";
 _grp addEventHandler ["EnemyDetected", {
 	params ["_group", "_newTarget"];
-	if (!isTouchingGround (vehicle _newTarget) || surfaceIsWater (getPos (leader _group))) exitWith {};
-	{deleteWaypoint _x} forEachReversed (waypoints _group);
-	(_group addWaypoint [ATLToASL (getPos _newTarget), -1]) setWaypointType "GUARD";
+	if (!local _group || {isNull _newTarget} || {leader _group distance _newTarget >= 75}) exitWith {};
+	if (random 1 < 0.3) then {_group enableGunLights "Auto"};
 	{
-		_x setAnimSpeedCoef 1;
-		_x setUnitPos "AUTO";
-	} forEach (units _group);
-	_group enableIRLasers true;
-	_group enableGunLights "Auto";
-	_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
-	_group removeEventHandler [_thisEvent, _thisEventHandler];
+		if (alive _x && {local _x} && {_x distance _newTarget < 75} && {random 1 < 0.25}) then {_x enableIRLasers true};
+	} forEach units _group;
 }];
 
-_grp addEventHandler ["CombatModeChanged", {
-	params ["_group", "_newMode"];
-	{
-		_x setAnimSpeedCoef 1;
-	} forEach (units _group);
+private _contactEh = _grp addEventHandler ["EnemyDetected", {
+	params ["_group", "_newTarget"];
+	if (!local _group || {isNull _newTarget}) exitWith {};
+	if (_group getVariable ["lmf_taskConverge_active", false] ||
+		{vehicle leader _group isKindOf "Ship"} ||
+		{!isTouchingGround (vehicle _newTarget)} || {surfaceIsWater getPos leader _group}) exitWith {};
+	{deleteWaypoint _x} forEachReversed waypoints _group;
+	(_group addWaypoint [getPosASL _newTarget, -1]) setWaypointType "GUARD";
+	_group setBehaviour "AWARE";
+	_group setSpeedMode "FULL";
+	_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
 	_group removeEventHandler [_thisEvent, _thisEventHandler];
+	_group setVariable ["lmf_ai_patrolContactEh", nil];
 }];
+_grp setVariable ["lmf_ai_patrolContactEh", _contactEh];
 
 _grp addEventHandler ["UnitKilled", {
 	params ["_group", "_unit", "_killer", "_instigator", "_useEffects"];
-	_aliveUnits = ((units _group) select {alive _x});
+	if (!local _group) exitWith {};
+	private _aliveUnits = units _group select {alive _x};
 	if (count _aliveUnits != 1) exitWith {};
 	[_aliveUnits#0] spawn lmf_ai_fnc_reassignSurvivor;
 	_group removeEventHandler [_thisEvent, _thisEventHandler];

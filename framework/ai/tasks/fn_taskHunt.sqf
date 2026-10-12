@@ -1,6 +1,6 @@
 /*
 	AI hunting
-	Directs AI towards player positions without requiring prior detection.
+	Directs each soldier towards the nearest living non-civilian player every 15 seconds.
 	Run scheduled where the group is local. Boat groups use the shared landing helper.
 	Author: nkenny. Contributors: Alex2k, Diwako, Drgn V4karian.
 
@@ -13,19 +13,21 @@
 */
 
 params [["_grp", grpNull, [grpNull]], ["_radius", 500, [0]]];
-private _cycle = 30;
+if (!canSuspend || {!local _grp}) exitWith {};
 private _wasInBoat = vehicle leader _grp isKindOf "Ship";
 private _hasLanded = false;
 
-while {{alive _x} count (units _grp) > 1} do {
+while {local _grp && {units _grp findIf {alive _x} != -1}} do {
 	private _tracker = leader _grp;
 	private _nearestDist = _radius;
-	private _availableTargets = (switchableUnits + playableUnits - entities "HeadlessClient_F");
+	private _availableTargets = allPlayers - entities "HeadlessClient_F";
 	private _nearest = objNull;
 
 	{
 		private _dist = vehicle _x distance2D _tracker;
-		if ((_dist < _nearestDist) && {(side _x != civilian) && {isTouchingGround (vehicle _x) && {isPlayer _x}}}) then {
+		// Foot soldiers remain targets on upper floors; only airborne aircraft are excluded.
+		if (_dist < _nearestDist && {alive _x} && {isPlayer _x} && {side _x != civilian} &&
+			{!(vehicle _x isKindOf "Air") || {isTouchingGround vehicle _x}}) then {
 			_nearest = _x;
 			_nearestDist = _dist;
 		};
@@ -33,7 +35,7 @@ while {{alive _x} count (units _grp) > 1} do {
 
 	// Reserve landing without yielding to the boat's detection handler.
 	isNil {
-		if (!local _grp || {{alive _x} count units _grp <= 1}) exitWith {};
+		if (!local _grp || {units _grp findIf {alive _x} == -1}) exitWith {};
 		private _veh = vehicle leader _grp;
 		private _inBoat = _veh isKindOf "Ship";
 		if (_inBoat) then {_wasInBoat = true};
@@ -55,11 +57,16 @@ while {{alive _x} count (units _grp) > 1} do {
 				[_grp, _veh, getPosASL _nearest, _radius] spawn lmf_ai_fnc_landBoatGroup;
 			};
 
-			_grp setBehaviour "AWARE";
+			// Drop any no-target GUARD fallback before resuming individual pursuit.
+			{deleteWaypoint _x} forEachReversed waypoints _grp;
+			private _targetPos = getPosATL _nearest;
 			{
-				private _targetPos = getPosATL _nearest;
-				_x doMove _targetPos;
+				if (alive _x && {local _x}) then {
+					_x forceSpeed -1;
+					_x doMove _targetPos;
+				};
 			} forEach (units _grp);
+			_grp setSpeedMode "FULL";
 		} else {
 			if (!_hasLanded && {waypoints _grp isEqualTo []}) then {
 				private _wp =_grp addWaypoint [getPos leader _grp, 0];
@@ -68,5 +75,5 @@ while {{alive _x} count (units _grp) > 1} do {
 		};
 	};
 
-	sleep _cycle;
+	sleep 15;
 };
