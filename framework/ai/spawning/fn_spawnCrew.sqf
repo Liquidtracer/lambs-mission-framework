@@ -2,11 +2,12 @@
 	Spawn paced vehicle crew
 	Internal scheduled server helper. Preserves BIS spawnCrew seat eligibility, including FFV.
 	Based on Bohemia's BIS_fnc_spawnCrew by Joris-Jan van 't Land.
-	Arguments: vehicle, local group, crew class, optional staged flag.
+	Arguments: vehicle, local group, crew class, optional staged flag, optional seat allowlist.
+	Omitting the allowlist uses all eligible seats; an explicit empty array creates no crew.
 	Returns created units. Caller owns pruning, commander selection and group readiness.
 */
 
-params ["_vehicle", "_group", "_class", ["_staged", false]];
+params ["_vehicle", "_group", "_class", ["_staged", false], ["_seatAllowlist", []]];
 if (!canSuspend || {isNull _group} || {!local _group}) exitWith {[]};
 if (getNumber (configFile >> "CfgVehicles" >> _class >> "isMan") != 1) exitWith {[]};
 _group setVariable ["lmf_ai_spawning", true];
@@ -22,6 +23,7 @@ if (getNumber (_entry >> "hasDriver") == 1 && {isNull driver _vehicle}) then {_s
 		_seats pushBack _x;
 	};
 } forEach allTurrets [_vehicle, true];
+if (count _this > 4) then {_seats = _seats arrayIntersect _seatAllowlist};
 private _failed = false;
 {
 	private _unit = [_group, _class, getPos _vehicle, "NONE", _vehicle, _x, _staged] call lmf_ai_fnc_requestSpawn;

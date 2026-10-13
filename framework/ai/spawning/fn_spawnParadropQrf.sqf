@@ -135,12 +135,33 @@ private _spawnOnce = {
 		if (_payloadReady) then {
 			// Prepare hidden, inactive occupants before flight; queue pressure must not outlast descent.
 			_vehicleSetup params ["_name", "_crewClass", "_infantryType"];
+			// Count each actual empty seat once, including FFV; staged crew do not occupy seats yet.
+			private _emptySeats = fullCrew [_droppedObj, "", true] select {isNull (_x # 0)};
+			private _crewSeats = [];
+			if !(_vicType in ["CAR", "TRUCK"]) then {
+				{
+					_x params ["_occupant", "_role", "_cargoIndex", "_turretPath"];
+					if (!(_vicType in ["APC", "TANK"]) || {_role in ["driver", "gunner", "commander"]}) then {
+						if (_role == "driver") then {
+							if (getNumber (configFile >> "CfgVehicles" >> typeOf _droppedObj >> "hasDriver") == 1) then {
+								_crewSeats pushBackUnique "DRIVER";
+							};
+						} else {
+							if (_turretPath isNotEqualTo [] && {getNumber (([_droppedObj, _turretPath] call BIS_fnc_turretConfig) >> "hasGunner") == 1}) then {
+								_crewSeats pushBackUnique _turretPath;
+							};
+						};
+					};
+				} forEach _emptySeats;
+			};
+			// Preserve composition order; reserve crew seats before any payload soldier is requested.
+			_infantryType = _infantryType select [0, (count _emptySeats - count _crewSeats) max 0];
 			if (_vicType in ["CAR", "TRUCK"]) then {
 				_crewGroup = [_spawnPos, lmf_enemySide, _infantryType, _droppedObj, "ANY", true] call lmf_ai_fnc_spawnGroup;
 				_infantryGroup = _crewGroup;
 			} else {
 				_crewGroup = createGroup lmf_enemySide;
-				[_droppedObj, _crewGroup, _crewClass, true] call lmf_ai_fnc_spawnCrew;
+				[_droppedObj, _crewGroup, _crewClass, true, _crewSeats] call lmf_ai_fnc_spawnCrew;
 				if (_infantryType isNotEqualTo []) then {
 					_infantryGroup = [_spawnPos, lmf_enemySide, _infantryType, _droppedObj, "ANY", true] call lmf_ai_fnc_spawnGroup;
 				};
@@ -235,9 +256,6 @@ private _spawnOnce = {
 					};
 					{[_x] call _seatUnit} forEach units _crewGroup;
 					if !(_vicType in ["CAR", "TRUCK"]) then {[_droppedObj, "LIEUTENANT"] call BIS_fnc_setRank};
-					if (_vicType in ["APC", "TANK"]) then {
-						{_droppedObj deleteVehicleCrew _x} forEach (units _crewGroup select {!(_x in [driver _droppedObj, gunner _droppedObj, commander _droppedObj])});
-					};
 					private _commander = commander _droppedObj;
 					if (_vicType in ["APC", "TANK", ""] && {local _crewGroup} && {!isNull _commander} && {alive _commander} && {group _commander == _crewGroup}) then {
 						_crewGroup selectLeader _commander;
