@@ -73,6 +73,8 @@ private _spawnOnce = {
 	private _droppedObj = objNull;
 	private _cargoSize = 0;
 	private _payloadReady = false;
+	private _vicType = "";
+	private _vehicleSetup = [];
 
 	if (!_isVehicleDrop) then {
 		_grp2 = [_spawnPos, lmf_enemySide, (selectRandom _mgTeam) + (selectRandom _atTeam)] call BIS_fnc_spawnGroup;
@@ -99,8 +101,23 @@ private _spawnOnce = {
 		}];
 	} else {
 		private _class = _dropVehicle;
-		private _map = [["CAR", _car], ["CARARMED", _carArmed], ["TRUCK", _truck], ["APC", _apc], ["TANK", _tank]];
-		{if (toUpper _class == _x#0) exitWith {_class = selectRandom (_x#1)}} forEach _map;
+		private _categories = ["CAR", "CARARMED", "TRUCK", "APC", "TANK"];
+		_vicType = toUpper _dropVehicle;
+		if (_vicType in _categories) then {
+			_class = selectRandom (_vehicles get _vicType);
+		} else {
+			_vicType = (lmf_ai_config get "VEHICLE_BY_CLASS") getOrDefault [toLower _class, ""];
+			if !(_vicType in _categories) then {_vicType = ""};
+		};
+		// Match Vehicle QRF categories; unregistered classnames receive seat-based crew only.
+		_vehicleSetup = switch (_vicType) do {
+			case "CAR": {["Car", "", (selectRandom _team) + (selectRandom _sentry)]};
+			case "CARARMED": {["Armed Car", _rifleman, []]};
+			case "TRUCK": {["Truck", "", (selectRandom _squad) + (selectRandom (selectRandom [_team, _mgTeam, _atTeam]))]};
+			case "APC": {["APC", _crew, (selectRandom _mgTeam) + (selectRandom _atTeam)]};
+			case "TANK": {["Tank", _crew, []]};
+			default {["Vehicle", _crew, []]};
+		};
 
 		_droppedObj = createVehicle [_class, [0, 0, 1000], [], 0, "NONE"];
 		_droppedObj allowDamage false;
@@ -133,8 +150,8 @@ private _spawnOnce = {
 	_veh limitSpeed 200;
 
 	// Pass flight state explicitly to the scheduled continuation.
-	[_veh, _grp, _grp2, _droppedObj, _cargoSize, _isAutonomous, _dropZone, _isVehicleDrop, _spawnPos, _vehicleCrew, _sentry, _team] spawn {
-		params ["_veh", "_grp", "_grp2", "_droppedObj", "_cargoSize", "_isAutonomous", "_dropZone", "_isVehicleDrop", "_spawnPos", "_vehicleCrew", "_sentry", "_team"];
+	[_veh, _grp, _grp2, _droppedObj, _cargoSize, _isAutonomous, _dropZone, _isVehicleDrop, _spawnPos, _vicType, _vehicleSetup] spawn {
+		params ["_veh", "_grp", "_grp2", "_droppedObj", "_cargoSize", "_isAutonomous", "_dropZone", "_isVehicleDrop", "_spawnPos", "_vicType", "_vehicleSetup"];
 
 		// Wait for the drop.
 		waitUntil {
@@ -154,43 +171,120 @@ private _spawnOnce = {
 
 			if (_isVehicleDrop) then {
 				// Vehicle deployment
+				if (!local _veh || {!local _droppedObj}) exitWith {};
+				private _collisionEnabled = (getPhysicsCollisionFlag _veh) # 0;
+				_veh setPhysicsCollisionFlag false;
+				// Restore on this machine: the collision flag has local effect, even after ownership changes.
+				[{
+					params ["_aircraft", "_collisionEnabled"];
+					if (!isNull _aircraft) then {_aircraft setPhysicsCollisionFlag _collisionEnabled};
+				}, [_veh, _collisionEnabled], 3] call CBA_fnc_waitAndExecute;
 				_veh allowDamage false;
 				private _dropped = [_droppedObj, "ACE_CARGO", [_veh, _cargoSize, 1.5, 0.5, false]] call lmf_paradrop_fnc_dropObject;
 				if (!_dropped) exitWith {
+					_veh setPhysicsCollisionFlag _collisionEnabled;
 					_veh allowDamage true;
 					deleteVehicle _droppedObj;
 				};
 
-				private _crewType = _vehicleCrew;
-				if (_droppedObj isKindOf "Car") then {
-					_crewType = if (count (allTurrets [_droppedObj, false]) > 0) then {selectRandom _sentry} else {(selectRandom _team) + (selectRandom _sentry)};
-				};
-
 				_veh allowDamage true;
 
-				[_droppedObj, _crewType, lmf_enemySide] spawn {
-					params ["_v", "_crew", "_side"];
-					sleep 1;
-					if (!alive _v) exitWith {};
-					private _g = [getPos _v, _side, _crew] call BIS_fnc_spawnGroup;
-					_g deleteGroupWhenEmpty true;
-
-					if (_v isKindOf "Tank" || _v isKindOf "APC") then {
-						((units _g)#0) moveInDriver _v;
-						if (count units _g > 1) then {((units _g)#1) moveInGunner _v};
-						if (count units _g > 2) then {((units _g)#2) moveInCommander _v};
-					} else {
-						{_x moveInAny _v} forEach units _g;
+				private _crewGroup = grpNull;
+				private _infantryGroup = grpNull;
+				// Create and seat occupants during descent in the scheduled flight continuation.
+				if (!alive _droppedObj || {!local _droppedObj}) exitWith {};
+				_vehicleSetup params ["_name", "_crewClass", "_infantryType"];
+				// LMF contact handling owns dismount, including after landing.
+				_droppedObj setUnloadInCombat [false, false];
+				if (_vicType in ["CAR", "TRUCK"]) then {
+					_crewGroup = [getPos _droppedObj, lmf_enemySide, _infantryType] call BIS_fnc_spawnGroup;
+					{_x moveInAny _droppedObj} forEach units _crewGroup;
+					{deleteVehicle _x} forEach (units _crewGroup select {isNull objectParent _x});
+					_infantryGroup = _crewGroup;
+				} else {
+					_crewGroup = createGroup lmf_enemySide;
+					[_droppedObj, _crewGroup, false, "", _crewClass] call BIS_fnc_spawnCrew;
+					if (_vicType in ["APC", "TANK"]) then {
+						{_droppedObj deleteVehicleCrew _x} forEach (units _crewGroup select {!(_x in [driver _droppedObj, gunner _droppedObj, commander _droppedObj])});
 					};
-					{deleteVehicle _x} forEach (units _g select {vehicle _x == _x});
+					private _commander = commander _droppedObj;
+					if (_vicType in ["APC", "TANK", ""] && {local _crewGroup} && {!isNull _commander} && {alive _commander} && {group _commander == _crewGroup}) then {
+						_crewGroup selectLeader _commander;
+					};
+					if (_infantryType isNotEqualTo []) then {
+						_infantryGroup = [getPos _droppedObj, lmf_enemySide, _infantryType] call BIS_fnc_spawnGroup;
+						{_x moveInAny _droppedObj} forEach units _infantryGroup;
+						_infantryGroup setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _infantryGroup]];
+						{deleteVehicle _x} forEach (units _infantryGroup select {isNull objectParent _x});
+					};
+				};
+				_crewGroup setGroupIdGlobal [format ["%1: %2 (%3)", _name, getText (configFile >> "CfgVehicles" >> typeOf _droppedObj >> "displayName"), groupId _crewGroup]];
+				{
+					_x deleteGroupWhenEmpty true;
+					_x setBehaviourStrong "CARELESS";
+					_x setCombatMode "BLUE";
+					{_x disableAI "AUTOCOMBAT"; _x disableAI "FSM"} forEach units _x;
+				} forEach (([_crewGroup, _infantryGroup] arrayIntersect [_crewGroup, _infantryGroup]) select {!isNull _x});
+				if (!isNull _infantryGroup) then {
+					_infantryGroup enableIRLasers false;
+					_infantryGroup enableGunLights "ForceOff";
+				};
 
-					waitUntil {sleep 0.5; !alive _v || {isTouchingGround _v}};
+				[_droppedObj, _crewGroup, _infantryGroup] spawn {
+					params ["_v", "_g", "_infantry"];
+					waitUntil {
+						sleep 0.5;
+						!alive _v || {!local _v} || {isNull attachedTo _v && {isTouchingGround _v || {getPos _v # 2 < 0.5}}}
+					};
 					sleep 1;
-					if (!alive _v) exitWith {};
-
-					private _wp = _g addWaypoint [getPosATL _v, 0];
-					_wp setWaypointType "GUARD";
-					// _g setVariable ["lmf_ai_joinableGroup", true];
+					if (!isNull _v && {!local _v}) exitWith {};
+					// Restore survivors' AI even if the vehicle was destroyed during insertion.
+					{
+						if (local _x) then {
+							_x setBehaviourStrong "AWARE";
+							_x setCombatMode (if (_x == _infantry) then {"RED"} else {"YELLOW"});
+							{_x enableAI "AUTOCOMBAT"; _x enableAI "FSM"} forEach (units _x select {local _x});
+							(_x addWaypoint [getPosASL leader _x, -1]) setWaypointType "GUARD";
+						};
+					} forEach (([_g, _infantry] arrayIntersect [_g, _infantry]) select {!isNull _x});
+					if (isNull _infantry || {!local _infantry}) exitWith {};
+					_infantry setVariable ["lmf_ai_transportVehicle", _v];
+					_infantry setFormation "DIAMOND";
+					_infantry setSpeedMode "FULL";
+					_infantry setCombatMode "RED";
+					_infantry addEventHandler ["EnemyDetected", {
+						params ["_group", "_newTarget"];
+						if (!local _group || {isNull _newTarget} || {!isNull objectParent leader _group}
+							|| {leader _group distance _newTarget >= 75}) exitWith {};
+						if (random 1 < 0.3) then {_group enableGunLights "Auto"};
+						{
+							if (alive _x && {local _x} && {_x distance _newTarget < 75} && {random 1 < 0.25}) then {_x enableIRLasers true};
+						} forEach units _group;
+					}];
+					_infantry addEventHandler ["UnitKilled", {
+						params ["_group"];
+						if (!local _group) exitWith {};
+						private _aliveUnits = units _group select {alive _x};
+						if (count _aliveUnits != 1 || {!isNull objectParent (_aliveUnits # 0)}) exitWith {};
+						[_aliveUnits # 0] spawn lmf_ai_fnc_reassignSurvivor;
+						_group removeEventHandler [_thisEvent, _thisEventHandler];
+					}];
+					_infantry addEventHandler ["EnemyDetected", {
+						params ["_group", "_newTarget"];
+						if (!local _group || {isNull _newTarget}) exitWith {};
+						private _leader = leader _group;
+						if (!isTouchingGround (vehicle _newTarget) || {(_leader distance2D _newTarget) > 500}) exitWith {};
+						_group removeEventHandler ["EnemyDetected", _thisEventHandler];
+						_group leaveVehicle (_group getVariable ["lmf_ai_transportVehicle", objNull]);
+						doGetOut (units _group);
+						_group setVariable ["lmf_ai_joinableGroup", true];
+						_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
+						{
+							if (waypointType _x == "GUARD") then {
+								_x setWaypointPosition [getPosASL _newTarget, -1];
+							};
+						} forEach (waypoints _group);
+					}];
 				};
 
 			} else {

@@ -40,7 +40,7 @@ private _fncDismountEh = {
 	private _leader = leader _group;
 	if (!isTouchingGround (vehicle _newTarget) || {(_leader distance2D _newTarget) > 500}) exitWith {};
 	_group removeEventHandler ["EnemyDetected", _thisEventHandler];
-	_group leaveVehicle (vehicle _leader);
+	_group leaveVehicle (_group getVariable ["lmf_ai_transportVehicle", objNull]);
 	doGetOut (units _group);
 	_group setVariable ["lmf_ai_joinableGroup", true];
 	_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
@@ -184,7 +184,7 @@ private _spawnOnce = {
 	private _isAir = _class isKindOf "Air";
 	private _veh = createVehicle [_class, _spawnPos, [], 0, if (_isAir && {surfaceIsWater _spawnPos}) then {"FLY"} else {"NONE"}];
 	_veh setDir _dir;
-	if (_vicType in ["CARARMED", "TANK", "HELITRANSPORT", "HELIATTACK"]) then {_veh setUnloadInCombat [false, false]};
+	if (_vicType in ["CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK"]) then {_veh setUnloadInCombat [false, false]};
 
 	private _grp = grpNull;
 	private _grp2 = grpNull;
@@ -203,8 +203,8 @@ private _spawnOnce = {
 		};
 		if (_vicType in ["APC", "TANK"]) then {
 			{_veh deleteVehicleCrew _x} forEach (units _grp select {!(_x in [driver _veh, gunner _veh, commander _veh])});
-			// Use the TANK commander as group leader so the crew follows normal waypoint orders.
-			if (_vicType == "TANK" && {local _grp}) then {
+			// Use the APC/TANK commander as group leader for normal waypoint orders.
+			if (local _grp) then {
 				private _commander = commander _veh;
 				if (!isNull _commander && {alive _commander} && {group _commander == _grp}) then {
 					_grp selectLeader _commander;
@@ -254,7 +254,10 @@ private _spawnOnce = {
 			[_aliveUnits # 0] spawn lmf_ai_fnc_reassignSurvivor;
 			_group removeEventHandler [_thisEvent, _thisEventHandler];
 		}];
-		if (_vicType != "HELITRANSPORT") then {_grp2 addEventHandler ["EnemyDetected", _fncDismountEh]};
+		if (_vicType != "HELITRANSPORT") then {
+			_grp2 setVariable ["lmf_ai_transportVehicle", _veh];
+			_grp2 addEventHandler ["EnemyDetected", _fncDismountEh];
+		};
 	};
 
 	if (_vicType == "HELITRANSPORT") then {

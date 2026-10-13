@@ -104,7 +104,7 @@ switch (toUpper _mode) do {
 
 		_object setDir (getDir _aircraft);
 		_object setVelocity [(_velocity select 0) * 0.5, (_velocity select 1) * 0.5, -2];
-		[_object, -10, 0] call BIS_fnc_setPitchBank;
+		[_object, -5, 0] call BIS_fnc_setPitchBank;
 		[_object, _cargoSize] call ace_cargo_fnc_setSize;
 
 		[_object, _stuckAltitude] spawn {

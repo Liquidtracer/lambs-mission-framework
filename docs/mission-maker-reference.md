@@ -288,7 +288,7 @@ private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
 
 **Primary delivery:** CAR/TRUCK → infantry GROUP; APC/HELITRANSPORT → cargo infantry GROUP; CARARMED/TANK/HELIATTACK/DRONE → vehicle OBJECT. Vehicle completion ignores surviving dismounted crew; infantry completion ignores the surviving transport. HELITRANSPORT retains its independent insertion, evacuation, retreat and cleanup.
 
-CAR/TRUCK/APC dismount on relevant ground contact within 500 meters and retarget GUARD toward that contact. Dismounted infantry uses Infantry QRF behavior, including close-contact light/IR chances and last-survivor reassignment; pure vehicle crews do not reassign. HELITRANSPORT uses synchronized TR UNLOAD/GETOUT at a searched helipad before infantry GUARD and helicopter retreat. TR UNLOAD uses forced CARELESS behavior. The existing ten-second monitor handles crash evacuation; no WAIT/anti-stuck refresh is used. Ground-vehicle dismount no longer empties the soldier's weapon or forces suppression.
+CAR/TRUCK/APC keep automatic combat unloading disabled. Their infantry dismounts through LMF on relevant ground contact within 500 meters, releases the original transport assignment and retargets GUARD toward that contact. Dismounted infantry uses Infantry QRF behavior, including close-contact light/IR chances and last-survivor reassignment; pure vehicle crews do not reassign. HELITRANSPORT uses synchronized TR UNLOAD/GETOUT at a searched helipad before infantry GUARD and helicopter retreat. TR UNLOAD uses forced CARELESS behavior. The existing ten-second monitor handles crash evacuation; no WAIT/anti-stuck refresh is used. Ground-vehicle dismount no longer empties the soldier's weapon or forces suppression.
 
 Use an LMF category for argument 1. The delay applies with multiple tickets. In LMF 2.0, rename the old `_uav` pool to `_drones` and change `"UAV"` calls to `"DRONE"`; there is no legacy alias.
 
@@ -334,6 +334,12 @@ private _tank = [spawn_1, "mrk_dropZone", 200, "TANK"] call lmf_ai_fnc_spawnPara
 **LMF 2.0 migration:** Paradrop arguments are now spawn position, drop zone, flying height, payload, tickets, respawn delay. Update existing mission/Eden calls; the previous order is unsupported.
 
 **Vehicle payload categories:** CAR, CARARMED, TRUCK, APC, TANK. The transport aircraft comes from \_paraVehicle in AI settings.
+
+Vehicle payloads match Vehicle QRF: CAR normally has six infantry including its driver, TRUCK twelve, APC a separate crew plus eight infantry, and CARARMED/TANK crew only. Available seats cap infantry numbers. APC/TANK select a valid vehicle commander as crew-group leader. Crew and passengers are created and seated during descent using scheduled execution; GUARD, combat AI and infantry contact/dismount handlers activate after landing and parachute detachment. Automatic combat unloading stays disabled: CAR/TRUCK/APC infantry remains aboard until LMF contact dismount releases the original transport assignment. Vehicle release briefly disables the transport aircraft's collision on the server for three seconds, then restores its previous setting (Arma 3 2.18+).
+
+Direct classnames found in one of these five configured vehicle categories use that category's setup. Other classnames receive configured CREW units in the actual crew seats, with no extra infantry. Use the configured category pools when a particular infantry composition is required.
+
+Vehicle payloads always return and track the vehicle OBJECT. For CAR/TRUCK/APC, a surviving empty vehicle delays replacement even if the infantry is dead; destroying the vehicle permits replacement even if infantry survives. Vehicle QRF instead tracks the infantry group for these categories. Tickets, respawn delay and proximity checks otherwise retain the shared wave rules.
 
 **Drop zone:** Use a marker, trigger or location for a fixed zone. The only supported array value is \[0,0,0], which selects autonomous mode; ordinary position arrays are unsupported. In autonomous mode, an object spawn position supplies the initial aircraft heading; an array spawn position uses a random heading. A fixed drop zone determines the heading towards that zone.
 

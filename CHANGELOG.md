@@ -24,7 +24,7 @@
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
 * **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
-* **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg_AI.sqf`. TANK selects a valid vehicle commander as group leader after crew pruning to restore normal waypoint response.
+* **Fixed:** Vehicle QRF crews use the configured infantry, crew and pilot classes from `cfg_AI.sqf`; APC/TANK select a valid commander as group leader. Paradrop vehicle categories match Vehicle QRF crew/passenger compositions and post-landing infantry behavior, with occupants seated during descent.
 * **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
 * **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
 * **Removed:** Numeric and custom-string player respawn modes. Only `OFF`, `WAVE` and `TICKETS` are supported; invalid configuration falls back to `OFF`. Waves follow mission-time boundaries without the old 10-second minimum, and intervals display as `MM:SS`.
