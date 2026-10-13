@@ -206,6 +206,9 @@ private _spawnOnce = {
 				private _dropped = false;
 				// Release and seat prepared occupants together; no creation or queue waits during descent.
 				isNil {
+					// Recheck after scheduled flight work, before release and seating become atomic.
+					if (!alive _veh || {!local _veh} || {!alive _droppedObj} || {!local _droppedObj}
+						|| {units _grp findIf {alive _x} == -1}) exitWith {};
 					private _collisionEnabled = (getPhysicsCollisionFlag _veh) # 0;
 					_veh setPhysicsCollisionFlag false;
 					[{
@@ -222,7 +225,10 @@ private _spawnOnce = {
 					_droppedObj setUnloadInCombat [false, false];
 					private _seatUnit = {
 						params ["_unit"];
-						[_unit] call lmf_ai_fnc_seatSpawnedUnit;
+						if !([_unit] call lmf_ai_fnc_seatSpawnedUnit) exitWith {
+							private _parent = objectParent _unit;
+							if (isNull _parent) then {deleteVehicle _unit} else {_parent deleteVehicleCrew _unit};
+						};
 						_unit enableSimulationGlobal true;
 						_unit hideObjectGlobal false;
 						_unit allowDamage true;
@@ -253,7 +259,7 @@ private _spawnOnce = {
 						_infantryGroup enableGunLights "ForceOff";
 					};
 				};
-				if (!_dropped) exitWith {};
+				if (!_dropped) exitWith {deleteVehicle _droppedObj};
 
 				[_droppedObj, _crewGroup, _infantryGroup] spawn {
 					params ["_v", "_g", "_infantry"];
@@ -334,7 +340,10 @@ private _spawnOnce = {
 
 			// A failed release leaves hidden occupants; successful seating removes spawnSeat.
 			{
-				if (!isNil {_x getVariable "lmf_ai_spawnSeat"}) then {deleteVehicle _x};
+				if (!isNil {_x getVariable "lmf_ai_spawnSeat"}) then {
+					private _parent = objectParent _x;
+					if (isNull _parent) then {deleteVehicle _x} else {_parent deleteVehicleCrew _x};
+				};
 			} forEach (units _crewGroup + units _infantryGroup);
 			{if (units _x isEqualTo []) then {deleteGroup _x}} forEach ([_crewGroup, _infantryGroup] arrayIntersect [_crewGroup, _infantryGroup]);
 			// Retreat
@@ -348,7 +357,10 @@ private _spawnOnce = {
 			};
 		} else {
 			if (_isVehicleDrop) then {
-				{deleteVehicle _x} forEach (units _crewGroup + units _infantryGroup);
+				{
+					private _parent = objectParent _x;
+					if (isNull _parent) then {deleteVehicle _x} else {_parent deleteVehicleCrew _x};
+				} forEach (units _crewGroup + units _infantryGroup);
 				{deleteGroup _x} forEach ([_crewGroup, _infantryGroup] arrayIntersect [_crewGroup, _infantryGroup]);
 				deleteVehicle _droppedObj;
 			} else {
