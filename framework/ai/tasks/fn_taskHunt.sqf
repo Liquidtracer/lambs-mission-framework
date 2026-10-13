@@ -1,6 +1,6 @@
 /*
 	AI hunting
-	Directs each soldier towards the nearest living non-civilian player every 15 seconds.
+	Directs each soldier towards the nearest living non-civilian player every 13–17 seconds.
 	Run scheduled where the group is local. Boat groups use the shared landing helper.
 	Author: nkenny. Contributors: Alex2k, Diwako, Drgn V4karian.
 
@@ -75,5 +75,5 @@ while {local _grp && {units _grp findIf {alive _x} != -1}} do {
 		};
 	};
 
-	sleep 15;
+	sleep (13 + random 4);
 };

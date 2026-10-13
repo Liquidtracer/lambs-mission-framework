@@ -23,3 +23,7 @@ if  !(isPlayer _unit) then {
 else {
 	if(_unit == player) then {};
 };
+
+if (group _unit getVariable ["lmf_ai_spawning", false]) then {
+	_unit setVariable ["lmf_ai_initComplete", true];
+};

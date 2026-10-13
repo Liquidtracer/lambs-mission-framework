@@ -3,7 +3,7 @@
 	Spawns infantry that hunts targets within the configured radius.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
 
-	Server only, after LMF preInit. One-shot call does not suspend; use spawn for managed waves.
+	Server only, after LMF preInit. Scheduled execution required for all calls (Arma 3 2.22+).
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
@@ -12,16 +12,17 @@
 		3: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 
 	Example:
-		private _grp = [spawn_1, "TEAM", 1500] call lmf_ai_fnc_spawnInfantryHunters;
+		private _handle = [spawn_1, "TEAM", 1500] spawn lmf_ai_fnc_spawnInfantryHunters;
 
-	Returns (one-shot): Spawned GROUP; grpNull on a non-spawner machine.
+	Returns (one-shot): Spawned GROUP; grpNull on failed/unscheduled/non-server calls.
+	The one-shot promise completes after InitPost/gear attempts and initial group setup.
+	Managed scripts finish after the final preparation or cancellation, without a combined result.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {grpNull};
+if (!_spawner || {!canSuspend}) exitWith {grpNull};
 
 private _managed = count _this > 3;
-if (_managed && {!canSuspend}) exitWith {};
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
@@ -31,7 +32,8 @@ _spawnPos = _spawnPos call CBA_fnc_getPos;
 
 private _spawnOnce = {
 	private _type = [_grpType] call _typeMaker;
-	private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
+	private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
+	if (isNull _grp) exitWith {grpNull};
 	[_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
 	_grp deleteGroupWhenEmpty true;
 	_grp setGroupIdGlobal [format ["Infantry Hunter (%1)", groupId _grp]];
@@ -80,6 +82,7 @@ private _spawnOnce = {
 			[_survivor] call lmf_ai_fnc_reassignSurvivor;
 			_survivor doFollow leader group _survivor;
 		}];
+		_grp setVariable ["lmf_ai_spawning", nil];
 		_grp setVariable ["lmf_ai_huntScript", [_grp, _radius] spawn lmf_ai_fnc_taskHunt];
 	};
 

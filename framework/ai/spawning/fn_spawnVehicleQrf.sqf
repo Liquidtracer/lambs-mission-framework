@@ -3,7 +3,7 @@
 	Spawns a vehicle QRF with additional infantry where configured.
 	Author: nkenny. Contributors: Drgn V4karian, Alex2k.
 
-	Server only, after LMF preInit. One-shot call does not suspend; use spawn for managed waves.
+	Server only, after LMF preInit. Scheduled execution required for all calls (Arma 3 2.22+).
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
@@ -12,17 +12,18 @@
 		3: Respawn delay in seconds <NUMBER> (default: 300)
 
 	Example:
-		private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
+		private _handle = [spawn_1, "TANK"] spawn lmf_ai_fnc_spawnVehicleQrf;
 
 	Returns (one-shot): Infantry GROUP for CAR/TRUCK/APC/HELITRANSPORT;
-	vehicle OBJECT for CARARMED/TANK/HELIATTACK/DRONE. objNull for no spawn/non-spawner.
+	vehicle OBJECT for CARARMED/TANK/HELIATTACK/DRONE. objNull for failed/unscheduled/non-server calls.
+	The one-shot promise completes after InitPost/gear attempts and setup; insertion continues.
+	Managed scripts finish after the final preparation or cancellation, without a combined result.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {objNull};
+if (!_spawner || {!canSuspend}) exitWith {objNull};
 
 private _managed = count _this > 2;
-if (_managed && {!canSuspend}) exitWith {};
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
@@ -75,7 +76,10 @@ private _fncHeliTransportEh = {
 			private _places = selectBestPlaces [_targetPos, 500, "(1 - sea) * (1 - forest) * (1 - trees) * (1 - houses)", 50, 400];
 			{
 				if (!local _group || {_group getVariable ["lmf_heliTransport_abandoned", false]}) exitWith {};
-				private _candidate = (_x # 0) findEmptyPosition [0, 20, typeOf _veh];
+				private _coarseDistance = (_x # 0) distance2D _targetPos;
+				private _candidate = if (_coarseDistance >= 130 && {_coarseDistance <= 520}) then {
+					(_x # 0) findEmptyPosition [0, 20, typeOf _veh]
+				} else {[]};
 				if !(_candidate isEqualTo []) then {
 					_candidate set [2, 0];
 					if (_candidate distance2D _targetPos >= 150 && {_candidate distance2D _targetPos <= 500}
@@ -182,24 +186,32 @@ private _spawnOnce = {
 	_setup params ["_name", "_crewClass", "_infantryType"];
 	private _class = selectRandom (_vehicles get _vicType);
 	private _isAir = _class isKindOf "Air";
-	private _veh = createVehicle [_class, _spawnPos, [], 0, if (_isAir && {surfaceIsWater _spawnPos}) then {"FLY"} else {"NONE"}];
+	private _veh = objNull;
+	private _simulation = true;
+	private _velocity = [];
+	isNil {
+		_veh = createVehicle [_class, _spawnPos, [], 0, if (_isAir && {surfaceIsWater _spawnPos}) then {"FLY"} else {"NONE"}];
+		_simulation = simulationEnabled _veh;
+		_velocity = velocity _veh;
+		_veh enableSimulationGlobal false;
+	};
+	if (isNull _veh) exitWith {objNull};
 	_veh setDir _dir;
 	if (_vicType in ["CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK"]) then {_veh setUnloadInCombat [false, false]};
 
 	private _grp = grpNull;
 	private _grp2 = grpNull;
 	if (_vicType in ["CAR", "TRUCK"]) then {
-		_grp = [_spawnPos, lmf_enemySide, _infantryType] call BIS_fnc_spawnGroup;
-		{_x moveInAny _veh} forEach units _grp;
+		_grp = [_spawnPos, lmf_enemySide, _infantryType, _veh, "ANY"] call lmf_ai_fnc_spawnGroup;
 		{deleteVehicle _x} forEach (units _grp select {isNull objectParent _x});
 		_grp2 = _grp;
 	} else {
 		if (_vicType == "DRONE") then {
-			createVehicleCrew _veh;
-			_grp = group (crew _veh # 0);
+			_grp = [grpNull, "", [], "", _veh] call lmf_ai_fnc_requestSpawn;
+			[_grp] call lmf_ai_fnc_waitForSpawnInit;
 		} else {
 			_grp = createGroup lmf_enemySide;
-			[_veh, _grp, false, "", _crewClass] call BIS_fnc_spawnCrew;
+			[_veh, _grp, _crewClass] call lmf_ai_fnc_spawnCrew;
 		};
 		if (_vicType in ["APC", "TANK"]) then {
 			{_veh deleteVehicleCrew _x} forEach (units _grp select {!(_x in [driver _veh, gunner _veh, commander _veh])});
@@ -212,16 +224,19 @@ private _spawnOnce = {
 			};
 		};
 		if (_infantryType isNotEqualTo []) then {
-			_grp2 = [_spawnPos, lmf_enemySide, _infantryType] call BIS_fnc_spawnGroup;
+			_grp2 = [_spawnPos, lmf_enemySide, _infantryType, _veh, if (_vicType == "HELITRANSPORT") then {"CARGO"} else {"ANY"}] call lmf_ai_fnc_spawnGroup;
 			_grp2 setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _grp2]];
-			if (_vicType == "HELITRANSPORT") then {
-				{_x assignAsCargo _veh; _x moveInCargo _veh} forEach units _grp2;
-			} else {
-				{_x moveInAny _veh} forEach units _grp2;
-			};
 			{deleteVehicle _x} forEach (units _grp2 select {isNull objectParent _x});
 		};
 	};
+	if (!alive _veh || {getNumber (configFile >> "CfgVehicles" >> _class >> "hasDriver") == 1 && {!alive driver _veh}} || {isNull _grp} || {units _grp findIf {alive _x} == -1}
+		|| {_infantryType isNotEqualTo [] && {units _grp2 findIf {alive _x} == -1}}) exitWith {
+		{private _parent = objectParent _x; if (isNull _parent) then {deleteVehicle _x} else {_parent deleteVehicleCrew _x}} forEach (units _grp + units _grp2);
+		{deleteGroup _x} forEach ([_grp, _grp2] arrayIntersect [_grp, _grp2]);
+		deleteVehicle _veh;
+		objNull
+	};
+
 	_grp setGroupIdGlobal [format ["%1: %2 (%3)", _name, getText (configFile >> "CfgVehicles" >> _class >> "displayName"), groupId _grp]];
 	{
 		_x deleteGroupWhenEmpty true;
@@ -351,6 +366,9 @@ private _spawnOnce = {
 		};
 	};
 
+	{_x setVariable ["lmf_ai_spawning", nil]} forEach ([_grp, _grp2] select {!isNull _x});
+	_veh enableSimulationGlobal _simulation;
+	_veh setVelocity _velocity;
 	if (_vicType in ["CAR", "TRUCK", "APC", "HELITRANSPORT"]) then {_grp2} else {_veh}
 };
 

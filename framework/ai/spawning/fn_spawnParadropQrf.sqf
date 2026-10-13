@@ -3,7 +3,7 @@
 	Spawns an aircraft that drops AI infantry or a vehicle, then leaves and despawns.
 	Author: Alex2k. Contributor: Drgn V4karian.
 
-	Server only, after LMF preInit. One-shot call does not suspend; use spawn for managed waves.
+	Server only, after LMF preInit. Scheduled execution required for all calls (Arma 3 2.22+).
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0]; object direction is used in autonomous mode)
@@ -14,17 +14,19 @@
 		5: Respawn delay in seconds <NUMBER> (default: 300; managed replacements only)
 
 	Example:
-		private _delivery = [spawn_1, "mrk_dropZone", 200, "TANK"] call lmf_ai_fnc_spawnParadropQrf;
+		private _handle = [spawn_1, "mrk_dropZone", 200, "TANK"] spawn lmf_ai_fnc_spawnParadropQrf;
 
 	Returns (one-shot): Prepared infantry GROUP or vehicle OBJECT; delivery continues asynchronously.
-	Returns a null delivery on preparation failure; objNull on a non-spawner machine.
+	Returns a null delivery on preparation failure; objNull on unscheduled/non-server calls.
+	The one-shot promise waits for InitPost/gear attempts and initial setup, not landing.
+	Vehicle occupants are staged before flight and seated at release.
+	Managed scripts finish after the final preparation or cancellation, without a combined result.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {objNull};
+if (!_spawner || {!canSuspend}) exitWith {objNull};
 
 private _managed = count _this > 4;
-if (_managed && {!canSuspend}) exitWith {};
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
@@ -50,7 +52,13 @@ private _spawnOnce = {
 	private _isAirSpawn = (_spawnPos # 2) > 20 || surfaceIsWater _spawnPos;
 	private _spawnType = if (_isAirSpawn) then {"FLY"} else {"NONE"};
 
-	private _veh = createVehicle [selectRandom _paraVehicle, _spawnPos, [], 0, _spawnType];
+	private _veh = objNull;
+	private _simulation = true;
+	isNil {
+		_veh = createVehicle [selectRandom _paraVehicle, _spawnPos, [], 0, _spawnType];
+		_simulation = simulationEnabled _veh;
+		_veh enableSimulationGlobal false;
+	};
 	if (isNull _veh) exitWith {if (_isVehicleDrop) then {objNull} else {grpNull}};
 	_veh setDir (
 		if (_isAutonomous) then {_dir} else {_spawnPos getDir _dzPos}
@@ -62,10 +70,9 @@ private _spawnOnce = {
 	};
 
 	// Crew
-	private _grp = [_spawnPos, lmf_enemySide, _heliCrew] call BIS_fnc_spawnGroup;
+	private _grp = [_spawnPos, lmf_enemySide, _heliCrew, _veh, "ANY"] call lmf_ai_fnc_spawnGroup;
 	_grp deleteGroupWhenEmpty true;
 	_grp addVehicle _veh;
-	{_x moveInAny _veh} forEach units _grp;
 	_grp setGroupIdGlobal [format ["Paradrop Aircraft (%1)", groupId _grp]];
 
 	// Payload preparation
@@ -75,13 +82,13 @@ private _spawnOnce = {
 	private _payloadReady = false;
 	private _vicType = "";
 	private _vehicleSetup = [];
+	private _crewGroup = grpNull;
+	private _infantryGroup = grpNull;
 
 	if (!_isVehicleDrop) then {
-		_grp2 = [_spawnPos, lmf_enemySide, (selectRandom _mgTeam) + (selectRandom _atTeam)] call BIS_fnc_spawnGroup;
+		_grp2 = [_spawnPos, lmf_enemySide, (selectRandom _mgTeam) + (selectRandom _atTeam), _veh, "CARGO"] call lmf_ai_fnc_spawnGroup;
 		_grp2 deleteGroupWhenEmpty true;
 		{
-			_x assignAsCargo _veh;
-			_x moveInCargo _veh;
 			_x setSkill ((skill _x)*1.25);
 		} forEach units _grp2;
 		// Unseated infantry cannot be delivered by this aircraft.
@@ -125,6 +132,22 @@ private _spawnOnce = {
 		_cargoSize = [_droppedObj] call ace_cargo_fnc_getSizeItem;
 		[_droppedObj, 1] call ace_cargo_fnc_setSize;
 		_payloadReady = alive _droppedObj && {[_droppedObj, _veh, true] call ace_cargo_fnc_loadItem};
+		if (_payloadReady) then {
+			// Prepare hidden, inactive occupants before flight; queue pressure must not outlast descent.
+			_vehicleSetup params ["_name", "_crewClass", "_infantryType"];
+			if (_vicType in ["CAR", "TRUCK"]) then {
+				_crewGroup = [_spawnPos, lmf_enemySide, _infantryType, _droppedObj, "ANY", true] call lmf_ai_fnc_spawnGroup;
+				_infantryGroup = _crewGroup;
+			} else {
+				_crewGroup = createGroup lmf_enemySide;
+				[_droppedObj, _crewGroup, _crewClass, true] call lmf_ai_fnc_spawnCrew;
+				if (_infantryType isNotEqualTo []) then {
+					_infantryGroup = [_spawnPos, lmf_enemySide, _infantryType, _droppedObj, "ANY", true] call lmf_ai_fnc_spawnGroup;
+				};
+			};
+			_payloadReady = units _crewGroup findIf {alive _x} != -1
+				&& {_infantryType isEqualTo [] || {units _infantryGroup findIf {alive _x} != -1}};
+		};
 	};
 
 	// Do not leave a prepared payload or transport behind after a failed setup.
@@ -132,7 +155,8 @@ private _spawnOnce = {
 		{
 			private _parent = objectParent _x;
 			if (isNull _parent) then {deleteVehicle _x} else {_parent deleteVehicleCrew _x};
-		} forEach (units _grp + units _grp2);
+		} forEach (units _grp + units _grp2 + units _crewGroup + units _infantryGroup);
+		{deleteGroup _x} forEach ([_grp, _grp2, _crewGroup, _infantryGroup] arrayIntersect [_grp, _grp2, _crewGroup, _infantryGroup]);
 		deleteVehicle _droppedObj;
 		deleteVehicle _veh;
 		if (_isVehicleDrop) then {objNull} else {grpNull}
@@ -149,9 +173,14 @@ private _spawnOnce = {
 	_veh flyInHeight _flyInHeight;
 	_veh limitSpeed 200;
 
+	// Release the aircraft only after its crew and payload preparation are complete.
+	{_x setVariable ["lmf_ai_spawning", nil]} forEach ([_grp, _grp2] select {!isNull _x});
+	_veh enableSimulationGlobal _simulation;
+	if (_isAirSpawn) then {_veh setVelocityModelSpace [0, 55, 0]};
+
 	// Pass flight state explicitly to the scheduled continuation.
-	[_veh, _grp, _grp2, _droppedObj, _cargoSize, _isAutonomous, _dropZone, _isVehicleDrop, _spawnPos, _vicType, _vehicleSetup] spawn {
-		params ["_veh", "_grp", "_grp2", "_droppedObj", "_cargoSize", "_isAutonomous", "_dropZone", "_isVehicleDrop", "_spawnPos", "_vicType", "_vehicleSetup"];
+	[_veh, _grp, _grp2, _droppedObj, _cargoSize, _isAutonomous, _dropZone, _isVehicleDrop, _spawnPos, _vicType, _vehicleSetup, _crewGroup, _infantryGroup] spawn {
+		params ["_veh", "_grp", "_grp2", "_droppedObj", "_cargoSize", "_isAutonomous", "_dropZone", "_isVehicleDrop", "_spawnPos", "_vicType", "_vehicleSetup", "_crewGroup", "_infantryGroup"];
 
 		// Wait for the drop.
 		waitUntil {
@@ -162,6 +191,7 @@ private _spawnOnce = {
 				_veh inArea _dropZone;
 			};
 			_triggered || {!alive _veh} || {{alive _x} count units _grp < 1}
+			|| {_isVehicleDrop && {!alive _droppedObj}}
 		};
 
 		// Payload deployment
@@ -171,39 +201,34 @@ private _spawnOnce = {
 
 			if (_isVehicleDrop) then {
 				// Vehicle deployment
-				if (!local _veh || {!local _droppedObj}) exitWith {};
-				private _collisionEnabled = (getPhysicsCollisionFlag _veh) # 0;
-				_veh setPhysicsCollisionFlag false;
-				// Restore on this machine: the collision flag has local effect, even after ownership changes.
-				[{
-					params ["_aircraft", "_collisionEnabled"];
-					if (!isNull _aircraft) then {_aircraft setPhysicsCollisionFlag _collisionEnabled};
-				}, [_veh, _collisionEnabled], 3] call CBA_fnc_waitAndExecute;
-				_veh allowDamage false;
-				private _dropped = [_droppedObj, "ACE_CARGO", [_veh, _cargoSize, 1.5, 0.5, false]] call lmf_paradrop_fnc_dropObject;
-				if (!_dropped) exitWith {
-					_veh setPhysicsCollisionFlag _collisionEnabled;
-					_veh allowDamage true;
-					deleteVehicle _droppedObj;
-				};
-
-				_veh allowDamage true;
-
-				private _crewGroup = grpNull;
-				private _infantryGroup = grpNull;
-				// Create and seat occupants during descent in the scheduled flight continuation.
-				if (!alive _droppedObj || {!local _droppedObj}) exitWith {};
+				if (!local _veh || {!alive _droppedObj} || {!local _droppedObj}) exitWith {};
 				_vehicleSetup params ["_name", "_crewClass", "_infantryType"];
-				// LMF contact handling owns dismount, including after landing.
-				_droppedObj setUnloadInCombat [false, false];
-				if (_vicType in ["CAR", "TRUCK"]) then {
-					_crewGroup = [getPos _droppedObj, lmf_enemySide, _infantryType] call BIS_fnc_spawnGroup;
-					{_x moveInAny _droppedObj} forEach units _crewGroup;
-					{deleteVehicle _x} forEach (units _crewGroup select {isNull objectParent _x});
-					_infantryGroup = _crewGroup;
-				} else {
-					_crewGroup = createGroup lmf_enemySide;
-					[_droppedObj, _crewGroup, false, "", _crewClass] call BIS_fnc_spawnCrew;
+				private _dropped = false;
+				// Release and seat prepared occupants together; no creation or queue waits during descent.
+				isNil {
+					private _collisionEnabled = (getPhysicsCollisionFlag _veh) # 0;
+					_veh setPhysicsCollisionFlag false;
+					[{
+						params ["_aircraft", "_collisionEnabled"];
+						if (!isNull _aircraft) then {_aircraft setPhysicsCollisionFlag _collisionEnabled};
+					}, [_veh, _collisionEnabled], 3] call CBA_fnc_waitAndExecute;
+					_veh allowDamage false;
+					_dropped = [_droppedObj, "ACE_CARGO", [_veh, _cargoSize, 1.5, 0.5, false]] call lmf_paradrop_fnc_dropObject;
+					_veh allowDamage true;
+					if (!_dropped) exitWith {
+						_veh setPhysicsCollisionFlag _collisionEnabled;
+						deleteVehicle _droppedObj;
+					};
+					_droppedObj setUnloadInCombat [false, false];
+					private _seatUnit = {
+						params ["_unit"];
+						[_unit] call lmf_ai_fnc_seatSpawnedUnit;
+						_unit enableSimulationGlobal true;
+						_unit hideObjectGlobal false;
+						_unit allowDamage true;
+					};
+					{[_x] call _seatUnit} forEach units _crewGroup;
+					if !(_vicType in ["CAR", "TRUCK"]) then {[_droppedObj, "LIEUTENANT"] call BIS_fnc_setRank};
 					if (_vicType in ["APC", "TANK"]) then {
 						{_droppedObj deleteVehicleCrew _x} forEach (units _crewGroup select {!(_x in [driver _droppedObj, gunner _droppedObj, commander _droppedObj])});
 					};
@@ -211,24 +236,24 @@ private _spawnOnce = {
 					if (_vicType in ["APC", "TANK", ""] && {local _crewGroup} && {!isNull _commander} && {alive _commander} && {group _commander == _crewGroup}) then {
 						_crewGroup selectLeader _commander;
 					};
-					if (_infantryType isNotEqualTo []) then {
-						_infantryGroup = [getPos _droppedObj, lmf_enemySide, _infantryType] call BIS_fnc_spawnGroup;
-						{_x moveInAny _droppedObj} forEach units _infantryGroup;
+					if (_infantryGroup != _crewGroup && {!isNull _infantryGroup}) then {
+						{[_x] call _seatUnit} forEach units _infantryGroup;
 						_infantryGroup setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _infantryGroup]];
-						{deleteVehicle _x} forEach (units _infantryGroup select {isNull objectParent _x});
+					};
+					{deleteVehicle _x} forEach (units _infantryGroup select {isNull objectParent _x});
+					_crewGroup setGroupIdGlobal [format ["%1: %2 (%3)", _name, getText (configFile >> "CfgVehicles" >> typeOf _droppedObj >> "displayName"), groupId _crewGroup]];
+					{
+						_x deleteGroupWhenEmpty true;
+						_x setBehaviourStrong "CARELESS";
+						_x setCombatMode "BLUE";
+						{_x disableAI "AUTOCOMBAT"; _x disableAI "FSM"} forEach units _x;
+					} forEach (([_crewGroup, _infantryGroup] arrayIntersect [_crewGroup, _infantryGroup]) select {!isNull _x});
+					if (!isNull _infantryGroup) then {
+						_infantryGroup enableIRLasers false;
+						_infantryGroup enableGunLights "ForceOff";
 					};
 				};
-				_crewGroup setGroupIdGlobal [format ["%1: %2 (%3)", _name, getText (configFile >> "CfgVehicles" >> typeOf _droppedObj >> "displayName"), groupId _crewGroup]];
-				{
-					_x deleteGroupWhenEmpty true;
-					_x setBehaviourStrong "CARELESS";
-					_x setCombatMode "BLUE";
-					{_x disableAI "AUTOCOMBAT"; _x disableAI "FSM"} forEach units _x;
-				} forEach (([_crewGroup, _infantryGroup] arrayIntersect [_crewGroup, _infantryGroup]) select {!isNull _x});
-				if (!isNull _infantryGroup) then {
-					_infantryGroup enableIRLasers false;
-					_infantryGroup enableGunLights "ForceOff";
-				};
+				if (!_dropped) exitWith {};
 
 				[_droppedObj, _crewGroup, _infantryGroup] spawn {
 					params ["_v", "_g", "_infantry"];
@@ -247,6 +272,7 @@ private _spawnOnce = {
 							(_x addWaypoint [getPosASL leader _x, -1]) setWaypointType "GUARD";
 						};
 					} forEach (([_g, _infantry] arrayIntersect [_g, _infantry]) select {!isNull _x});
+					{_x setVariable ["lmf_ai_spawning", nil]} forEach ([_g, _infantry] select {!isNull _x});
 					if (isNull _infantry || {!local _infantry}) exitWith {};
 					_infantry setVariable ["lmf_ai_transportVehicle", _v];
 					_infantry setFormation "DIAMOND";
@@ -306,6 +332,11 @@ private _spawnOnce = {
 				] call CBA_fnc_waitUntilAndExecute;
 			};
 
+			// A failed release leaves hidden occupants; successful seating removes spawnSeat.
+			{
+				if (!isNil {_x getVariable "lmf_ai_spawnSeat"}) then {deleteVehicle _x};
+			} forEach (units _crewGroup + units _infantryGroup);
+			{if (units _x isEqualTo []) then {deleteGroup _x}} forEach ([_crewGroup, _infantryGroup] arrayIntersect [_crewGroup, _infantryGroup]);
 			// Retreat
 			sleep 20;
 			if (alive _veh) then {
@@ -316,7 +347,11 @@ private _spawnOnce = {
 				if (alive _veh) then {{_veh deleteVehicleCrew _x} forEach crew _veh; deleteVehicle _veh};
 			};
 		} else {
-			if (_isVehicleDrop) then {deleteVehicle _droppedObj} else {
+			if (_isVehicleDrop) then {
+				{deleteVehicle _x} forEach (units _crewGroup + units _infantryGroup);
+				{deleteGroup _x} forEach ([_crewGroup, _infantryGroup] arrayIntersect [_crewGroup, _infantryGroup]);
+				deleteVehicle _droppedObj;
+			} else {
 				{
 					private _parent = objectParent _x;
 					if (isNull _parent) then {

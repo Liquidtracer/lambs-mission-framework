@@ -3,7 +3,7 @@
 	Spawns infantry and assigns a patrol task.
 	Author: nkenny. Contributor: Drgn V4karian, Alex2k.
 
-	Server only, after LMF preInit. One-shot call; no suspension required.
+	Server only, after LMF preInit. Scheduled execution required (Arma 3 2.22+).
 
 	Arguments:
 		0: Spawn position <OBJECT or ARRAY> (default: [0, 0, 0])
@@ -14,13 +14,14 @@
 		5: Patrol formation <STRING> (default: "STAG COLUMN")
 
 	Example:
-		private _grp = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] call lmf_ai_fnc_spawnPatrol;
+		private _handle = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] spawn lmf_ai_fnc_spawnPatrol;
 
-	Returns: Spawned group <GROUP>; grpNull on a non-spawner machine.
+	Returns: Spawned group <GROUP>; grpNull on failed/unscheduled/non-server calls.
+	The one-shot promise completes after InitPost/gear attempts and initial group setup.
 */
 
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if !(_spawner) exitWith {grpNull};
+if (!_spawner || {!canSuspend}) exitWith {grpNull};
 
 #include "spawnDefinitions.sqf"
 
@@ -44,7 +45,8 @@ if (_patrolSpeed == "ATTACK") then {
 };
 
 private _type = [_grpType] call _typeMaker;
-private _grp = [_spawnPos, lmf_enemySide, _type] call BIS_fnc_spawnGroup;
+private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
+if (isNull _grp) exitWith {grpNull};
 [_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
 _grp deleteGroupWhenEmpty true;
 _grp setGroupIdGlobal [format ["Infantry Patrol (%1)", groupId _grp]];
@@ -90,4 +92,5 @@ _grp addEventHandler ["UnitKilled", {
 	_group removeEventHandler [_thisEvent, _thisEventHandler];
 }];
 
+_grp setVariable ["lmf_ai_spawning", nil];
 _grp

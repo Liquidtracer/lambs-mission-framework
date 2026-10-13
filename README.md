@@ -6,7 +6,7 @@ LAMBS Mission Framework (LMF) is a reusable framework for Arma 3 mission making,
 
 ## Status
 
-The current development version is **2.0.0**, marked **Unreleased** in the changelog.
+The current development version is **2.0.0**, marked **Unreleased** in the changelog. Arma 3 **2.22 or later** is required.
 
 ## Documentation
 

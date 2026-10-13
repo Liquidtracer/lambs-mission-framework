@@ -59,6 +59,12 @@ class ai {
 	class spawning {
 		file = "framework\ai\spawning";
 		class isSpawner {};
+		class requestSpawn {};
+		class processSpawnQueue {};
+		class seatSpawnedUnit {};
+		class waitForSpawnInit {};
+		class spawnGroup {};
+		class spawnCrew {};
 		class spawnPatrol {};
 		class spawnGarrison {};
 		class spawnInfantryQrf {};

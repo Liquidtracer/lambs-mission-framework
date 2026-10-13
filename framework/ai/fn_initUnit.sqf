@@ -177,11 +177,12 @@ private _applyLoadout = {
 };
 
 if (isSwitchingWeapon _unit) then {
-	[_unit, _loadout, _applyLoadout] spawn {
+	private _gearScript = [_unit, _loadout, _applyLoadout] spawn {
 		params ["_unit", "_loadout", "_applyLoadout"];
 		waitUntil [{isNull _unit || {!alive _unit} || {!local _unit} || {!isSwitchingWeapon _unit}}, 10, 0.05];
 		[_unit, _loadout] call _applyLoadout;
 	};
+	if (group _unit getVariable ["lmf_ai_spawning", false]) then {_unit setVariable ["lmf_ai_gearScript", _gearScript]};
 } else {
 	[_unit, _loadout] call _applyLoadout;
 };

@@ -155,13 +155,34 @@ Enemy side: settings/cfg\_Mission.sqf · AI classes and equipment: settings/cfg_
 
 A positive integer may replace the infantry type to spawn that many randomly selected soldiers.
 
-**One-shot:** Use the existing spawner name with `call` and omit tickets to return the primary group or object. Patrol and Garrison are always one-shot. These calls can run without suspension after LMF preInit has loaded AI settings; they do not wait for mission time or apply wave proximity checks.
+**Arma 3 2.22+ is required. All six AI spawners require scheduled server execution after LMF preInit.** Use `spawn` for both one-shot and managed spawning; unscheduled calls return a null delivery without spawning. A `call` from an already scheduled script also works and suspends that script until the function returns. ZEN's existing function `remoteExec` calls are scheduled and remain supported.
+
+**One-shot:** Omit tickets (Patrol and Garrison are always one-shot). `spawn` returns a native script-handle promise; its result is the primary GROUP or OBJECT once preparation finishes. One-shot spawning has no player-distance checks and no mission-time startup wait. Placement and visibility remain the mission maker's responsibility.
 
 ```sqf
-private _grp = [spawn_1, "TEAM"] call lmf_ai_fnc_spawnInfantryQrf;
+private _handle = [spawn_1, "TEAM"] spawn lmf_ai_fnc_spawnInfantryQrf;
+_handle continueWith {
+	private _grp = _this;
+	if (!isNull _grp) then {
+		_grp setGroupIdGlobal ["Reinforcements"];
+	};
+};
 ```
 
-**Managed waves:** Supply the ticket argument explicitly, including `1`, and use `spawn`. Tickets are the total number of spawns; `0` spawns nothing. Argument presence selects the mode, regardless of `call` or `spawn`. The caller of `spawn` receives a script handle, not the delivery. Managed execution requires a scheduled context: use `spawn`. ZEN function `remoteExec` is already scheduled; unscheduled managed calls exit without spawning.
+`continueWith` runs **unscheduled**. Keep callbacks short; spawn any suspending or expensive follow-up work. From scheduled code, await the same native result:
+
+```sqf
+private _handle = [spawn_1, "TEAM"] spawn lmf_ai_fnc_spawnInfantryQrf;
+private _grp = waitUntil _handle;
+```
+
+For a request originating on a client, target the server with `[spawn_1, "TEAM"] remoteExec ["lmf_ai_fnc_spawnInfantryQrf", 2]`. `remoteExec` does not send a server-local promise result back to the caller. Do not replay spawning for JIP.
+
+**Readiness and pacing:** One shared server queue spaces actual soldier creation by at least approximately 0.1 seconds, including concurrent spawners and the Supply Drop pilot. Under load preparation takes longer; there is no catch-up burst. Drone `createVehicleCrew` remains an atomic engine operation, admitted through the same queue; its internal crew members are not individually paced. Curator logic and editor-placed units are outside this soldier queue.
+
+Groups stay excluded from Converge and survivor joining during preparation. A one-shot result means all surviving prepared soldiers have passed LMF's CBA InitPost route and any deferred gear attempt, and the spawner has installed its initial task/handlers. The existing ten-second weapon-switch gear timeout can retain the original loadout; completion does not guarantee successful custom gear application or completion of unrelated mods' asynchronous work. Vehicle insertion, paradrop landing, recurring tasks and cleanup continue independently. Vehicles are held with simulation disabled during preparation, then restored before delivery. Paradrop vehicle occupants are prepared hidden/inactive before flight and seated at release, so queue pressure cannot leave a descending payload awaiting creation. Paradrop infantry's existing 1.25 skill multiplier is now applied after LMF skill initialization, rather than racing InitPost.
+
+**Managed waves:** Supply tickets explicitly, including `1`. Tickets are the total number of deliveries; `0` creates none. Argument presence selects the mode. The script completes with no combined delivery result after preparing the final ticket, on proximity cancellation, or on preparation failure; completion does not mean the final delivery has died or landed.
 
 ```sqf
 [spawn_1, "TEAM", 3] spawn lmf_ai_fnc_spawnInfantryQrf;
@@ -182,7 +203,7 @@ Spawns infantry to occupy buildings and available gunner seats in nearby vehicle
 **Example**
 
 ```sqf
-private _grp = [garrison_1, "TEAM", 100, 1, false] call lmf_ai_fnc_spawnGarrison;
+private _handle = [garrison_1, "TEAM", 100, 1, false] spawn lmf_ai_fnc_spawnGarrison;
 ```
 
 **Arguments**
@@ -204,7 +225,7 @@ Spawns infantry to patrol an area. Relevant ground contact on land permanently c
 **Example**
 
 ```sqf
-private _grp = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] call lmf_ai_fnc_spawnPatrol;
+private _handle = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] spawn lmf_ai_fnc_spawnPatrol;
 ```
 
 **Arguments**
@@ -225,12 +246,12 @@ private _grp = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] call 
 
 Returns an infantry GROUP with a GUARD task; Arma and LAMBS handle combat without LMF moving its waypoints on contact. Additional tickets provide replacement groups after losses. Spawning over water creates a boat group.
 
-**Run on:** Server · **Use:** call without tickets / spawn with tickets
+**Run on:** Server · **Use:** spawn
 
 **Example**
 
 ```sqf
-private _grp = [spawn_1, "TEAM"] call lmf_ai_fnc_spawnInfantryQrf;
+private _handle = [spawn_1, "TEAM"] spawn lmf_ai_fnc_spawnInfantryQrf;
 [spawn_1, "TEAM", 3] spawn lmf_ai_fnc_spawnInfantryQrf;
 ```
 
@@ -244,14 +265,14 @@ private _grp = [spawn_1, "TEAM"] call lmf_ai_fnc_spawnInfantryQrf;
 
 ### Infantry hunter
 
-Returns an infantry GROUP that actively hunts the nearest living non-civilian player within range without prior detection. Individual movement orders use the player's 3D position every 15 seconds, including upper floors; actual navigation depends on the building. Hunters use FULL speed and normal Arma combat AI while LAMBS group and individual reactions are disabled during hunting. When casualties leave one survivor, hunting stops and the soldier joins an eligible friendly group or receives GUARD. An initially single-soldier spawn still hunts. Airborne aircraft are excluded. Spawning over water creates a boat group using the shared landing flow.
+Returns an infantry GROUP that actively hunts the nearest living non-civilian player within range without prior detection. Individual movement orders use the player's 3D position immediately and then every 13–17 seconds, including upper floors; actual navigation depends on the building. Hunters use FULL speed and normal Arma combat AI while LAMBS group and individual reactions are disabled during hunting. When casualties leave one survivor, hunting stops and the soldier joins an eligible friendly group or receives GUARD. An initially single-soldier spawn still hunts. Airborne aircraft are excluded. Spawning over water creates a boat group using the shared landing flow.
 
-**Run on:** Server · **Use:** call without tickets / spawn with tickets
+**Run on:** Server · **Use:** spawn
 
 **Example**
 
 ```sqf
-private _grp = [spawn_1, "TEAM", 1500] call lmf_ai_fnc_spawnInfantryHunters;
+private _handle = [spawn_1, "TEAM", 1500] spawn lmf_ai_fnc_spawnInfantryHunters;
 [spawn_1, "TEAM", 1500, 3] spawn lmf_ai_fnc_spawnInfantryHunters;
 ```
 
@@ -268,12 +289,12 @@ private _grp = [spawn_1, "TEAM", 1500] call lmf_ai_fnc_spawnInfantryHunters;
 
 Spawns a QRF vehicle with crew and, where applicable, infantry passengers.
 
-**Run on:** Server · **Use:** call without tickets / spawn with tickets
+**Run on:** Server · **Use:** spawn
 
 **Example**
 
 ```sqf
-private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
+private _handle = [spawn_1, "TANK"] spawn lmf_ai_fnc_spawnVehicleQrf;
 [spawn_1, "HELITRANSPORT", 3, 300] spawn lmf_ai_fnc_spawnVehicleQrf;
 ```
 
@@ -310,13 +331,13 @@ Zeus **LMF AI → Vehicle QRF → DRONE** exposes the category and randomly sele
 
 Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs and is cleaned up. The infantry payload is one MG team plus one AT team.
 
-**Run on:** Server · **Use:** call without tickets / spawn with tickets
+**Run on:** Server · **Use:** spawn
 
 **Example**
 
 ```sqf
-private _grp = [spawn_1, "mrk_dropZone", 200, ""] call lmf_ai_fnc_spawnParadropQrf;
-private _tank = [spawn_1, "mrk_dropZone", 200, "TANK"] call lmf_ai_fnc_spawnParadropQrf;
+private _infantryHandle = [spawn_1, "mrk_dropZone", 200, ""] spawn lmf_ai_fnc_spawnParadropQrf;
+private _vehicleHandle = [spawn_1, "mrk_dropZone", 200, "TANK"] spawn lmf_ai_fnc_spawnParadropQrf;
 [spawn_1, "mrk_dropZone", 200, "TANK", 3, 300] spawn lmf_ai_fnc_spawnParadropQrf;
 ```
 
@@ -329,13 +350,13 @@ private _tank = [spawn_1, "mrk_dropZone", 200, "TANK"] call lmf_ai_fnc_spawnPara
 * **4. Total delivery tickets** — Number. Optional: omit for one-shot; supply for managed waves.
 * **5. Delay after the primary payload finishes, seconds** — Number. Default: 300.
 
-**Returns:** Infantry GROUP or dropped vehicle OBJECT, prepared immediately. Flight, drop, crew creation after vehicle release, GUARD assignment and aircraft cleanup continue asynchronously. A returned payload is not confirmation of a completed drop. Failed preparation returns a null delivery; an undeliverable payload is cleaned up.
+**Promise result:** Infantry GROUP or dropped vehicle OBJECT after paced preparation. Flight, drop, seating prepared vehicle occupants at release, GUARD assignment and aircraft cleanup continue asynchronously. A returned payload is not confirmation of a completed drop. Failed preparation returns a null delivery; an undeliverable payload is cleaned up.
 
 **LMF 2.0 migration:** Paradrop arguments are now spawn position, drop zone, flying height, payload, tickets, respawn delay. Update existing mission/Eden calls; the previous order is unsupported.
 
 **Vehicle payload categories:** CAR, CARARMED, TRUCK, APC, TANK. The transport aircraft comes from \_paraVehicle in AI settings.
 
-Vehicle payloads match Vehicle QRF: CAR normally has six infantry including its driver, TRUCK twelve, APC a separate crew plus eight infantry, and CARARMED/TANK crew only. Available seats cap infantry numbers. APC/TANK select a valid vehicle commander as crew-group leader. Crew and passengers are created and seated during descent using scheduled execution; GUARD, combat AI and infantry contact/dismount handlers activate after landing and parachute detachment. Automatic combat unloading stays disabled: CAR/TRUCK/APC infantry remains aboard until LMF contact dismount releases the original transport assignment. Vehicle release briefly disables the transport aircraft's collision on the server for three seconds, then restores its previous setting (Arma 3 2.18+).
+Vehicle payloads match Vehicle QRF: CAR normally has six infantry including its driver, TRUCK twelve, APC a separate crew plus eight infantry, and CARARMED/TANK crew only. Available seats cap infantry numbers. APC/TANK select a valid vehicle commander as crew-group leader. Crew and passengers are created through the shared queue before flight, held hidden/inactive and damage-protected, then seated together at vehicle release; GUARD, combat AI and infantry contact/dismount handlers activate after landing and parachute detachment. Automatic combat unloading stays disabled: CAR/TRUCK/APC infantry remains aboard until LMF contact dismount releases the original transport assignment. Vehicle release briefly disables the transport aircraft's collision on the server for three seconds, then restores its previous setting (Arma 3 2.18+).
 
 Direct classnames found in one of these five configured vehicle categories use that category's setup. Other classnames receive configured CREW units in the actual crew seats, with no extra infantry. Use the configured category pools when a particular infantry composition is required.
 
@@ -415,7 +436,7 @@ Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, re
 * **1. Group-name keywords; case-insensitive. "ALL" or \["ALL"] selects all eligible groups** — String / Array of String. Required.
 * **2. Boat shoreline search radius, metres; not a group-selection radius** — Number. Default: 2000.
 
-Only processes groups local to the calling machine. Stops hunter orders and removes patrol contact takeover before assigning the new task. Land groups can receive another convergence task later; boats remain temporarily reserved while landing/dismounting.
+Returns before orders finish. One scheduled worker per call spaces groups by approximately 0.1 seconds. Newer calls supersede older pending orders for the same group; eligibility, locality, living leader and transport state are rechecked when each order is applied. Partially prepared groups are excluded. Only processes groups local to the calling machine. Stops hunter orders and removes patrol contact takeover before assigning the new task. Land groups can receive another convergence task later; boats remain temporarily reserved while landing/dismounting.
 
 
 

@@ -17,7 +17,7 @@
 		["mrk_supplySpawn", "mrk_supplyDrop", "C_Plane_Civil_01_F", "B_supplyCrate_F"] spawn lmf_supplyDrop_fnc_deliverSupplies;
 */
 
-if !(isServer) exitWith {};
+if (!isServer || {!canSuspend}) exitWith {};
 waitUntil {sleep 1; CBA_missionTime > 0};
 
 params [
@@ -42,7 +42,14 @@ private _dir = _spawnPos getDir _dropPos;
 sleep 5;
 
 // Prepare and spawn the vehicle
-private _veh = createVehicle [_type, _spawnPos, [], 0, "FLY"];
+private _veh = objNull;
+private _simulation = true;
+isNil {
+	_veh = createVehicle [_type, _spawnPos, [], 0, "FLY"];
+	_simulation = simulationEnabled _veh;
+	_veh enableSimulationGlobal false;
+};
+if (isNull _veh) exitWith {};
 _veh setPos (_veh modelToWorld [0, 0, 200]);
 _veh setDir _dir;
 _veh setVelocityModelSpace [0, 150, 0];
@@ -58,7 +65,8 @@ if (_veh isKindOf "Plane") then {_markerType = "b_plane"};
 if (_veh isKindOf "Helicopter") then {_markerType = "b_air"};
 
 // Prep pilot
-private _grp = [_spawnPos, side (playableUnits + switchableUnits select 0), ["B_Pilot_F"]] call BIS_fnc_spawnGroup;
+private _grp = [_spawnPos, side (playableUnits + switchableUnits select 0), ["B_Pilot_F"], _veh, "ANY"] call lmf_ai_fnc_spawnGroup;
+if (isNull _grp || {units _grp isEqualTo []}) exitWith {deleteGroup _grp; deleteVehicle _veh};
 _grp deleteGroupWhenEmpty true;
 _grp setCombatMode "BLUE";
 _grp setBehaviourStrong "CARELESS";
@@ -116,6 +124,10 @@ if (lmf_playerGear && {!(_category isEqualTo "")}) then {
 private _cargoSize = [_crate] call ace_cargo_fnc_getSizeItem;
 [_crate, 1] call ace_cargo_fnc_setSize;
 [_crate, _veh, true] call ace_cargo_fnc_loadItem;
+
+_grp setVariable ["lmf_ai_spawning", nil];
+_veh enableSimulationGlobal _simulation;
+_veh setVelocityModelSpace [0, 150, 0];
 
 // Allow time to slow down before passing the release point.
 waitUntil {sleep 0.5; (_veh distance2D _dropPos) < 1000 || {!alive _veh}};
