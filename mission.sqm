@@ -12,14 +12,14 @@ class EditorData
 	};
 	class LayerIndexProvider
 	{
-		nextID=192;
+		nextID=199;
 	};
 	class Camera
 	{
-		pos[]={14916.896,55.265942,16930.752};
-		dir[]={0.38586473,-0.92189229,0.034971662};
-		up[]={0.91812927,0.38744625,0.083211809};
-		aside[]={0.090261966,-3.7252903e-09,-0.99591815};
+		pos[]={14680.992,81.802765,16660.324};
+		dir[]={-0.38211146,-0.4953129,0.78016406};
+		up[]={-0.21786755,0.86871469,0.44482425};
+		aside[]={0.89806718,-1.4901161e-08,0.43985844};
 	};
 };
 binarizationWanted=0;
@@ -32,8 +32,7 @@ addons[]=
 	"ace_dragging",
 	"A3_Structures_F_Mil_Helipads",
 	"A3_Ui_F",
-	"A3_Modules_F_Curator_Curator",
-	"A3_Structures_F_Mil_BagBunker"
+	"A3_Modules_F_Curator_Curator"
 };
 class AddonsMetaData
 {
@@ -143,7 +142,7 @@ class Mission
 	};
 	class Entities
 	{
-		items=2;
+		items=1;
 		class Item0
 		{
 			dataType="Layer";
@@ -1817,22 +1816,6 @@ class Mission
 			};
 			id=377;
 			atlOffset=0.10162544;
-		};
-		class Item1
-		{
-			dataType="Object";
-			class PositionInfo
-			{
-				position[]={14935.629,18.79969,16931.654};
-				angles[]={0,4.5380201,0};
-			};
-			side="Empty";
-			flags=4;
-			class Attributes
-			{
-			};
-			id=380;
-			type="Land_BagBunker_Large_F";
 		};
 	};
 };

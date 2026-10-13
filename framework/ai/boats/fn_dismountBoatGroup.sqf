@@ -8,21 +8,25 @@
 */
 
 params ["_group", "_veh"];
+if (isNull _group || {!local _group}) exitWith {};
 
 if (!isNull _group && {(units _group) findIf {alive _x} != -1}) then {
 	_group leaveVehicle _veh;
+	{unassignVehicle _x} forEach (units _group select {alive _x && {local _x} && {!isPlayer _x}});
 	_group setBehaviourStrong "AWARE";
 
 	{
 		private _unit = _x;
-		if (alive _unit && {vehicle _unit == _veh}) then {
+		if (alive _unit && {local _unit} && {!isPlayer _unit} && {objectParent _unit == _veh}) then {
 			[
 				{
-					params ["_unit"];
+					params ["_unit", "_veh", "_group"];
+					if (!alive _unit || {!local _unit} || {group _unit != _group} || {objectParent _unit != _veh}) exitWith {};
+					unassignVehicle _unit;
 					moveOut _unit;
 					[_unit, getPos _unit] call lambs_main_fnc_doSmoke;
 				},
-				[_unit],
+				[_unit, _veh, _group],
 				random 3
 			] call CBA_fnc_waitAndExecute;
 		};

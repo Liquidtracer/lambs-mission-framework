@@ -76,6 +76,7 @@ switch (_mode) do {
 		];
 
 		if (vehicle _unit != _unit) then {
+			if (!isPlayer _unit) then {unassignVehicle _unit};
 			moveOut _unit;
 		};
 
@@ -98,7 +99,11 @@ switch (_mode) do {
 		private _items = backpackItems _unit;
 		removeBackpack _unit;
 		_unit addBackpack _parachuteBackpack;
-		_unit action ["openParachute", vehicle _unit];
+		// Release the aircraft seat without ordering an ordinary exit before the parachute action.
+		isNil {
+			if (!isPlayer _unit) then {unassignVehicle _unit};
+			_unit action ["openParachute", vehicle _unit];
+		};
 		sleep _delay;
 		_unit addBackpack _backpack;
 		{_unit addItem _x} forEach _items;

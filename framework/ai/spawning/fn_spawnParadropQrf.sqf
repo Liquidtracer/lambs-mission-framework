@@ -326,7 +326,10 @@ private _spawnOnce = {
 						if (!isTouchingGround (vehicle _newTarget) || {(_leader distance2D _newTarget) > 500}) exitWith {};
 						_group removeEventHandler ["EnemyDetected", _thisEventHandler];
 						_group leaveVehicle (_group getVariable ["lmf_ai_transportVehicle", objNull]);
-						doGetOut (units _group);
+						// Clear individual reservations too, including FFV and already dismounted infantry.
+						private _dismounting = units _group select {alive _x && {local _x} && {!isPlayer _x}};
+						{unassignVehicle _x} forEach _dismounting;
+						doGetOut _dismounting;
 						_group setVariable ["lmf_ai_joinableGroup", true];
 						_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
 						{
