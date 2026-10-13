@@ -34,12 +34,10 @@ if (_vehicleKey isNotEqualTo "") then {
 // Flag
 if (_flag isNotEqualTo "") then {_vic forceFlagTexture _flag};
 
-// Vehicle flip handler & dismount tweaks
+// Vehicle flip handler
 _vic addEventHandler ["GetOut", {
 	params ["_vehicle", "_role", "_unit", "_turret"];
 	if (!alive _unit) exitWith {};
-	_unit setAmmo [primaryWeapon _unit, 0];
-	_unit setSuppression 1;
 
 	if (!alive _vehicle) exitWith {};
 	if (_role == "driver" && {(vectorUp _vehicle) select 2 < 0} && {allPlayers findIf {_x distance2D _vehicle < 1000} == -1}) then {

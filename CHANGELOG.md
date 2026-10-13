@@ -18,12 +18,13 @@
 * **Improved:** Breaking configuration change: replaced the four ground and four air Player vehicle slots with scalable `lmf_groundVehicles` and `lmf_airVehicles` arrays.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
 * **Tweaked:** Simplified infantry AI: random garrison release without surrender, native GUARD QRF, permanent Patrol-to-QRF transitions, 15-second individual hunter pursuit with last-survivor reassignment, and close-contact weapon-light/IR chances. Converge cancels hunting and patrol takeover before retasking.
+* **Tweaked:** Simplified Vehicle QRF setup and aligned dismounted infantry with Infantry QRF. Transport helicopters use synchronized TR UNLOAD/GETOUT with forced CARELESS behavior and no WAIT refresh; crash evacuation and passenger-safe cleanup remain. Removed crew reassignment and ground-dismount forced empty magazines/suppression.
 * **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal; TO&E handles missing LMF roles.
 * **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.
 * **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
 * **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
-* **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg_AI.sqf`.
+* **Fixed:** Vehicle QRF crews now use the configured infantry, crew and pilot classes from `cfg_AI.sqf`. TANK selects a valid vehicle commander as group leader after crew pruning to restore normal waypoint response.
 * **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
 * **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
 * **Removed:** Numeric and custom-string player respawn modes. Only `OFF`, `WAVE` and `TICKETS` are supported; invalid configuration falls back to `OFF`. Waves follow mission-time boundaries without the old 10-second minimum, and intervals display as `MM:SS`.

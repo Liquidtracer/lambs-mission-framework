@@ -288,6 +288,8 @@ private _delivery = [spawn_1, "TANK"] call lmf_ai_fnc_spawnVehicleQrf;
 
 **Primary delivery:** CAR/TRUCK → infantry GROUP; APC/HELITRANSPORT → cargo infantry GROUP; CARARMED/TANK/HELIATTACK/DRONE → vehicle OBJECT. Vehicle completion ignores surviving dismounted crew; infantry completion ignores the surviving transport. HELITRANSPORT retains its independent insertion, evacuation, retreat and cleanup.
 
+CAR/TRUCK/APC dismount on relevant ground contact within 500 meters and retarget GUARD toward that contact. Dismounted infantry uses Infantry QRF behavior, including close-contact light/IR chances and last-survivor reassignment; pure vehicle crews do not reassign. HELITRANSPORT uses synchronized TR UNLOAD/GETOUT at a searched helipad before infantry GUARD and helicopter retreat. TR UNLOAD uses forced CARELESS behavior. The existing ten-second monitor handles crash evacuation; no WAIT/anti-stuck refresh is used. Ground-vehicle dismount no longer empties the soldier's weapon or forces suppression.
+
 Use an LMF category for argument 1. The delay applies with multiple tickets. In LMF 2.0, rename the old `_uav` pool to `_drones` and change `"UAV"` calls to `"DRONE"`; there is no legacy alias.
 
 Configure both air UAVs and ground UGVs in `_drones` in `settings/cfg_AI.sqf`. DRONE randomly selects from this pool for each spawn; use only classes available in your mission's mods/DLCs. Normal armed and unarmed drones use GUARD and Arma AI for movement, scouting and weapon use. Ground drones receive no flight commands. Empty pools spawn nothing; duplicate classnames retain their random selection weighting.
