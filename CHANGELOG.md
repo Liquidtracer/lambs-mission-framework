@@ -2,34 +2,34 @@
 
 ## LMF 2.0.0 - Unreleased
 
-* **Added:** Startup mission information and group-arrival notifications for leaders.
-* **Added:** Zeus Infantry Patrol can target a living player's position at confirmation while spawning at the clicked position.
-* **Improved:** Rebuilt Personal Arsenal with role-aware clothing, weapon and attachment customization during warmup, replacing the separate Available Optics action and restricting manual inventory management.
-* **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
-* **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
-* **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
-* **Improved:** Supply Spawner, Player and ZEN Supply Drop share LARGE, SMALL, EXPLOSIVES, MEDICAL and VEHICLE crates with unique configured classnames and one-time initialization. Empty classnames disable categories; duplicate configuration disables conflicting categories with an RPT diagnostic. Supply Spawner uses the Eden names `supplySpawner` / `supplyPad`.
-* **Improved:** Reworked AI helicopter landing searches and evacuation handling, and boat landing and follow-up tasks.
-* **Improved:** Unified UAV/UGV QRF in the configured `_drones`/`DRONE` pool, with native GUARD behavior, real IED payload drops, RF self-destruct attacks and category-based drone spawning in Zeus.
-* **Improved:** AI spawners now require scheduled execution and Arma 3 2.22 native promises, returning primary groups or objects after paced preparation. Concurrent spawners share soldier creation pacing; explicit tickets retain shared wave management. Vehicle waves follow their primary infantry or vehicle, and Paradrop now takes drop zone, height and payload before optional tickets and delay.
-* **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups. Callsign families use `lmf_bftInfantryCallsigns`, `lmf_bftGroundCallsigns` and `lmf_bftAirCallsigns`; existing mission configs must be updated, with no legacy aliases.
-* **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.
-* **Improved:** Player roles, weapon distribution, Role Selector, Personal Arsenal, Supply Crates and ZEN now share one equipment configuration registry; Player weapon keys are strings instead of numeric IDs.
-* **Improved:** Breaking configuration change: replaced the four ground and four air Player vehicle slots with scalable `lmf_groundVehicles` and `lmf_airVehicles` arrays.
-* **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
-* **Tweaked:** Simplified infantry AI: random garrison stances and release without surrender, shared MAT/infantry placement, native GUARD QRF, permanent Patrol-to-QRF transitions, 13–17-second individual hunter pursuit with last-survivor reassignment, and close-contact weapon-light/IR chances. Converge spreads group orders across time and cancels hunting and patrol takeover before retasking.
-* **Tweaked:** Simplified Vehicle QRF setup and aligned dismounted infantry with Infantry QRF. Transport helicopters use synchronized TR UNLOAD/GETOUT with forced CARELESS behavior and no WAIT refresh; crash evacuation and passenger-safe cleanup remain. Removed crew reassignment and ground-dismount forced empty magazines/suppression.
-* **Fixed:** Vehicle Commander and Vehicle Crew inherit clothing and default weapon categories from Vehicle Platoon Commander, with independent overrides.
-* **Fixed:** Converge releases Garrison groups from vehicle and static weapon positions, including mounted leaders without drivers. Accepted Garrison groups have Dynamic Simulation disabled without automatic reactivation, clear vehicle assignments, dismount normally and proceed on foot to GUARD.
-* **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal; TO&E handles missing LMF roles.
-* **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
-* **Fixed:** Supply Drop remains available after player respawn while drops remain.
-* **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
-* **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
-* **Fixed:** Vehicle QRF crews use the configured infantry, crew and pilot classes from `cfg_AI.sqf`; APC/TANK select a valid commander as group leader. Paradrop vehicle categories match Vehicle QRF crew/passenger compositions and post-landing infantry behavior, with occupants seated during descent.
-* **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
-* **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
-* **Removed:** Numeric and custom-string player respawn modes. Only `OFF`, `WAVE` and `TICKETS` are supported; invalid configuration falls back to `OFF`. Waves follow mission-time boundaries without the old 10-second minimum, and intervals display as `MM:SS`.
+- **Added:** Startup mission information and group-arrival notifications for leaders.
+- **Added:** Zeus Infantry Patrol can target a living player's position at confirmation while spawning at the clicked position.
+- **Improved:** Rebuilt Personal Arsenal with role-aware clothing, weapon and attachment customization during warmup, replacing the separate Available Optics action and restricting manual inventory management.
+- **Improved:** Reorganized LMF into system-based modules with related functions, initialization and configuration kept together. Function names and integration paths have changed.
+- **Improved:** Unified player feedback through shared ACE notifications and a common UI color palette.
+- **Improved:** Reworked Supply Drop requests with map selection and server-managed availability.
+- **Improved:** Supply Spawner, Player and ZEN Supply Drop share LARGE, SMALL, EXPLOSIVES, MEDICAL and VEHICLE crates with unique configured classnames and one-time initialization. Empty classnames disable categories; duplicate configuration disables conflicting categories with an RPT diagnostic. Supply Spawner uses the Eden names `supplySpawner` / `supplyPad`.
+- **Improved:** Reworked AI helicopter landing searches and evacuation handling, and boat landing and follow-up tasks.
+- **Improved:** Unified UAV/UGV QRF in the configured `_drones`/`DRONE` pool, with native GUARD behavior, real IED payload drops, RF self-destruct attacks and category-based drone spawning in Zeus.
+- **Improved:** AI spawners now require scheduled execution and Arma 3 2.22 native promises, returning primary groups or objects after paced preparation. Concurrent spawners share soldier creation pacing; explicit tickets retain shared wave management. Vehicle waves follow their primary infantry or vehicle, and Paradrop now takes drop zone, height and payload before optional tickets and delay.
+- **Improved:** BFT now separates callsign and icon selection and reuses callsigns from empty groups. Callsign families use `lmf_bftInfantryCallsigns`, `lmf_bftGroundCallsigns` and `lmf_bftAirCallsigns`; existing mission configs must be updated, with no legacy aliases.
+- **Improved:** The admin `#bring` command uses an available passenger seat when the admin is in a vehicle, or cancels with feedback if no seat is available.
+- **Improved:** Player roles, weapon distribution, Role Selector, Personal Arsenal, Supply Crates and ZEN now share one equipment configuration registry; Player weapon keys are strings instead of numeric IDs.
+- **Improved:** Breaking configuration change: replaced the four ground and four air Player vehicle slots with scalable `lmf_groundVehicles` and `lmf_airVehicles` arrays.
+- **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
+- **Tweaked:** Simplified infantry AI: random garrison stances and release without surrender, shared MAT/infantry placement, native GUARD QRF, permanent Patrol-to-QRF transitions, 13–17-second individual hunter pursuit with last-survivor reassignment, and close-contact weapon-light/IR chances. Converge spreads group orders across time and cancels hunting and patrol takeover before retasking.
+- **Tweaked:** Simplified Vehicle QRF setup and aligned dismounted infantry with Infantry QRF. Transport helicopters use synchronized TR UNLOAD/GETOUT with forced CARELESS behavior and no WAIT refresh; crash evacuation and passenger-safe cleanup remain. Removed crew reassignment and ground-dismount forced empty magazines/suppression.
+- **Fixed:** Vehicle Commander and Vehicle Crew inherit clothing and default weapon categories from Vehicle Platoon Commander, with independent overrides.
+- **Fixed:** Converge releases Garrison groups from vehicle and static weapon positions, including mounted leaders without drivers. Accepted Garrison groups have Dynamic Simulation disabled without automatic reactivation, clear vehicle assignments, dismount normally and proceed on foot to GUARD.
+- **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal; TO&E handles missing LMF roles.
+- **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
+- **Fixed:** Supply Drop remains available after player respawn while drops remain.
+- **Fixed:** Dropped crates and floating boats can finish landing and regain damage when ground-contact detection returns false.
+- **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
+- **Fixed:** Vehicle QRF crews use the configured infantry, crew and pilot classes from `cfg_AI.sqf`; APC/TANK select a valid commander as group leader. Paradrop vehicle categories match Vehicle QRF crew/passenger compositions and post-landing infantry behavior, with occupants seated during descent.
+- **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
+- **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
+- **Removed:** Numeric and custom-string player respawn modes. Only `OFF`, `WAVE` and `TICKETS` are supported; invalid configuration falls back to `OFF`. Waves follow mission-time boundaries without the old 10-second minimum, and intervals display as `MM:SS`.
 
 
 

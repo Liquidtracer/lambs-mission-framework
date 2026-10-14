@@ -17,7 +17,7 @@ class CfgNotifications {
 		difficulty[] = {};
 	};
 
-	class LMFvictory {
+	class lmf_notifications_victory {
 		title = "Victory";
 		iconPicture = "\A3\modules_f_curator\Data\portraitAnimalsSheep_ca.paa";
 		iconText = "+%2";
@@ -26,7 +26,7 @@ class CfgNotifications {
 		duration = 10;
 	};
 
-	class LMFdefeat {
+	class lmf_notifications_defeat {
 		title = "Defeat";
 		iconPicture = "\A3\modules_f_curator\Data\portraitAnimalsSheep_ca.paa";
 		iconText = "+%2";
@@ -35,7 +35,7 @@ class CfgNotifications {
 		duration = 10;
 	};
 
-	class LMFnotification {
+	class lmf_notifications_message {
 		title = "Notification";
 		iconPicture = "\A3\modules_f_curator\Data\portraitAnimalsSheep_ca.paa";
 		iconText = "+%2";

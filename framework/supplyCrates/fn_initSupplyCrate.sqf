@@ -69,7 +69,6 @@ if (_category isEqualTo "SMALL") exitWith {
 	if (_lat#0 != "") then {_supp addWeaponCargoGlobal [_lat#0, 2];};
 	if (_lmgAmmo#0 != "") then {_supp addMagazineCargoGlobal [_lmgAmmo#0, 5];};
 	if (_mmgAmmo#0 != "") then {_supp addMagazineCargoGlobal [_mmgAmmo#0, 5];};
-	// if (_matAmmo#0 != "") then {_supp addMagazineCargoGlobal [_matAmmo#0, 4];};
 	if (_rifleAmmo#0 != "") then {_supp addMagazineCargoGlobal [_rifleAmmo#0, 15];};
 	if (_carbineAmmo#0 != "") then {_supp addMagazineCargoGlobal [_carbineAmmo#0, 15];};
 	if (_rifleGlAmmo#0 != "") then {_supp addMagazineCargoGlobal [_rifleGlAmmo#0, 15];};
@@ -98,14 +97,12 @@ if (_category isEqualTo "LARGE") exitWith {
 	if (_grenadeSmokeClr#0 != "") then {_supp addMagazineCargoGlobal [_grenadeSmokeClr#0, 10];};
 	if (_lat#0 != "") then {_supp addWeaponCargoGlobal [_lat#0, 6];};
 	_supp addItemCargoGlobal ["ACE_Wirecutter", 3];
-	// _supp addItemCargoGlobal ["ACE_IR_Strobe_Item",30];
 };
 
 if (_category isEqualTo "MEDICAL") exitWith {
 	_supp addItemCargoGlobal ["ACE_morphine", 15];
 	_supp addItemCargoGlobal ["ACE_epinephrine", 15];
 	_supp addItemCargoGlobal ["ACE_tourniquet", 10];
-	// _supp addItemCargoGlobal ["ACE_splint",10];
 	_supp addItemCargoGlobal ["ACE_bloodIV", 15];
 	_supp addItemCargoGlobal ["ACE_fieldDressing", 50];
 	_supp addItemCargoGlobal ["ACE_bodyBag", 10];
@@ -115,6 +112,4 @@ if (_category isEqualTo "EXPLOSIVES") exitWith {
 	_supp addItemCargoGlobal ["DemoCharge_Remote_Mag", 10];
 	_supp addItemCargoGlobal ["SatchelCharge_Remote_Mag", 5];
 	_supp addItemCargoGlobal ["ACE_M26_Clacker", 2];
-
-	// if ((_backpackLight#0) != "") then {_supp addBackpackCargoGlobal [(selectRandom _backpackLight), 2];};
 };

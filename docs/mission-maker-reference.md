@@ -2,10 +2,6 @@
 
 The canonical practical mission-maker reference for mission scripts and triggers using the LMF 2.0.0 system-based names. Code and settings paths are relative to the mission root. See [architecture.md](architecture.md) for technical context and [development.md](development.md) for development conventions.
 
-
-
-
-
 ## Mission settings
 
 Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locally on every machine during preInit; it is not a server-synchronized runtime settings interface. Player loadout details belong in `settings/cfg_Player.sqf`, AI classes and gear in `settings/cfg_AI.sqf`, and briefing content in `settings/cfg_Briefing.sqf`.
@@ -142,8 +138,6 @@ Custom scripts should normally use the documented equipment functions above and 
 
 Enemy side: settings/cfg\_Mission.sqf · AI classes and equipment: settings/cfg_AI.sqf
 
-
-
 ### Shared options
 
 * "SQUAD" — 8 soldiers.
@@ -198,7 +192,9 @@ Garrison, Patrol, Infantry QRF and Hunters start with weapon lights and IR laser
 
 Spawns infantry to occupy buildings and available gunner seats in nearby vehicles or static weapons, with MAT gunners using the same candidate pool as other soldiers. Soldiers actually placed in ACE Garrison start with an equally random UP/MIDDLE/DOWN stance; unused building candidates retain normal stance control. EnemyDetected chooses equally between UP and MIDDLE for eligible garrisoned soldiers on foot, without geometry checks; within 75 meters each defender has a 10% chance to leave ACE Garrison. No surrender routine is used. Dynamic Simulation and last-survivor reassignment remain.
 
-**Run on:** Server · **Use:** call · **Returns:** GROUP
+**Run on:** Server · **Use:** spawn · **Promise result:** GROUP
+
+`call` is also supported from an already scheduled script and suspends it until the function returns.
 
 **Example**
 
@@ -210,17 +206,17 @@ private _handle = [garrison_1, "TEAM", 100, 1, false] spawn lmf_ai_fnc_spawnGarr
 
 * **0. Spawn position: object or \[x,y,z]** — Object / Array. Default: \[0,0,0].
 * **1. Infantry type or soldier count** — String / Number. Default: "TEAM".
-* **2. Garrison radius, metres** — Number. Default: 100.
+* **2. Garrison radius, meters** — Number. Default: 100.
 * **3. Distribution: 0 evenly, 1 building by building, 2 random** — Number. Default: 1.
 * **4. Fill from top to bottom; applies to distribution 0 and 1** — Boolean. Default: false.
-
-
 
 ### Patrol
 
 Spawns infantry to patrol an area. Relevant ground contact on land permanently changes the same group to QRF with GUARD and AWARE/FULL; it does not resume patrolling. Its new group name contains QRF but not Patrol. The separate light/IR reaction remains active after transition or convergence. Spawning over water creates a boat group using the shared landing flow.
 
-**Run on:** Server · **Use:** call · **Returns:** GROUP
+**Run on:** Server · **Use:** spawn · **Promise result:** GROUP
+
+`call` is also supported from an already scheduled script and suspends it until the function returns.
 
 **Example**
 
@@ -231,16 +227,14 @@ private _handle = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] sp
 **Arguments**
 
 * **0. Spawn position: object or \[x,y,z]** — Object / Array. Default: \[0,0,0].
-* **1. Patrol centre: object, marker name or position** — Object / String / Array. Default: \[0,0,0].
+* **1. Patrol center: object, marker name or position** — Object / String / Array. Default: \[0,0,0].
 * **2. Infantry type or soldier count** — String / Number. Default: "TEAM".
-* **3. Patrol radius, metres** — Number. Default: 200.
+* **3. Patrol radius, meters** — Number. Default: 200.
 * **4. Patrol preset; see below** — String. Default: "SLOW".
 * **5. Formation** — String. Default: "STAG COLUMN".
 * "SLOW" — SAFE / LIMITED.
 * "FAST" — AWARE / NORMAL.
 * "ATTACK" — AWARE / LIMITED; no animation-speed override.
-
-
 
 ### Infantry QRF
 
@@ -261,8 +255,6 @@ private _handle = [spawn_1, "TEAM"] spawn lmf_ai_fnc_spawnInfantryQrf;
 * **1. Infantry type or soldier count** — String / Number. Default: "TEAM".
 * **2. Total spawn tickets** — Number. Optional: omit for one-shot; supply for managed waves.
 
-
-
 ### Infantry hunter
 
 Returns an infantry GROUP that actively hunts the nearest living non-civilian player within range without prior detection. Individual movement orders use the player's 3D position immediately and then every 13–17 seconds, including upper floors; actual navigation depends on the building. Hunters use FULL speed and normal Arma combat AI while LAMBS group and individual reactions are disabled during hunting. When casualties leave one survivor, hunting stops and the soldier joins an eligible friendly group or receives GUARD. An initially single-soldier spawn still hunts. Airborne aircraft are excluded. Spawning over water creates a boat group using the shared landing flow.
@@ -280,10 +272,8 @@ private _handle = [spawn_1, "TEAM", 1500] spawn lmf_ai_fnc_spawnInfantryHunters;
 
 * **0. Spawn position: object or \[x,y,z]** — Object / Array. Default: \[0,0,0].
 * **1. Infantry type or soldier count** — String / Number. Default: "TEAM".
-* **2. Hunting radius from the group leader, metres** — Number. Default: 500.
+* **2. Hunting radius from the group leader, meters** — Number. Default: 500.
 * **3. Total spawn tickets** — Number. Optional: omit for one-shot; supply for managed waves.
-
-
 
 ### Vehicle QRF
 
@@ -325,8 +315,6 @@ Zeus **LMF AI → Vehicle QRF → DRONE** exposes the category and randomly sele
 [spawn_1, "DRONE", 3, 300] spawn lmf_ai_fnc_spawnVehicleQrf;
 ```
 
-
-
 ### Para QRF
 
 Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs and is cleaned up. The infantry payload is one MG team plus one AT team.
@@ -345,7 +333,7 @@ private _vehicleHandle = [spawn_1, "mrk_dropZone", 200, "TANK"] spawn lmf_ai_fnc
 
 * **0. Spawn position; above 20 m or over water selects an airborne start** — Object / Array. Default: \[0,0,0].
 * **1. Drop zone: marker, trigger or location; \[0,0,0] selects autonomous mode** — String / Object / Location / Array. Default: \[0,0,0].
-* **2. Flight height, metres** — Number. Default: 200.
+* **2. Flight height, meters** — Number. Default: 200.
 * **3. Payload: "" for infantry; otherwise vehicle classname or category** — String. Default: "".
 * **4. Total delivery tickets** — Number. Optional: omit for one-shot; supply for managed waves.
 * **5. Delay after the primary payload finishes, seconds** — Number. Default: 300.
@@ -364,8 +352,6 @@ Vehicle payloads always return and track the vehicle OBJECT. For CAR/TRUCK/APC, 
 
 **Drop zone:** Use a marker, trigger or location for a fixed zone. The only supported array value is \[0,0,0], which selects autonomous mode; ordinary position arrays are unsupported. In autonomous mode, an object spawn position supplies the initial aircraft heading; an array spawn position uses a random heading. A fixed drop zone determines the heading towards that zone.
 
-
-
 ### Supply drop
 
 Creates a transport, pilot and payload, delivers it by parachute, then sends the aircraft away. After landing, a fixed global marker records the delivery position when BFT is enabled and old-school map is disabled. It remains there if the payload is moved or deleted; joining players receive it automatically.
@@ -376,7 +362,9 @@ Creates a transport, pilot and payload, delivers it by parachute, then sends the
 
 lmf\_supplyDropAircraft configures the aircraft used by player requests. Both plane and helicopter classnames use the same fly-over-and-parachute-drop behavior. Direct calls select the aircraft through argument 2.
 
-\["mrk\_supplySpawn", "mrk\_supplyDrop", "C\_Plane\_Civil\_01\_F", "B\_supplyCrate\_F"] spawn lmf\_supplyDrop\_fnc\_deliverSupplies;
+```sqf
+["mrk_supplySpawn", "mrk_supplyDrop", "C_Plane_Civil_01_F", "B_supplyCrate_F"] spawn lmf_supplyDrop_fnc_deliverSupplies;
+```
 
 **Arguments**
 
@@ -396,8 +384,6 @@ Existing four-argument calls remain supported. Without a category, an enabled co
 
 If the aircraft is destroyed before cargo release, the delivery is lost and undelivered cargo is deleted. There is no refund, retry or emergency drop. The aircraft, wreck and crew remain for Arma's normal cleanup; LMF only cleans up living aircraft after a completed delivery. Cargo already released continues its landing sequence independently.
 
-
-
 ### Check the spawner machine
 
 Returns whether the current machine should run LMF spawners. In the current framework, this is the server only.
@@ -406,47 +392,39 @@ Returns whether the current machine should run LMF spawners. In the current fram
 
 **Example**
 
-private \_isSpawner = \[] call lmf\_ai\_fnc\_isSpawner;
+```sqf
+private _isSpawner = [] call lmf_ai_fnc_isSpawner;
+```
 
 **Arguments:** None.
-
-
-
-
 
 ## AI tasks
 
 For existing AI groups. Run on the server for server-owned AI; the task functions do not automatically transfer execution to another owner.
 
-
-
 ### Converge task
 
 Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, releases infantry garrisons and assigns shoreline tasks to boats. Busy transport helicopters remain excluded. Static-weapon leaders and driverless vehicles are accepted for groups created by `spawnGarrison`; other groups retain their existing exclusions. Accepted land groups also release garrisoned soldiers on foot when their leader is mounted. Released soldiers regain AUTO stance and PATH/MOVE; AUTO still allows natural crouching or crawling during combat.
 
-Garrison uses vehicle and static weapons defensively, without assigning a driver at spawn. When Converge accepts the group, it disables Dynamic Simulation before release and movement orders, with no automatic reactivation. Other AI groups keep their existing Dynamic Simulation setting. At Converge, it abandons land vehicles and proceeds on foot to GUARD, including when its leader is a gunner without a driver. Vehicle-pool and individual seat assignments are cleared before normal dismount orders, preventing reassignment to the abandoned weapons. AUTO/PATH/MOVE and the initial doFollow reset are retained. After GUARD is activated, living Garrison soldiers already on foot receive doStop followed by doMove to the same target, so they can move independently of a stuck leader. This releases formation following; no automatic formation restoration or retry loop is added. Mounted soldiers keep the existing dismount flow. There are no boarding waypoints, transport selection, driver assignments, timers or forced exits. Repeated Converge replaces the target using the latest accepted order. Normal dismount/pathfinding remains subject to engine limitations; incapacitated soldiers are not forcibly moved. Vehicle QRF, transport helicopters, boats, Garrison stances and MAT handling are unchanged.
+Garrison uses vehicle and static weapons defensively, without assigning a driver at spawn. When Converge accepts the group, it disables Dynamic Simulation before release and movement orders, with no automatic reactivation. Other AI groups keep their existing Dynamic Simulation setting. At Converge, it abandons land vehicles and proceeds on foot to GUARD, including when its leader is a gunner without a driver. Vehicle-pool and individual seat assignments are cleared before normal dismount orders, preventing reassignment to the abandoned weapons. AUTO/PATH/MOVE and the initial doFollow reset are retained. After the group's GUARD waypoint is activated, each living Garrison soldier already on foot receives doStop followed by doMove to the same target, so they can move independently of a stuck leader. This releases formation following; no automatic formation restoration or retry loop is added. Mounted soldiers keep the existing dismount flow. There are no boarding waypoints, transport selection, driver assignments, timers or forced exits. Repeated Converge replaces the target using the latest accepted order. Normal dismount/pathfinding remains subject to engine limitations; incapacitated soldiers are not forcibly moved. Vehicle QRF, transport helicopters, boats, Garrison stances and MAT handling are unchanged.
 
 **Run on:** Server for server-owned AI · **Use:** call
 
 **Example**
 
-\[objective\_1, \["QRF", "Patrol"], 650] call lmf\_ai\_fnc\_taskConverge;
+```sqf
+[objective_1, ["QRF", "Patrol"], 650] call lmf_ai_fnc_taskConverge;
+```
 
 **Arguments**
 
 * **0. Target object or \[x,y,z]** — Object / Array. Required.
 * **1. Group-name keywords; case-insensitive. "ALL" or \["ALL"] selects all eligible groups** — String / Array of String. Required.
-* **2. Boat shoreline search radius, metres; not a group-selection radius** — Number. Default: 2000.
+* **2. Boat shoreline search radius, meters; not a group-selection radius** — Number. Default: 2000.
 
 Returns before orders finish. One scheduled worker per call spaces groups by approximately 0.1 seconds. Newer calls supersede older pending orders for the same group; eligibility, locality, living leader and transport state are rechecked when each order is applied. Partially prepared groups are excluded. Only processes groups local to the calling machine. Stops hunter orders and removes patrol contact takeover before assigning the new task. Land groups can receive another convergence task later; boats remain temporarily reserved while landing/dismounting.
 
-
-
-
-
 ## Paradrop \& fire support
-
-
 
 ### Passenger paradrop
 
@@ -456,20 +434,20 @@ Flies an existing aircraft through an approach point to a drop zone and drops it
 
 **Example**
 
-\[plane\_1, "mrk\_dropZone", "mrk\_dropZone\_WP", 220, 140, false] spawn lmf\_paradrop\_fnc\_paradropPassengers;
+```sqf
+[plane_1, "mrk_dropZone", "mrk_dropZone_WP", 220, 140, false] spawn lmf_paradrop_fnc_paradropPassengers;
+```
 
 **Arguments**
 
 * **0. Existing aircraft with AI pilot** — Object. Required.
 * **1. Drop zone: area marker name or trigger** — String / Object. Required.
 * **2. Approach waypoint marker name** — String. Required.
-* **3. Approach flight height, metres** — Number. Required.
-* **4. Drop height after the approach point, metres** — Number. Required.
+* **3. Approach flight height, meters** — Number. Required.
+* **4. Drop height after the approach point, meters** — Number. Required.
 * **5. Start airborne: move aircraft up and give initial velocity** — Boolean. Required.
 
 **Aircraft control:** Waits for warmup to end, takes over waypoints, fuel and damage protection, then cleans up the transport after departure. Passenger drops are routed to each unit's owner. Do not replay the call for JIP.
-
-
 
 ### Fire support
 
@@ -479,7 +457,9 @@ Orders a fire mission from server-owned AI artillery or MK41 VLS against a targe
 
 **Example**
 
-\[art1, target\_1, 10, true, 6] spawn lmf\_ai\_fnc\_fireSupportAtTarget;
+```sqf
+[art1, target_1, 10, true, 6] spawn lmf_ai_fnc_fireSupportAtTarget;
+```
 
 **Arguments**
 
@@ -490,8 +470,6 @@ Orders a fire mission from server-owned AI artillery or MK41 VLS against a targe
 * **4. Artillery rounds; VLS always fires one missile** — Number. Default: 1.
 
 Normal cooldown: **10 seconds** after artillery firing ends, or **60 seconds** after VLS launch. Script completion does not confirm a hit.
-
-
 
 ## Forward Deploy
 
@@ -517,8 +495,6 @@ When updating an existing mission, use the current setting and object-variable n
 
 Requires lmf\_bft = true. Use server calls for mission setup. Group state and distributed object tracking support JIP.
 
-
-
 ### Set callsign
 
 Registers the group's BFT callsign and default icon. Names are uppercased and rejected if used by another non-empty group on the same side. Existing manual icon overrides are retained.
@@ -527,7 +503,9 @@ Registers the group's BFT callsign and default icon. Names are uppercased and re
 
 **Example**
 
-\[group leader\_1, "b\_inf", "FOX/1"] call lmf\_bft\_fnc\_setCallsign;
+```sqf
+[group leader_1, "b_inf", "FOX/1"] call lmf_bft_fnc_setCallsign;
+```
 
 **Arguments**
 
@@ -538,8 +516,6 @@ Registers the group's BFT callsign and default icon. Names are uppercased and re
 
 A supplied requester must be the living group leader. Client calls are sent to the server and checked against the local player as group leader.
 
-
-
 ### Track object
 
 Displays a networked object on BFT clients' maps. Players need an assigned map. A new call replaces the object's previous tracker.
@@ -548,7 +524,9 @@ Displays a networked object on BFT clients' maps. Players need an assigned map. 
 
 **Example**
 
-\[crate\_1, "loc\_container", "ColorWEST", \[0.75, 0.75], "Supplies", 0.25, true, false, -1, false] call lmf\_bft\_fnc\_trackObject;
+```sqf
+[crate_1, "loc_container", "ColorWEST", [0.75, 0.75], "Supplies", 0.25, true, false, -1, false] call lmf_bft_fnc_trackObject;
+```
 
 **Arguments**
 
@@ -565,13 +543,7 @@ Displays a networked object on BFT clients' maps. Players need an assigned map. 
 
 Movement is drawn every frame. Duration starts at the server call and does not restart for JIP. Direct client calls remain local. Do not supply the internal deadline argument.
 
-
-
-
-
 ## Messages \& utilities
-
-
 
 ### ACE message
 
@@ -581,7 +553,9 @@ Displays a local message with title, text, icon and optional sound.
 
 **Example**
 
-\["HQ", "Transport is inbound."] call lmf\_notifications\_fnc\_showAceMessage;
+```sqf
+["HQ", "Transport is inbound."] call lmf_notifications_fnc_showAceMessage;
+```
 
 **Arguments**
 
@@ -592,11 +566,11 @@ Displays a local message with title, text, icon and optional sound.
 * **4. Text box width** — Number. Default: 12.
 * **5. Sound name; "" disables sound** — String. Default: "TacticalPing4".
 * **6. Icon scale** — Number. Default: 1.45.
-* **7. Error body colour** — Boolean. Default: false. Uses the error colour while preserving explicit inline colours.
+* **7. Error body color** — Boolean. Default: false. Uses the error color while preserving explicit inline colors.
 
 Height and width are ACE textbox units, not duration. ACE controls the display lifetime.
 
-Use red error text with "addItemFailed" for rejected actions and failures; explanatory text may be white. The error flag controls colour only, so choose the sound explicitly. Passive negative status may remain silent. Use "beep" for confirmations, "taskUpdated" for map-selection instructions and "TacticalPing4" for normal radio messages. Keep titles and system icons blue.
+Use red error text with "addItemFailed" for rejected actions and failures; explanatory text may be white. The error flag controls color only, so choose the sound explicitly. Passive negative status may remain silent. Use "beep" for confirmations, "taskUpdated" for map-selection instructions and "TacticalPing4" for normal radio messages. Keep titles and system icons blue.
 
 Separate complete sentences with `<br/>` when the message continues, and omit trailing breaks. Names and values may retain deliberate separate lines.
 
@@ -606,11 +580,11 @@ To notify all connected player clients from the dedicated server:
 
 **Example**
 
-\["HQ", "Transport is inbound."] remoteExec \["lmf\_notifications\_fnc\_showAceMessage", -2];
+```sqf
+["HQ", "Transport is inbound."] remoteExec ["lmf_notifications_fnc_showAceMessage", -2];
+```
 
 Do not add these messages to the JIP queue.
-
-
 
 ### Standard notifications
 
@@ -620,17 +594,15 @@ Displays LMF's standard notifications. Victory and defeat notifications **do not
 
 **Example**
 
-\["New task received"] call lmf\_notifications\_fnc\_showNotification;
-
-\[] call lmf\_notifications\_fnc\_showVictory;
-
-\[] call lmf\_notifications\_fnc\_showDefeat;
+```sqf
+["New task received"] call lmf_notifications_fnc_showNotification;
+[] call lmf_notifications_fnc_showVictory;
+[] call lmf_notifications_fnc_showDefeat;
+```
 
 * lmf\_notifications\_fnc\_showNotification — **0:** Message — String, required
 * lmf\_notifications\_fnc\_showVictory — None
 * lmf\_notifications\_fnc\_showDefeat — None
-
-
 
 ### Long-range radio check
 
@@ -640,15 +612,15 @@ Checks whether a unit carries a supported long-range ACRE radio. Does not check 
 
 **Example**
 
-private \_hasLR = \[player] call lmf\_radio\_fnc\_hasLongRangeRadio;
+```sqf
+private _hasLR = [player] call lmf_radio_fnc_hasLongRangeRadio;
+```
 
 **Arguments**
 
 * **0. Unit to check** — Object. Required.
 
 **Supported families:** ACRE\_PRC148, ACRE\_PRC152, ACRE\_PRC77, ACRE\_PRC117F, ACRE\_SEM70.
-
-
 
 ### Vehicle service
 
