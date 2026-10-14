@@ -36,28 +36,24 @@ _grp setFormation "DIAMOND";
 _grp enableIRLasers false;
 _grp enableGunLights "ForceOff";
 _grp setVariable ["lmf_ai_joinableGroup", true];
+_grp setVariable ["lmf_ai_garrisonGroup", true];
 _grp enableAttack false;
 
-// Preserve MAT gunners for building positions; other soldiers can man nearby weapons.
-private _units = units _grp select {typeOf _x != _matGunner};
-private _unitsAt = units _grp select {typeOf _x == _matGunner};
+private _units = units _grp;
 {
 	if (_x emptyPositions "gunner" > 0 && {_units isNotEqualTo []}) then {
 		private _unit = _units deleteAt (count _units - 1);
 		_unit assignAsGunner _x;
 		_unit moveInGunner _x;
-		_grp addVehicle _x;
 	};
 } forEach (_spawnPos nearObjects ["LandVehicle", _garrisonRadius]);
 
-[_spawnPos, nil, _units + _unitsAt, _garrisonRadius, _distribution, _topDown, true] call ace_ai_fnc_garrison;
+[_spawnPos, nil, _units, _garrisonRadius, _distribution, _topDown, true] call ace_ai_fnc_garrison;
 {
-	// Check overhead building geometry, including at CBA Building Positions.
-	private _eyePos = eyePos _x;
-	private _surfaces = lineIntersectsSurfaces [_eyePos, _eyePos vectorAdd [0, 0, 10], _x, objNull, true, -1, "GEOM", "NONE", true];
-	private _isIndoor = _surfaces findIf {(_x # 3) isKindOf "Building"} != -1;
-	_x setUnitPos selectRandom (if (_isIndoor) then {["UP", "MIDDLE"]} else {["MIDDLE", "DOWN"]});
-} forEach (_units + _unitsAt);
+	if (alive _x && {local _x} && {vehicle _x == _x} && {_x getVariable ["ace_ai_garrisonned", false]}) then {
+		_x setUnitPos selectRandom ["UP", "MIDDLE", "DOWN"];
+	};
+} forEach _units;
 
 _grp addEventHandler ["EnemyDetected", {
 	params ["_group", "_newTarget"];
@@ -66,11 +62,7 @@ _grp addEventHandler ["EnemyDetected", {
 	{
 		if (alive _x && {local _x} && {vehicle _x == _x} && {!captive _x} &&
 			{_x getVariable ["ace_ai_garrisonned", false]} && {!(_x checkAIFeature "PATH")}) then {
-			// Check overhead building geometry, including at CBA Building Positions.
-			private _eyePos = eyePos _x;
-			private _surfaces = lineIntersectsSurfaces [_eyePos, _eyePos vectorAdd [0, 0, 10], _x, objNull, true, -1, "GEOM", "NONE", true];
-			private _isIndoor = _surfaces findIf {(_x # 3) isKindOf "Building"} != -1;
-			_x setUnitPos selectRandom (if (_isIndoor) then {["UP", "MIDDLE"]} else {["MIDDLE", "DOWN"]});
+			_x setUnitPos selectRandom ["UP", "MIDDLE"];
 			if (_x distance _newTarget < 75 && {random 1 < 0.1}) then {
 				[[_x]] call ace_ai_fnc_unGarrison;
 				_x setUnitPos "AUTO";

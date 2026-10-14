@@ -154,6 +154,7 @@ private _pBackpack = [""];
 private _pWeapon = "SMG";
 
 // --- Ground vehicle roles ---------------------------------------------------------------------------
+// Commander and crew clothing set to [""] inherits the vehicle platoon leader, which falls back to Rifleman.
 // Vehicle platoon leader
 private _vplUniform = [""];
 private _vplVest = ["V_BandollierB_oli"];
@@ -168,7 +169,7 @@ private _vpsgVest = [""];
 private _vpsgHeadgear = [""];
 private _vpsgGoggles = [""];
 private _vpsgBackpack = [""];
-private _vpsgWeapon = "SMG";
+private _vpsgWeapon = _vplWeapon; // Use the platoon leader's category, or set an explicit weapon key.
 
 // Vehicle crew
 private _vcUniform = [""];
@@ -176,7 +177,7 @@ private _vcVest = [""];
 private _vcHeadgear = [""];
 private _vcGoggles = [""];
 private _vcBackpack = [""];
-private _vcWeapon = "SMG";
+private _vcWeapon = _vplWeapon; // Use the platoon leader's category, or set an explicit weapon key.
 
 // --- Weapons ----------------------------------------------------------------------------------------
 // Flare gun (FLARE_GUN)

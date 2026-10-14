@@ -89,13 +89,13 @@ Configure Player gear in `settings/cfg_Player.sqf` before mission start. The loa
 
 Each of the 20 role definitions is `[classname, display name, rank]`. Use a unique Eden unit classname per role; matching ignores classname case. An empty classname has no automatic assignment, and an unconfigured classname receives no automatic LMF role. The display name is used for the current role and selection menus. Explicit role selection does not change the unit's classname.
 
-The role's `*Uniform`, `*Vest`, `*Headgear`, `*Goggles` and `*Backpack` arrays provide selection pools. For example, `_medVest = [""]` inherits `_rVest`. Only the exact one-element array `[""]` inherits the corresponding Rifleman pool; this also applies to crew and pilot roles and direct `applyBaseLoadout` calls. `[]` does **not** inherit or provide fallback equipment. Mixed arrays and duplicate entries are retained; duplicates retain their random-selection weighting.
+The role's `*Uniform`, `*Vest`, `*Headgear`, `*Goggles` and `*Backpack` arrays provide selection pools. For example, `_medVest = [""]` inherits `_rVest`. Only the exact one-element array `[""]` inherits. Vehicle Commander and Vehicle Crew inherit each slot from Vehicle Platoon Commander (`_vpl*`), including its resolved Rifleman fallback. For example, `_vpsgVest = [""]` inherits `_vplVest`; an explicit vest pool overrides it independently. Vehicle Platoon Commander, other roles (including helicopter crew and pilots), and direct `applyBaseLoadout` calls retain Rifleman fallback. `[]` does **not** inherit or provide fallback equipment. Mixed arrays and duplicate entries are retained; duplicates retain their random-selection weighting.
 
 Set each role's `*Weapon` value to one of these exact uppercase keys:
 
 `FLARE_GUN`, `PISTOL`, `SMG`, `CARBINE`, `RIFLE`, `RIFLE_GL`, `DMR`, `LMG`, `MMG`, `LAT`, `MAT`.
 
-For example, `_rWeapon = "RIFLE"` and `_gWeapon = "RIFLE_GL"`. Role-specific extras such as the AT gunner's MAT launcher remain part of the role function.
+For example, `_rWeapon = "RIFLE"` and `_gWeapon = "RIFLE_GL"`. Vehicle Commander (`_vpsgWeapon`) and Vehicle Crew (`_vcWeapon`) default to `_vplWeapon`; replace either assignment with an explicit key to override it independently. Role-specific extras such as the AT gunner's MAT launcher remain part of the role function.
 
 ### Weapon pools and supplies
 
@@ -196,7 +196,7 @@ Garrison, Patrol, Infantry QRF and Hunters start with weapon lights and IR laser
 
 ### Garrison
 
-Spawns infantry to occupy buildings and available gunner seats in nearby vehicles or static weapons. EnemyDetected randomizes held stances; within 75 meters each defender has a 10% chance to leave ACE Garrison. No surrender routine is used. Dynamic Simulation and last-survivor reassignment remain.
+Spawns infantry to occupy buildings and available gunner seats in nearby vehicles or static weapons, with MAT gunners using the same candidate pool as other soldiers. Soldiers actually placed in ACE Garrison start with an equally random UP/MIDDLE/DOWN stance; unused building candidates retain normal stance control. EnemyDetected chooses equally between UP and MIDDLE for eligible garrisoned soldiers on foot, without geometry checks; within 75 meters each defender has a 10% chance to leave ACE Garrison. No surrender routine is used. Dynamic Simulation and last-survivor reassignment remain.
 
 **Run on:** Server · **Use:** call · **Returns:** GROUP
 
@@ -422,7 +422,9 @@ For existing AI groups. Run on the server for server-owned AI; the task function
 
 ### Converge task
 
-Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, releases infantry garrisons and assigns shoreline tasks to boats. Skips ineligible groups, including static weapons and busy transport helicopters.
+Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, releases infantry garrisons and assigns shoreline tasks to boats. Busy transport helicopters remain excluded. Static-weapon leaders and driverless vehicles are accepted for groups created by `spawnGarrison`; other groups retain their existing exclusions. Accepted land groups also release garrisoned soldiers on foot when their leader is mounted. Released soldiers regain AUTO stance and PATH/MOVE; AUTO still allows natural crouching or crawling during combat.
+
+Garrison uses vehicle and static weapons defensively, without assigning a driver at spawn. At Converge, it abandons land vehicles and proceeds on foot to GUARD, including when its leader is a gunner without a driver. Vehicle-pool and individual seat assignments are cleared before normal dismount orders, preventing reassignment to the abandoned weapons. AUTO/PATH/MOVE and doFollow are retained. There are no boarding waypoints, transport selection, driver assignments, timers or forced exits. Repeated Converge replaces the target using the latest accepted order. Normal dismount/pathfinding remains subject to engine limitations; incapacitated soldiers are not forcibly moved. Vehicle QRF, transport helicopters, boats, Garrison stances and MAT handling are unchanged.
 
 **Run on:** Server for server-owned AI · **Use:** call
 

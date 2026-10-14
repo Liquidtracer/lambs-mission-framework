@@ -17,8 +17,10 @@
 * **Improved:** Player roles, weapon distribution, Role Selector, Personal Arsenal, Supply Crates and ZEN now share one equipment configuration registry; Player weapon keys are strings instead of numeric IDs.
 * **Improved:** Breaking configuration change: replaced the four ground and four air Player vehicle slots with scalable `lmf_groundVehicles` and `lmf_airVehicles` arrays.
 * **Tweaked:** Supply deliveries leave a fixed landing-site marker instead of continuously tracking the payload.
-* **Tweaked:** Simplified infantry AI: random garrison release without surrender, native GUARD QRF, permanent Patrol-to-QRF transitions, 13–17-second individual hunter pursuit with last-survivor reassignment, and close-contact weapon-light/IR chances. Converge spreads group orders across time and cancels hunting and patrol takeover before retasking.
+* **Tweaked:** Simplified infantry AI: random garrison stances and release without surrender, shared MAT/infantry placement, native GUARD QRF, permanent Patrol-to-QRF transitions, 13–17-second individual hunter pursuit with last-survivor reassignment, and close-contact weapon-light/IR chances. Converge spreads group orders across time and cancels hunting and patrol takeover before retasking.
 * **Tweaked:** Simplified Vehicle QRF setup and aligned dismounted infantry with Infantry QRF. Transport helicopters use synchronized TR UNLOAD/GETOUT with forced CARELESS behavior and no WAIT refresh; crash evacuation and passenger-safe cleanup remain. Removed crew reassignment and ground-dismount forced empty magazines/suppression.
+* **Fixed:** Vehicle Commander and Vehicle Crew inherit clothing and default weapon categories from Vehicle Platoon Commander, with independent overrides.
+* **Fixed:** Converge releases Garrison groups from vehicle and static weapon positions, including mounted leaders without drivers. Groups clear vehicle assignments, dismount normally and proceed on foot to GUARD.
 * **Fixed:** Disabled player gear retains starting Eden equipment on respawn and disables Personal Arsenal; TO&E handles missing LMF roles.
 * **Fixed:** Supply aircraft destroyed before release lose only their undelivered cargo without refund or retry; wrecks and crew remain for Arma's normal cleanup.
 * **Fixed:** Supply Drop remains available after player respawn while drops remain.

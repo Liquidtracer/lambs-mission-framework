@@ -4,6 +4,8 @@
 	Groups are selected by keywords in groupId.
 	Author: Alex2k.
 	Returns immediately; one scheduled worker applies group orders about 0.1 seconds apart.
+	LMF garrisons abandon land vehicles and converge on foot.
+	Requires local AI groups.
 
 	Arguments:
 		0: Target position <OBJECT or ARRAY>
@@ -55,8 +57,8 @@ isNil {
 			private _leader = leader _x;
 			private _vehicle = vehicle _leader;
 
-			!(_vehicle isKindOf "StaticWeapon") &&
-			{_vehicle == _leader || {!isNull driver _vehicle}}
+			(_x getVariable ["lmf_ai_garrisonGroup", false] && {_vehicle isKindOf "LandVehicle"}) ||
+			{!(_vehicle isKindOf "StaticWeapon") && {_vehicle == _leader || {!isNull driver _vehicle}}}
 		}
 	};
 
@@ -82,9 +84,13 @@ isNil {
 			private _leader = leader _group;
 			private _vehicle = vehicle _leader;
 			private _gId = toLower groupId _group;
+			private _isGarrison = _group getVariable ["lmf_ai_garrisonGroup", false] &&
+				{units _group findIf {alive _x && {vehicle _x != _x} && {!(vehicle _x isKindOf "LandVehicle")}} == -1};
 			if ((!_isAll && {_typesLower findIf {_gId find _x > -1} == -1})
-				|| {!alive _leader} || {!local _leader} || {_vehicle isKindOf "StaticWeapon"}
-				|| {_vehicle != _leader && {isNull driver _vehicle}}) exitWith {};
+				|| {!alive _leader} || {!local _leader}
+				|| {!(_isGarrison && {_vehicle isKindOf "LandVehicle"}) &&
+					{_vehicle isKindOf "StaticWeapon" || {_vehicle != _leader && {isNull driver _vehicle}}}}) exitWith {};
+			if (_isGarrison && {units _group findIf {alive _x && {!local _x || {isPlayer _x}}} >= 0}) exitWith {};
 
 			if (!isNil {_group getVariable "lmf_ai_huntScript"}) then {
 				terminate (_group getVariable "lmf_ai_huntScript");
@@ -112,22 +118,43 @@ isNil {
 			};
 
 			{deleteWaypoint _x} forEachReversed waypoints _group;
-			if (_vehicle == _leader) then {
-				private _garrisoned = units _group select {_x getVariable ["ace_ai_garrisonned", false]};
-				[_garrisoned] call ace_ai_fnc_unGarrison;
-				{
-					_x setUnitPos "AUTO";
-					_x enableAI "PATH";
-					_x enableAI "MOVE";
-				} forEach units _group;
-				// Replace individual hunt/ACE orders before following the new waypoint.
-				(units _group) doFollow _leader;
+			// Release garrisoned infantry even when their leader is in a vehicle.
+			private _garrisoned = units _group select {vehicle _x == _x && {_x getVariable ["ace_ai_garrisonned", false]}};
+			[_garrisoned] call ace_ai_fnc_unGarrison;
+			private _infantry = if (_vehicle == _leader || {_isGarrison}) then {units _group} else {_garrisoned};
+			{
+				_x setUnitPos "AUTO";
+				_x enableAI "PATH";
+				_x enableAI "MOVE";
+			} forEach _infantry;
+			// Replace individual hunt/ACE orders before following the new waypoint.
+			_infantry doFollow _leader;
+			if (_vehicle == _leader || {_isGarrison}) then {
 				_group setBehaviour "AWARE";
 				_group setSpeedMode "NORMAL";
 			};
 
+			if (_isGarrison) then {
+				private _units = units _group select {alive _x};
+				private _vehicles = assignedVehicles _group;
+				{
+					_vehicles pushBackUnique vehicle _x;
+					_vehicles pushBackUnique assignedVehicle _x;
+				} forEach _units;
+				_vehicles = _vehicles select {_x isKindOf "LandVehicle"};
+				// Remove the vehicle pool and seat orders after resetting formation.
+				{_group leaveVehicle _x} forEach _vehicles;
+				{if (assignedVehicle _x in _vehicles) then {unassignVehicle _x}} forEach _units;
+				doGetOut (_units select {vehicle _x in _vehicles});
+			};
+
 			private _wp = _group addWaypoint [_position, 0];
 			_wp setWaypointType "GUARD";
+			if (_isGarrison) then {
+				_wp setWaypointBehaviour "AWARE";
+				_wp setWaypointSpeed "NORMAL";
+				_group setCurrentWaypoint _wp;
+			};
 		};
 		sleep 0.1;
 	} forEach _groups;

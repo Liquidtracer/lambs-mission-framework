@@ -39,7 +39,14 @@ private _roleByClass = createHashMap;
 	{
 		private _pool = _x;
 		// Only the exact sentinel inherits; empty and mixed pools remain unchanged.
-		if (_pool isEqualTo [""]) then {_pool = _riflemanClothing select _forEachIndex};
+		if (_pool isEqualTo [""]) then {
+			_pool = if (_roleKey in ["VEHICLE_COMMANDER", "VEHICLE_CREW"]) then {
+				// The platoon leader is registered first, with Rifleman fallback already resolved.
+				((_roles get "VEHICLE_PLATOON_LEADER") get "CLOTHING") get (_clothingKeys select _forEachIndex)
+			} else {
+				_riflemanClothing select _forEachIndex
+			};
+		};
 		_clothing set [_clothingKeys select _forEachIndex, _pool];
 	} forEach _clothingPools;
 	_roles set [_roleKey, createHashMapFromArray [
