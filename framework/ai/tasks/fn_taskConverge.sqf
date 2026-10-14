@@ -5,6 +5,7 @@
 	Author: Alex2k.
 	Returns immediately; one scheduled worker applies group orders about 0.1 seconds apart.
 	LMF garrisons abandon land vehicles and converge on foot.
+	Accepted LMF garrisons have Dynamic Simulation disabled without automatic restoration.
 	Requires local AI groups.
 
 	Arguments:
@@ -92,6 +93,9 @@ isNil {
 					{_vehicle isKindOf "StaticWeapon" || {_vehicle != _leader && {isNull driver _vehicle}}}}) exitWith {};
 			if (_isGarrison && {units _group findIf {alive _x && {!local _x || {isPlayer _x}}} >= 0}) exitWith {};
 
+			// Keep accepted garrisons active beyond the Dynamic Simulation activation distance.
+			if (_isGarrison) then {_group enableDynamicSimulation false};
+
 			if (!isNil {_group getVariable "lmf_ai_huntScript"}) then {
 				terminate (_group getVariable "lmf_ai_huntScript");
 				_group setVariable ["lmf_ai_huntScript", nil];
@@ -154,6 +158,13 @@ isNil {
 				_wp setWaypointBehaviour "AWARE";
 				_wp setWaypointSpeed "NORMAL";
 				_group setCurrentWaypoint _wp;
+				// Let soldiers on foot move independently of a stuck formation leader.
+				{
+					if (alive _x && {vehicle _x == _x}) then {
+						doStop _x;
+						_x doMove _position;
+					};
+				} forEach units _group;
 			};
 		};
 		sleep 0.1;

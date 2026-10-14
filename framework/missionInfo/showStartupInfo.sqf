@@ -60,4 +60,7 @@ private _text = format [
 	LMF_MAIN_COLOR, _entries joinString "<br/><br/>"
 ];
 
+// Skip the automatic dialog if Zeus is already open; do not interrupt or defer it.
+if (!isNull (findDisplay 312)) exitWith {};
+
 [parseText _text, "LAMBS Mission Framework", "OK", false] call BIS_fnc_guiMessage;
