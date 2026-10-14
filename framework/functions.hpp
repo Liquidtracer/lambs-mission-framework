@@ -56,23 +56,26 @@ class ai {
 		class findJoinableGroups {};
 		class reassignSurvivor {};
 	};
-	class spawning {
-		file = "framework\ai\spawning";
+	class spawningCore {
+		file = "framework\ai\spawning\core";
 		class isSpawner {};
+		class getPlayerProximityState {};
+		class runWaves {};
 		class requestSpawn {};
 		class processSpawnQueue {};
-		class seatSpawnedUnit {};
-		class waitForSpawnInit {};
 		class spawnGroup {};
 		class spawnCrew {};
+		class seatSpawnedUnit {};
+		class waitForSpawnInit {};
+	};
+	class spawning {
+		file = "framework\ai\spawning";
 		class spawnPatrol {};
 		class spawnGarrison {};
 		class spawnInfantryQrf {};
 		class spawnInfantryHunters {};
 		class spawnVehicleQrf {};
 		class spawnParadropQrf {};
-		class runWaves {};
-		class getPlayerProximityState {};
 	};
 };
 class supplyDrop {
