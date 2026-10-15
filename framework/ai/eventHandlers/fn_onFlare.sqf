@@ -13,7 +13,18 @@ if (side _shooter == lmf_enemySide) exitWith {};
 private _detectionRange = 800;
 private _targetPos = [[[(getPos _shooter), 200]], []] call BIS_fnc_randomPos;
 
-private _qrf = allGroups select {(((groupId _x) find "QRF") != -1 || ((groupId _x) find "Patrol") != -1 || ((groupId _x) find "Car") != -1) && ((leader _x) distance2D _targetPos < _detectionRange)};
+// Infantry/patrol response; ordinary flares also retain the car-type exception.
+private _qrf = allGroups select {
+	local _x && {side _x == lmf_enemySide} && {[_x, ["QRF", "PATROL"]] call lmf_ai_fnc_canRetaskGroup}
+	&& {
+		private _tags = _x getVariable ["lmf_ai_groupTags", []];
+		!("AIR" in _tags) && {!("DRONE" in _tags)} && {
+			("INFANTRY" in _tags && {!("VEHICLE" in _tags)})
+			|| {(_x getVariable ["lmf_ai_vehicleType", ""]) in ["CAR", "CARARMED"]}
+		}
+	}
+	&& {alive leader _x} && {(leader _x) distance2D _targetPos < _detectionRange}
+};
 if (_qrf isEqualTo []) exitWith {};
 
 private _nearestQrf = [_qrf, _targetPos] call BIS_fnc_nearestPosition;

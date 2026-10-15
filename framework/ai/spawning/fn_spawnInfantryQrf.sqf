@@ -38,8 +38,8 @@ private _spawnOnce = {
 	private _type = [_grpType] call _typeMaker;
 	private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
 	if (isNull _grp) exitWith {grpNull};
+	[_grp, ["QRF", "INFANTRY"], "LMF Infantry QRF"] call lmf_ai_fnc_initGroup;
 	[_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
-	_grp setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _grp]];
 	_grp deleteGroupWhenEmpty true;
 	_grp setVariable ["lmf_ai_joinableGroup", true];
 	_grp setFormation "DIAMOND";

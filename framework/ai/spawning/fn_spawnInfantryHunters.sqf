@@ -39,9 +39,9 @@ private _spawnOnce = {
 	private _type = [_grpType] call _typeMaker;
 	private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
 	if (isNull _grp) exitWith {grpNull};
+	[_grp, ["HUNTER", "INFANTRY"], "LMF Hunter"] call lmf_ai_fnc_initGroup;
 	[_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
 	_grp deleteGroupWhenEmpty true;
-	_grp setGroupIdGlobal [format ["Infantry Hunter (%1)", groupId _grp]];
 	// Keep Arma combat AI active; LAMBS movement reactions must not interrupt pursuit.
 	_grp setVariable ["lambs_danger_disableGroupAI", true];
 	{_x setVariable ["lambs_danger_disableAI", true]} forEach units _grp;

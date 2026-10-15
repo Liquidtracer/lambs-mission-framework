@@ -78,7 +78,7 @@ private _spawnOnce = {
 	private _grp = [_spawnPos, lmf_enemySide, _heliCrew, _veh, "ANY"] call lmf_ai_fnc_spawnGroup;
 	_grp deleteGroupWhenEmpty true;
 	_grp addVehicle _veh;
-	_grp setGroupIdGlobal [format ["Paradrop Aircraft (%1)", groupId _grp]];
+	[_grp, ["AIR", "TRANSPORT"], "LMF Paradrop Transport"] call lmf_ai_fnc_initGroup;
 
 	// Payload preparation
 	private _grp2 = grpNull;
@@ -93,6 +93,8 @@ private _spawnOnce = {
 	if (!_isVehicleDrop) then {
 		_grp2 = [_spawnPos, lmf_enemySide, (selectRandom _mgTeam) + (selectRandom _atTeam), _veh, "CARGO"] call lmf_ai_fnc_spawnGroup;
 		_grp2 deleteGroupWhenEmpty true;
+		[_grp2, ["QRF", "INFANTRY"], "LMF Infantry QRF"] call lmf_ai_fnc_initGroup;
+		_grp2 setVariable ["lmf_ai_inserting", true];
 		{
 			_x setSkill ((skill _x)*1.25);
 		} forEach units _grp2;
@@ -170,6 +172,16 @@ private _spawnOnce = {
 				if (_infantryType isNotEqualTo []) then {
 					_infantryGroup = [_spawnPos, lmf_enemySide, _infantryType, _droppedObj, "ANY", true] call lmf_ai_fnc_spawnGroup;
 				};
+			};
+			private _tags = ["QRF", if (_droppedObj isKindOf "Air") then {"AIR"} else {if (_droppedObj isKindOf "Ship") then {"BOAT"} else {"VEHICLE"}}];
+			if (_crewGroup == _infantryGroup) then {_tags pushBack "INFANTRY"};
+			private _isDrone = unitIsUAV _droppedObj;
+			if (_isDrone) then {_tags pushBack "DRONE"};
+			private _subtype = if (_isDrone) then {if (_droppedObj isKindOf "Air") then {"UAV"} else {"UGV"}} else {if (_vicType == "") then {getText (configFile >> "CfgVehicles" >> typeOf _droppedObj >> "displayName")} else {_vicType}};
+			[_crewGroup, _tags, if (_isDrone) then {"LMF Drone QRF"} else {"LMF Vehicle QRF"}, _subtype] call lmf_ai_fnc_initGroup;
+			_crewGroup setVariable ["lmf_ai_vehicleType", _vicType];
+			if (!isNull _infantryGroup && {_infantryGroup != _crewGroup}) then {
+				[_infantryGroup, ["QRF", "INFANTRY"], "LMF Infantry QRF"] call lmf_ai_fnc_initGroup;
 			};
 			_payloadReady = units _crewGroup findIf {alive _x} != -1
 				&& {_infantryType isEqualTo [] || {units _infantryGroup findIf {alive _x} != -1}};
@@ -267,10 +279,8 @@ private _spawnOnce = {
 					};
 					if (_infantryGroup != _crewGroup && {!isNull _infantryGroup}) then {
 						{[_x] call _seatUnit} forEach units _infantryGroup;
-						_infantryGroup setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _infantryGroup]];
 					};
 					{deleteVehicle _x} forEach (units _infantryGroup select {isNull objectParent _x});
-					_crewGroup setGroupIdGlobal [format ["%1: %2 (%3)", _name, getText (configFile >> "CfgVehicles" >> typeOf _droppedObj >> "displayName"), groupId _crewGroup]];
 					{
 						_x deleteGroupWhenEmpty true;
 						_x setBehaviourStrong "CARELESS";
@@ -336,7 +346,7 @@ private _spawnOnce = {
 						{unassignVehicle _x} forEach _dismounting;
 						doGetOut _dismounting;
 						_group setVariable ["lmf_ai_joinableGroup", true];
-						_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
+						[_group] call lmf_ai_fnc_awaitGroupDismount;
 						{
 							if (waypointType _x == "GUARD") then {
 								_x setWaypointPosition [getPosASL _newTarget, -1];
@@ -360,6 +370,17 @@ private _spawnOnce = {
 						private _wp = _g2 addWaypoint [getPosATL leader _g2, 0];
 						_wp setWaypointType "GUARD";
 						_g2 setVariable ["lmf_ai_joinableGroup", true];
+						// Keep selection blocked until the last living passenger has landed.
+						[
+							{
+								params ["_group"];
+								isNull _group || {!local _group} || {units _group findIf {alive _x && {!isNull objectParent _x || {!isTouchingGround _x}}} == -1}
+							},
+							{
+								params ["_group"];
+								if (!isNull _group && {local _group}) then {_group setVariable ["lmf_ai_inserting", nil]};
+							}, [_g2]
+						] call CBA_fnc_waitUntilAndExecute;
 					}, [_grp2]
 				] call CBA_fnc_waitUntilAndExecute;
 			};

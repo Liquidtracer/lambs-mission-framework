@@ -51,7 +51,7 @@
 	[
 		{
 			params ["_flareObject", "_flarePos"];
-			private _garrisonGroups = allGroups select {side _x == lmf_enemySide && ((groupId _x) find "Garrison") != -1};
+			private _garrisonGroups = allGroups select {local _x && {side _x == lmf_enemySide} && {alive leader _x} && {[_x, ["GARRISON"]] call lmf_ai_fnc_canRetaskGroup}};
 			if (_garrisonGroups isEqualTo []) exitWith {};
 			private _nearestGarrisonGroup = [_garrisonGroups, _flarePos] call BIS_fnc_nearestPosition;
 			{_x setUnitPos "UP"} forEach (units _nearestGarrisonGroup select {alive _x});
@@ -72,11 +72,18 @@
 		[_flareObject, _flarePos], (5 + (random 5))
 	] call CBA_fnc_waitAndExecute;
 
-	// Make nearest "QRF" or "Patrol" group move towards the flare
+	// Make nearest infantry QRF or patrol group move towards the flare
 	[
 		{
 			params ["_flareObject", "_flarePos"];
-			private _qrfGroup = allGroups select {side _x == lmf_enemySide && (((groupId _x) find "QRF") != -1 || ((groupId _x) find "Patrol") != -1)};
+			private _qrfGroup = allGroups select {
+				local _x && {side _x == lmf_enemySide} && {alive leader _x}
+				&& {[_x, ["QRF", "PATROL"]] call lmf_ai_fnc_canRetaskGroup}
+				&& {
+					private _tags = _x getVariable ["lmf_ai_groupTags", []];
+					"INFANTRY" in _tags && {_tags findIf {_x in ["VEHICLE", "AIR", "DRONE"]} == -1}
+				}
+			};
 			if (_qrfGroup isEqualTo []) exitWith {};
 			private _nearestQrfGroup = [_qrfGroup, _flarePos] call BIS_fnc_nearestPosition;
 			if ((leader _nearestQrfGroup) distance2D _flarePos < 800) then {

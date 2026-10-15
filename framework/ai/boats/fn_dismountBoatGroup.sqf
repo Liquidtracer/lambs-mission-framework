@@ -44,6 +44,7 @@ if (!isNull _group && {(units _group) findIf {alive _x} != -1}) then {
 		params ["_group"];
 		if (!isNull _group) then {
 			_group setVariable ["lmf_taskConverge_active", false];
+			[_group] call lmf_ai_fnc_awaitGroupDismount;
 		};
 	},
 	[_group, _veh]

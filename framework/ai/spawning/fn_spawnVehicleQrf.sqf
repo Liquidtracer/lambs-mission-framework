@@ -52,7 +52,7 @@ private _fncDismountEh = {
 	{unassignVehicle _x} forEach _dismounting;
 	doGetOut _dismounting;
 	_group setVariable ["lmf_ai_joinableGroup", true];
-	_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
+	[_group] call lmf_ai_fnc_awaitGroupDismount;
 	{
 		if (waypointType _x == "GUARD") then {
 			_x setWaypointPosition [getPosASL _newTarget, -1];
@@ -233,7 +233,7 @@ private _spawnOnce = {
 		};
 		if (_infantryType isNotEqualTo []) then {
 			_grp2 = [_spawnPos, lmf_enemySide, _infantryType, _veh, if (_vicType == "HELITRANSPORT") then {"CARGO"} else {"ANY"}] call lmf_ai_fnc_spawnGroup;
-			_grp2 setGroupIdGlobal [format ["Infantry QRF (%1)", groupId _grp2]];
+			[_grp2, ["QRF", "INFANTRY"], "LMF Infantry QRF"] call lmf_ai_fnc_initGroup;
 			{deleteVehicle _x} forEach (units _grp2 select {isNull objectParent _x});
 		};
 	};
@@ -245,7 +245,14 @@ private _spawnOnce = {
 		objNull
 	};
 
-	_grp setGroupIdGlobal [format ["%1: %2 (%3)", _name, getText (configFile >> "CfgVehicles" >> _class >> "displayName"), groupId _grp]];
+	private _tags = ["QRF", if (_isAir) then {"AIR"} else {if (_veh isKindOf "Ship") then {"BOAT"} else {"VEHICLE"}}];
+	if (_grp == _grp2) then {_tags pushBack "INFANTRY"};
+	if (_vicType == "DRONE") then {_tags pushBack "DRONE"};
+	if (_vicType == "HELITRANSPORT") then {_tags = ["AIR", "TRANSPORT"]};
+	private _prefix = if (_vicType == "DRONE") then {"LMF Drone QRF"} else {if (_vicType == "HELITRANSPORT") then {"LMF Heli Transport"} else {if (_isAir) then {"LMF Air QRF"} else {"LMF Vehicle QRF"}}};
+	private _subtype = if (_vicType == "DRONE") then {if (_isAir) then {"UAV"} else {"UGV"}} else {_vicType};
+	[_grp, _tags, _prefix, _subtype] call lmf_ai_fnc_initGroup;
+	_grp setVariable ["lmf_ai_vehicleType", _vicType];
 	{
 		_x deleteGroupWhenEmpty true;
 		if (_vicType != "HELITRANSPORT" || {_x == _grp}) then {
@@ -330,6 +337,7 @@ private _spawnOnce = {
 					};
 					if (_evacuated && {_onFoot} && {_passengers isEqualTo []}) then {
 						_group setVariable ["lmf_heliTransport_active", false];
+						[_group] call lmf_ai_fnc_awaitGroupDismount;
 						_done = true;
 					};
 				};

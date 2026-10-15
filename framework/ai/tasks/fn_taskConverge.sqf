@@ -1,7 +1,7 @@
 /*
 	AI convergence
 	Makes AI groups converge on a position.
-	Groups are selected by keywords in groupId.
+	Groups are selected by exact LMF classification tags, independently of groupId.
 	Author: Alex2k.
 	Returns immediately; one scheduled worker applies group orders about 0.1 seconds apart.
 	LMF garrisons abandon land vehicles and converge on foot.
@@ -10,12 +10,12 @@
 
 	Arguments:
 		0: Target position <OBJECT or ARRAY>
-		1: Group ID keywords <ARRAY or STRING> ("ALL" selects all eligible groups)
+		1: Group tags <ARRAY or STRING> (case-insensitive OR; "ALL" selects eligible LMF combat groups)
 		2: Shoreline waypoint radius for boats in meters <NUMBER> (default: 2000)
 
 	Examples:
 		[objective_1, ["ALL"], 650] call lmf_ai_fnc_taskConverge;
-		[objective_1, ["QRF", "Car"]] call lmf_ai_fnc_taskConverge;
+		[objective_1, ["PATROL", "QRF"]] call lmf_ai_fnc_taskConverge;
 */
 
 params ["_targetPos", "_typeArray", ["_radius", 2000]];
@@ -30,16 +30,6 @@ if (_typeArray isEqualType "") then {
 	_typeArray = [_typeArray];
 };
 
-private _isAll = "ALL" in (_typeArray apply {toUpper _x});
-private _typesLower = _typeArray apply {toLower _x};
-
-private _transportAllowsTask = {
-	params ["_group"];
-	if (_group getVariable ["lmf_heliTransport_active", false]) exitWith {false};
-	private _transport = _group getVariable ["lmf_heliTransport_vehicle", objNull];
-	isNull _transport || {(units _group) findIf {alive _x && {objectParent _x == _transport}} == -1}
-};
-
 // Find eligible groups
 private _groups = [];
 isNil {
@@ -48,11 +38,7 @@ isNil {
 		{side _x == lmf_enemySide} &&
 		{!(_x getVariable ["lmf_ai_spawning", false])} &&
 		{!(_x getVariable ["lmf_taskConverge_active", false])} &&
-		{[_x] call _transportAllowsTask} &&
-		{
-			private _gId = toLower groupId _x;
-			_isAll || {_typesLower findIf {_gId find _x > -1} > -1}
-		} &&
+		{[_x, _typeArray] call lmf_ai_fnc_canRetaskGroup} &&
 		{(units _x) findIf {alive _x} > -1} &&
 		{
 			private _leader = leader _x;
@@ -71,8 +57,8 @@ isNil {
 	};
 };
 
-[_groups, _position, _radius, _transportAllowsTask, _isAll, _typesLower] spawn {
-	params ["_groups", "_position", "_radius", "_transportAllowsTask", "_isAll", "_typesLower"];
+[_groups, _position, _radius, _typeArray] spawn {
+	params ["_groups", "_position", "_radius", "_typeArray"];
 	// Cancel old tasking and assign new orders without scheduler interleaving.
 	{
 		isNil {
@@ -81,17 +67,17 @@ isNil {
 				|| {_group getVariable ["lmf_ai_spawning", false]}
 				|| {_group getVariable ["lmf_ai_convergeVersion", 0] != _version}
 				|| {_group getVariable ["lmf_taskConverge_active", false]} ||
-				{!([_group] call _transportAllowsTask)}) exitWith {};
+				{!([_group, _typeArray] call lmf_ai_fnc_canRetaskGroup)}) exitWith {};
 			private _leader = leader _group;
 			private _vehicle = vehicle _leader;
-			private _gId = toLower groupId _group;
 			private _isGarrison = _group getVariable ["lmf_ai_garrisonGroup", false] &&
 				{units _group findIf {alive _x && {vehicle _x != _x} && {!(vehicle _x isKindOf "LandVehicle")}} == -1};
-			if ((!_isAll && {_typesLower findIf {_gId find _x > -1} == -1})
-				|| {!alive _leader} || {!local _leader}
+			if (!alive _leader || {!local _leader}
 				|| {!(_isGarrison && {_vehicle isKindOf "LandVehicle"}) &&
 					{_vehicle isKindOf "StaticWeapon" || {_vehicle != _leader && {isNull driver _vehicle}}}}) exitWith {};
 			if (_isGarrison && {units _group findIf {alive _x && {!local _x || {isPlayer _x}}} >= 0}) exitWith {};
+
+			[_group] call lmf_ai_fnc_mobilizeGroup;
 
 			// Keep accepted garrisons active beyond the Dynamic Simulation activation distance.
 			if (_isGarrison) then {_group enableDynamicSimulation false};

@@ -52,9 +52,9 @@ if (_patrolSpeed == "ATTACK") then {
 private _type = [_grpType] call _typeMaker;
 private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
 if (isNull _grp) exitWith {[_feedback, "Failed", "Group creation failed."] call lmf_ai_fnc_reportSpawn; grpNull};
+[_grp, ["PATROL", "INFANTRY"], "LMF Patrol"] call lmf_ai_fnc_initGroup;
 [_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
 _grp deleteGroupWhenEmpty true;
-_grp setGroupIdGlobal [format ["Infantry Patrol (%1)", groupId _grp]];
 _grp setVariable ["lmf_ai_joinableGroup", true];
 _grp setSpeedMode "FULL";
 _grp setCombatMode "RED";
@@ -82,7 +82,7 @@ private _contactEh = _grp addEventHandler ["EnemyDetected", {
 	(_group addWaypoint [getPosASL _newTarget, -1]) setWaypointType "GUARD";
 	_group setBehaviour "AWARE";
 	_group setSpeedMode "FULL";
-	_group setGroupIdGlobal [format ["Infantry QRF: (T-%1-%2-%3)", round (random 999), round (random 999), round (random 99)]];
+	[_group] call lmf_ai_fnc_mobilizeGroup;
 	_group removeEventHandler [_thisEvent, _thisEventHandler];
 	_group setVariable ["lmf_ai_patrolContactEh", nil];
 }];

@@ -53,6 +53,10 @@ class ai {
 	class groups {
 		file = "framework\ai\groups";
 		class assignCallsign {};
+		class initGroup {};
+		class mobilizeGroup {};
+		class canRetaskGroup {};
+		class awaitGroupDismount {};
 		class findJoinableGroups {};
 		class reassignSurvivor {};
 	};

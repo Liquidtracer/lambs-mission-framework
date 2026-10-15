@@ -214,7 +214,7 @@ private _handle = [garrison_1, "TEAM", 100, 1, false] spawn lmf_ai_fnc_spawnGarr
 
 ### Patrol
 
-Spawns infantry to patrol an area. Relevant ground contact on land permanently changes the same group to QRF with GUARD and AWARE/FULL; it does not resume patrolling. Its new group name contains QRF but not Patrol. The separate light/IR reaction remains active after transition or convergence. Spawning over water creates a boat group using the shared landing flow.
+Spawns infantry to patrol an area. Relevant ground contact on land permanently changes the same group to QRF with GUARD and AWARE/FULL; it does not resume patrolling. It retains its PATROL tag and original identity, for example `LMF Patrol 1 (QRF)`, and gains QRF. The separate light/IR reaction remains active after transition or convergence. Spawning over water creates a boat group using the shared landing flow.
 
 **Run on:** Server · **Use:** spawn · **Promise result:** GROUP
 
@@ -406,7 +406,7 @@ For existing AI groups. Run on the server for server-owned AI; the task function
 
 ### Converge task
 
-Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, releases infantry garrisons and assigns shoreline tasks to boats. Busy transport helicopters remain excluded. Static-weapon leaders and driverless vehicles are accepted for groups created by `spawnGarrison`; other groups retain their existing exclusions. Accepted land groups also release garrisoned soldiers on foot when their leader is mounted. Released soldiers regain AUTO stance and PATH/MOVE; AUTO still allows natural crouching or crawling during combat.
+Sends selected groups on lmf\_enemySide towards a target. Replaces waypoints, releases infantry garrisons and assigns shoreline tasks to boats. Pure transport aircraft are always excluded, and their infantry cannot be redirected during insertion. Eden groups without LMF classification are excluded, including from ALL. Static-weapon leaders and driverless vehicles are accepted for groups created by `spawnGarrison`; other groups retain their existing exclusions. Accepted land groups also release garrisoned soldiers on foot when their leader is mounted. Released soldiers regain AUTO stance and PATH/MOVE; AUTO still allows natural crouching or crawling during combat.
 
 Garrison uses vehicle and static weapons defensively, without assigning a driver at spawn. When Converge accepts the group, it disables Dynamic Simulation before release and movement orders, with no automatic reactivation. Other AI groups keep their existing Dynamic Simulation setting. At Converge, it abandons land vehicles and proceeds on foot to GUARD, including when its leader is a gunner without a driver. Vehicle-pool and individual seat assignments are cleared before normal dismount orders, preventing reassignment to the abandoned weapons. AUTO/PATH/MOVE and the initial doFollow reset are retained. After the group's GUARD waypoint is activated, each living Garrison soldier already on foot receives doStop followed by doMove to the same target, so they can move independently of a stuck leader. This releases formation following; no automatic formation restoration or retry loop is added. Mounted soldiers keep the existing dismount flow. There are no boarding waypoints, transport selection, driver assignments, timers or forced exits. Repeated Converge replaces the target using the latest accepted order. Normal dismount/pathfinding remains subject to engine limitations; incapacitated soldiers are not forcibly moved. Vehicle QRF, transport helicopters, boats, Garrison stances and MAT handling are unchanged.
 
@@ -415,14 +415,31 @@ Garrison uses vehicle and static weapons defensively, without assigning a driver
 **Example**
 
 ```sqf
-[objective_1, ["QRF", "Patrol"], 650] call lmf_ai_fnc_taskConverge;
+[objective_1, ["PATROL", "QRF"], 650] call lmf_ai_fnc_taskConverge;
 ```
 
 **Arguments**
 
 * **0. Target object or \[x,y,z]** — Object / Array. Required.
-* **1. Group-name keywords; case-insensitive. "ALL" or \["ALL"] selects all eligible groups** — String / Array of String. Required.
+* **1. Exact classification tags; case-insensitive OR. "ALL" or \["ALL"] selects eligible LMF combat groups only** — String / Array of String. Required.
 * **2. Boat shoreline search radius, meters; not a group-selection radius** — Number. Default: 2000.
+
+**Breaking change:** Argument 1 now matches tags, not substrings of visible group names. Replace category/name fragments such as `"Car"`, `"Truck"`, `"APC"` or `"Heli"` with `"VEHICLE"` or `"AIR"` as appropriate; those platform selectors are broader than the old name fragments. `"Patrol"` and `"QRF"` still work case-insensitively. Custom callsigns no longer control eligibility. Multiple tags mean OR, not an intersection. Renaming an Eden group does not register it.
+
+All six spawners assign server-local `lmf_ai_groupTags` and sequential names such as `LMF Patrol 1`, `LMF Garrison 1`, `LMF Infantry QRF 1`, `LMF Vehicle QRF 1 (APC)` and `LMF Drone QRF 1 (UAV)`. Names use reserved LMF prefixes; mission-maker player callsigns and ATLAS/JINX are unchanged.
+
+| Tag | Meaning |
+|---|---|
+| `PATROL`, `GARRISON`, `HUNTER` | Permanent origin; retained after role changes. |
+| `INFANTRY` | Infantry, including passengers and CAR/TRUCK's shared driver/infantry group. |
+| `VEHICLE`, `AIR`, `BOAT` | Current operated platform; passengers in a separate group do not inherit the transport's platform tag. |
+| `DRONE` | UAV/UGV; also carries AIR or VEHICLE according to the vehicle class. |
+| `QRF` | Existing QRF or a group that received an accepted Converge order. |
+| `TRANSPORT` | Pure transport/support group; never selected, even by AIR or ALL. |
+
+CAR/TRUCK keep their shared group; APC crew and infantry remain separate. Intentional ground/boat dismount removes platform tags once every living member is on foot, preserving origin and QRF. Helicopter crew remains TRANSPORT after evacuation. Unrelated engine- or externally initiated dismounts are not automatically tracked, so platform tags may remain until a supported LMF exit flow completes. Paradrop infantry stays excluded until all living passengers are on foot and touching ground; dropped vehicle groups retain their preparation guard through the existing landing/setup sequence. A stuck passenger keeps its group protected.
+
+Accepted Converge orders add QRF only after the final eligibility checks. Non-QRF groups retain their original name with one `(QRF)` suffix; repeated orders do not duplicate tags or suffixes. Explicit mission/BFT renames are preserved. Flare movement retains infantry/patrol responses and insertion/transport exclusions: INFANTRY groups with QRF or PATROL qualify only without VEHICLE/AIR/DRONE. Ordinary flares additionally accept CAR/CARARMED groups; tripflares do not. Mounted shared CAR/TRUCK groups enter the infantry path only after intentional dismount clears VEHICLE. APC passengers qualify separately from their crew. QRF alone never makes tanks, aircraft, drones or other vehicle crews eligible. Existing movement/suppression orders, enemy-side/locality checks and separate garrison suppression remain unchanged. Attack helicopters are named `LMF Air QRF N (HELIATTACK)`.
 
 Returns before orders finish. One scheduled worker per call spaces groups by approximately 0.1 seconds. Newer calls supersede older pending orders for the same group; eligibility, locality, living leader and transport state are rechecked when each order is applied. Partially prepared groups are excluded. Only processes groups local to the calling machine. Stops hunter orders and removes patrol contact takeover before assigning the new task. Land groups can receive another convergence task later; boats remain temporarily reserved while landing/dismounting.
 

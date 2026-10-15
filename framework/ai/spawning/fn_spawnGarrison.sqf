@@ -36,7 +36,7 @@ private _type = [_grpType] call _typeMaker;
 private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
 if (isNull _grp) exitWith {[_feedback, "Failed", "Group creation failed."] call lmf_ai_fnc_reportSpawn; grpNull};
 _grp deleteGroupWhenEmpty true;
-_grp setGroupIdGlobal [format ["Infantry Garrison (%1)", groupId _grp]];
+[_grp, ["GARRISON", "INFANTRY"], "LMF Garrison"] call lmf_ai_fnc_initGroup;
 _grp setFormation "DIAMOND";
 _grp enableIRLasers false;
 _grp enableGunLights "ForceOff";

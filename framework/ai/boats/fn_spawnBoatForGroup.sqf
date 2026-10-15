@@ -26,7 +26,9 @@ _veh setUnloadInCombat [false, false];
 
 {deleteVehicle _x} forEach ((units _grp) select {isNull objectParent _x});
 
-_grp setGroupIdGlobal [format ["Boat %1", groupId _grp]];
+private _tags = +(_grp getVariable ["lmf_ai_groupTags", []]);
+_tags pushBackUnique "BOAT";
+_grp setVariable ["lmf_ai_groupTags", _tags];
 _grp setBehaviourStrong "CARELESS";
 _grp setSpeedMode "FULL";
 
