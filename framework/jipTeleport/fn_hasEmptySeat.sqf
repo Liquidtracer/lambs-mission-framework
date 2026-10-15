@@ -8,7 +8,7 @@
 	Example:
 		[transport_1] call lmf_jipTeleport_fnc_hasEmptySeat;
 
-	Returns: Whether an eligible vehicle has an empty seat <BOOLEAN>
+	Returns: Whether an eligible vehicle has an unlocked ordinary cargo seat <BOOLEAN>
 */
 
 params [["_target", objNull, [objNull]]];
@@ -17,5 +17,5 @@ if (isNull _target) exitWith {false};
 private _vehicle = vehicle _target;
 if (!alive _vehicle || {_vehicle isKindOf "CAManBase"} || {_vehicle isKindOf "ParachuteBase"}) exitWith {false};
 
-// All positions (including cargo/FFV); matches the ordinary moveInAny syntax.
-(_vehicle emptyPositions "") > 0
+// Ordinary cargo only, excluding FFV; respect locks as in the destination moveInAny call.
+(_vehicle emptyPositions ["CARGO", false]) > 0

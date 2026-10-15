@@ -28,6 +28,7 @@
 - **Fixed:** AI ground-target validation now checks the detected unit's vehicle instead of only the unit.
 - **Fixed:** Vehicle QRF crews use the configured infantry, crew and pilot classes from `cfg_AI.sqf`; APC/TANK select a valid commander as group leader. Paradrop vehicle categories match Vehicle QRF crew/passenger compositions and post-landing infantry behavior, with occupants seated during descent.
 - **Fixed:** Failed patrol waypoint searches now fall back to the patrol target instead of distant map positions, including at small patrol radii.
+- **Fixed:** JIP teleport uses only unlocked ordinary passenger seats, excluding crew and turret/FFV positions, with the existing safe-ground fallback when no eligible seat is available.
 - **Removed:** Legacy admin teleport and standalone administrative Safety On/Off actions. Warmup safety remains unchanged.
 - **Removed:** Numeric and custom-string player respawn modes. Only `OFF`, `WAVE` and `TICKETS` are supported; invalid configuration falls back to `OFF`. Waves follow mission-time boundaries without the old 10-second minimum, and intervals display as `MM:SS`.
 

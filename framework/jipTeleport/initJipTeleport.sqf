@@ -70,7 +70,7 @@ private _statement = {
 
 	private _moved = false;
 	if (_useSeat) then {
-		_moved = _unit moveInAny _vehicle;
+		_moved = _unit moveInAny [_vehicle, ["CARGO"]];
 		_moved = _moved && {vehicle _unit isEqualTo _vehicle};
 	} else {
 		_unit setPosATL _destination;

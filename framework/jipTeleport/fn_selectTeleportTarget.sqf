@@ -29,7 +29,7 @@ private _highestRank = -1;
 		&& {_x distance2D _startPos >= 200}
 	) then {
 		private _vehicle = vehicle _x;
-		// An occupied aircraft/boat is fine when there is a seat. Without a seat,
+		// An occupied aircraft/boat is fine when there is an eligible cargo seat. Without one,
 		// only allow a ground destination beside a slow/stationary target on land.
 		private _reachable = [_x] call lmf_jipTeleport_fnc_hasEmptySeat;
 		if (!_reachable) then {
