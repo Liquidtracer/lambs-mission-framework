@@ -5,7 +5,7 @@
 */
 
 if (getMarkerColor "respawn" != "") then {
-	_rspMkr = createMarker ["mrk_respawn_inf", getMarkerPos "respawn"];
+	private _rspMkr = createMarker ["lmf_markers_respawnInf", getMarkerPos "respawn"];
 	_rspMkr setMarkerType "respawn_inf";
 	_rspMkr setMarkerSize [0.75, 0.75];
 	_rspMkr setMarkerColor "ColorBlack";
@@ -13,7 +13,7 @@ if (getMarkerColor "respawn" != "") then {
 	_rspMkr setMarkerAlpha 1;
 
 	"respawn" setMarkerAlpha 0;
-	"mrk_respawn_inf" setMarkerAlpha 0;
+	"lmf_markers_respawnInf" setMarkerAlpha 0;
 };
 
 #include "..\equipment\createRoleSelectorMarker.sqf"
@@ -30,7 +30,7 @@ if !(isNil "RRR") then {
 };
 
 if !(isNil "LAMBS_Hospital") then {
-	_hospMkr = createMarker ["mrk_hospital", getPosASL LAMBS_Hospital];
+	private _hospMkr = createMarker ["lmf_markers_hospital", getPosASL LAMBS_Hospital];
 	_hospMkr setMarkerType "b_med";
 	_hospMkr setMarkerSize [0.75, 0.75];
 	_hospMkr setMarkerColor "ColorBlack";
@@ -38,5 +38,5 @@ if !(isNil "LAMBS_Hospital") then {
 	_hospMkr setMarkerAlpha 1;
 };
 
-_clearMapCoordsMkr = createMarker ["mrk_clearMap", [-1000, -1000]];
+private _clearMapCoordsMkr = createMarker ["lmf_markers_clearMap", [-1000, -1000]];
 _clearMapCoordsMkr setMarkerType "Empty";

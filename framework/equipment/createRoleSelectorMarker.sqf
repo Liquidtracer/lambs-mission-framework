@@ -4,7 +4,7 @@
 */
 
 if !(isNil "crateRoles") then {
-	_gearSelectMkr = createMarker ["lmf_equipment_roleSelectorMarker", getPosASL crateRoles];
+	private _gearSelectMkr = createMarker ["lmf_equipment_roleSelectorMarker", getPosASL crateRoles];
 	_gearSelectMkr setMarkerType "b_inf";
 	_gearSelectMkr setMarkerSize [0.75, 0.75];
 	_gearSelectMkr setMarkerColor "ColorBlack";

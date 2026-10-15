@@ -6,7 +6,7 @@
 		[] call lmf_ai_fnc_isSpawner;
 */
 
-_isSpawner = false;
+private _isSpawner = false;
 // Use the server for AI spawning; HC spawning is intentionally disabled.
 if (isServer) then {
 	_isSpawner = true;

@@ -49,7 +49,7 @@ _vic addEventHandler ["GetOut", {
 // Vehicle lights
 [
 	{
-	params ["_vic"];
+		params ["_vic"];
 		_vic disableAI "LIGHTS";
 		_vic action ["lightOff", _vic];
 		_vic action ["CollisionLightOff", _vic];

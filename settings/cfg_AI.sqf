@@ -5,7 +5,7 @@
 	Leave an ammo pool empty to let LMF select a compatible magazine automatically.
 	Weapon variants with built-in attachments are supported.
 	Vehicle identifiers correspond to the type names used by LMF spawning functions.
-	If _enemyGear is false, only the vehicle and unit classname sections need to be configured.
+	Setting _enemyGear to false disables custom soldier loadouts; other AI settings still apply.
 */
 
 // General settings

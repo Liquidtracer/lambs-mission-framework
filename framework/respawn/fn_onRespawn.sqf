@@ -7,7 +7,7 @@
 */
 
 // Black fade
-cutText  ["", "BLACK FADED", 10, true];
+cutText ["", "BLACK FADED", 10, true];
 
 private _entityKilledEh = missionNamespace getVariable ["lmf_entityKilledEh", -1];
 if (_entityKilledEh >= 0) then {
@@ -49,7 +49,7 @@ player action ["SwitchWeapon", player, player, -1];
 sleep 5;
 setCurrentChannel 3;
 player setUnitTrait ["camouflageCoef", lmf_camoCoef];
-cutText  ["", "BLACK IN", 5, true];
+cutText ["", "BLACK IN", 5, true];
 
 if (lmf_respawnType isEqualTo "TICKETS") then {
 	private _ticketColor = if (lmf_respawnTickets > 0) then {LMF_STATUS_GOOD_COLOR} else {LMF_STATUS_CRITICAL_COLOR};

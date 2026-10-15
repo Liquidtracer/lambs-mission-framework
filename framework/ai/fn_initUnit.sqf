@@ -38,8 +38,8 @@ _unit addEventHandler ["Hit", {
 }];
 
 if !(lmf_ai_config get "CUSTOM_GEAR") exitWith {
-	private _validNvGs = (lmf_ai_config get "NVG") select {_x isNotEqualTo ""};
-	if (sunOrMoon < 1 && {!(_validNvGs isEqualTo [])}) then {_unit linkItem (selectRandom _validNvGs)};
+	private _validNvgs = (lmf_ai_config get "NVG") select {_x isNotEqualTo ""};
+	if (sunOrMoon < 1 && {!(_validNvgs isEqualTo [])}) then {_unit linkItem (selectRandom _validNvgs)};
 };
 
 // Choose clothing

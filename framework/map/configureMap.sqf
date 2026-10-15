@@ -1,22 +1,20 @@
 /*
 	Map configuration
-	Auto activates map textures.
-	Adds "Oldschool map system" that deletes markers that aren't local to the player.
+	Enables map textures and optionally restricts shared markers.
 	Author: Alex2k.
 */
 
 if !(hasInterface) exitWith {};
 
 [{getClientStateNumber > 8}, {
-	// Modify map controls
 	[{visibleMap}, {
-		// Auto activate the textures button
+		// Enable map textures.
 		ctrlActivate ((findDisplay 12) displayCtrl 107);
-		// (Removes textures button)
+		// Hide and disable the texture toggle in old-school mode.
 		if (lmf_oldSchoolMap) then {
 			disableSerialization;
-			_display = uiNamespace getVariable "RSCDiary";
-			_ctrl = _display displayCtrl 1201;
+			private _display = uiNamespace getVariable "RSCDiary";
+			private _ctrl = _display displayCtrl 1201;
 			_ctrl ctrlEnable false;
 			_ctrl ctrlSetTextColor [0, 0, 0, 0];
 			_ctrl ctrlSetTooltip "";
@@ -24,7 +22,7 @@ if !(hasInterface) exitWith {};
 		};
 	}, []] call CBA_fnc_waitUntilAndExecute;
 
-	// Oldschool map system
+	// Remove existing user markers and hide incoming shared markers in old-school mode.
 	if (lmf_oldSchoolMap) then {
 		{
 			if ((_x find "_USER_DEFINED #") != -1) then {deleteMarkerLocal _x};

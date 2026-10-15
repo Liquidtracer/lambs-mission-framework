@@ -1,11 +1,10 @@
 /*
 	Mission configuration
-	Description.ext handles all sorts of framework important settings.
+	Defines mission settings and registers LMF functions and event handlers.
 */
 
 // Header
-class Header
-{
+class Header {
 	gameType = Coop;
 	minPlayers = 1;
 	maxPlayers = 99;
@@ -23,7 +22,6 @@ debriefing = 0;
 allowProfileGlasses = 0;
 briefing = 0;
 disabledai = 1;
-// enableDebugConsole = 1;
 enableDebugConsole[] = {
 	"76561197962792796", // nkenny
 	"76561197972498138", // Liquid Tracer
@@ -33,7 +31,6 @@ enableTargetDebug = 1;
 disableChannels[]={0, 2, 4, 5};
 cba_settings_hasSettingsFile = 1;
 forceRotorLibSimulation = 2;
-// disableRandomization[] = { "All" };
 
 // Corpses
 corpseManagerMode = 1;

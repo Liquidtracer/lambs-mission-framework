@@ -8,7 +8,7 @@
 		0: Group <GROUP>
 		1: Patrol target <OBJECT or ARRAY>
 		2: Patrol radius in meters <NUMBER>
-		3: Behaviour <STRING>
+		3: Behavior <STRING>
 		4: Speed <STRING>
 		5: Formation <STRING>
 

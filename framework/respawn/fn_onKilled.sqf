@@ -110,7 +110,6 @@ if (alive player || {_unit isNotEqualTo player}) exitWith {};
 // ACE spectator interface
 [true] call ace_spectator_fnc_setSpectator;
 [[0, 1, 2], []] call ace_spectator_fnc_updateCameraModes;
-// [[2,3],[0,1]] call ace_spectator_fnc_updateVisionModes;
 [0, objNull] call ace_spectator_fnc_setCameraAttributes;
 
 // Spectator settings

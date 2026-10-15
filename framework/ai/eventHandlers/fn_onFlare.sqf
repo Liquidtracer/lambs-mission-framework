@@ -10,13 +10,13 @@ private _spawner = [] call lmf_ai_fnc_isSpawner;
 if !(_spawner) exitWith {};
 if (side _shooter == lmf_enemySide) exitWith {};
 
-_detectionRange = 800;
-_targetPos = [[[(getPos _shooter), 200]], []] call BIS_fnc_randomPos;
+private _detectionRange = 800;
+private _targetPos = [[[(getPos _shooter), 200]], []] call BIS_fnc_randomPos;
 
-_qrf = allGroups select {(((groupId _x) find "QRF") != -1 || ((groupId _x) find "Patrol") != -1 || ((groupId _x) find "Car") != -1) && ((leader _x) distance2D _targetPos < _detectionRange)};
+private _qrf = allGroups select {(((groupId _x) find "QRF") != -1 || ((groupId _x) find "Patrol") != -1 || ((groupId _x) find "Car") != -1) && ((leader _x) distance2D _targetPos < _detectionRange)};
 if (_qrf isEqualTo []) exitWith {};
 
-_nearestQrf = [_qrf, _targetPos] call BIS_fnc_nearestPosition;
+private _nearestQrf = [_qrf, _targetPos] call BIS_fnc_nearestPosition;
 
 (units _nearestQrf) doMove _targetPos;
 _nearestQrf setBehaviour "AWARE";

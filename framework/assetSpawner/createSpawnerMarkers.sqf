@@ -4,16 +4,16 @@
 */
 
 if !(isNil "supplySpawner") then {
-	_crateSpawnMkr = createMarker ["lmf_assetSpawner_supplyMarker", getPosASL supplySpawner];
+	private _crateSpawnMkr = createMarker ["lmf_assetSpawner_supplyMarker", getPosASL supplySpawner];
 	_crateSpawnMkr setMarkerType "b_service";
 	_crateSpawnMkr setMarkerSize [0.75, 0.75];
 	_crateSpawnMkr setMarkerColor "ColorBlack";
 	_crateSpawnMkr setMarkerText "";
 	_crateSpawnMkr setMarkerAlpha 1;
-	};
+};
 
 if !(isNil "groundSpawner") then {
-	_vehSpawnMkr = createMarker ["lmf_assetSpawner_groundMarker", getPosASL groundSpawner];
+	private _vehSpawnMkr = createMarker ["lmf_assetSpawner_groundMarker", getPosASL groundSpawner];
 	_vehSpawnMkr setMarkerType "b_motor_inf";
 	_vehSpawnMkr setMarkerSize [0.75, 0.75];
 	_vehSpawnMkr setMarkerColor "ColorBlack";
@@ -22,7 +22,7 @@ if !(isNil "groundSpawner") then {
 };
 
 if !(isNil "airSpawner") then {
-	_vehSpawnMkr = createMarker ["lmf_assetSpawner_airMarker", getPosASL airSpawner];
+	private _vehSpawnMkr = createMarker ["lmf_assetSpawner_airMarker", getPosASL airSpawner];
 	_vehSpawnMkr setMarkerType "b_air";
 	_vehSpawnMkr setMarkerSize [0.75, 0.75];
 	_vehSpawnMkr setMarkerColor "ColorBlack";

@@ -15,7 +15,7 @@ params ["_unit"];
 
 [] spawn {
 	if (lmf_warmup_isActive) then {
-		_result = ["Start mission?", "Start Mission", "OK", true] call BIS_fnc_guiMessage;
+		private _result = ["Start mission?", "Start Mission", "OK", true] call BIS_fnc_guiMessage;
 		if (_result) then {
 			lmf_warmup_isActive = false;
 			publicVariable "lmf_warmup_isActive";

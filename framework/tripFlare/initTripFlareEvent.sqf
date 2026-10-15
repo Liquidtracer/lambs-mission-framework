@@ -6,7 +6,6 @@
 ["ace_tripflareTriggered", {
 	params ["_flareObject", "_flarePos"];
 
-	// Play sound
 	playSound3D ["a3\missions_f_oldman\data\sound\flare\flare.wss", _flareObject];
 
 	// Create extra flare
@@ -22,7 +21,6 @@
 		[_flareObject, _flarePos], (1 + random 2)
 	] call CBA_fnc_waitAndExecute;
 
-	// Delete flareobject eventually
 	[
 		{
 			params ["_flareObject", "_flarePos"];
@@ -32,7 +30,7 @@
 		[_flareObject, _flarePos], (60 + (random 20))
 	] call CBA_fnc_waitAndExecute;
 
-	// Exit if players didn't trigger the flare
+	// Only respond to flares near players.
 	private _nearPlayers = allPlayers select {_x distance2D _flarePos < 20};
 	if (_nearPlayers isEqualTo []) exitWith {};
 
@@ -98,7 +96,7 @@
 			if (_mortars isEqualTo []) exitWith {};
 			private _nearestMortar = [_mortars, _flarePos] call BIS_fnc_nearestPosition;
 
-			// Hold fire if there are units friendly to the mortar in the target area
+			// Avoid mortar fire into friendly AI positions.
 			private _unitsInRange = _flarePos nearEntities ["Man", 100];
 			private _friendlyUnitsInRange = _unitsInRange select {side _x == lmf_enemySide && alive _x};
 			if (count _friendlyUnitsInRange > 1) exitWith {};

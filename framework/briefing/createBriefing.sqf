@@ -115,7 +115,7 @@ player createDiaryRecord ["lmf_diary", ["Technical", _technicalText, "\A3\missio
 
 // Briefing
 player createDiaryRecord ["lmf_diary", [format ["OPORD"], format ["
-<font color='%10' size='10'><marker name='mrk_clearMap'>[Clear Coordinates]</marker></font><font color='%11' size='10'>  |  Made by %7 with LMF %8</font>
+<font color='%10' size='10'><marker name='lmf_markers_clearMap'>[Clear Coordinates]</marker></font><font color='%11' size='10'>  |  Made by %7 with LMF %8</font>
 <br/><font face='PuristaBold' color='%9' size='16'>Situation</font><br/>
 <font >%1</font>
 <br/><br/><font face='PuristaBold' color='%12' >Enemy ></font> %2

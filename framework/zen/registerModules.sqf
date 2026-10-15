@@ -55,7 +55,6 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		_dialog params [["_plr", objNull, [objNull]]];
 		if (isNull _plr) exitWith {["Error: unable to find player"] call zen_common_fnc_showMessage};
 
-		// Respawn the player and show feedback.
 		[5] remoteExec ["setPlayerRespawnTime", _plr];
 		["Respawn requested for %1", name _plr] call zen_common_fnc_showMessage;
 	}, {}, []] call zen_dialog_fnc_create;
@@ -202,7 +201,6 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		private _flyHeight = parseNumber _height;
 		private _spawnPos = [_clickPos#0, _clickPos#1, _flyHeight];
 
-		// Payload selection
 		private _dropVehicle = "";
 		if (_type != "INFANTRY") then {
 			_dropVehicle = _type;
@@ -249,13 +247,13 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		if (_type#0 isEqualTo "") exitWith {};
 
 		_pos = ASLToATL _pos;
-		_dropPos = _pos;
+		private _dropPos = _pos;
 
-		// Calculate the spawn position.
+		// Keep the delivery aircraft away from the requested drop location.
 		lmf_supplyDropPos = getMarkerPos "respawn";
 		private _initPos = lmf_supplyDropPos;
 		private _dir = _dropPos getDir _initPos;
-		_spawnPos = _initPos getPos [random 5000, _dir];
+		private _spawnPos = _initPos getPos [random 5000, _dir];
 		if (_spawnPos distance2D _dropPos < 5000) then {
 			_spawnPos = _initPos getPos [5000, _dir];
 		};
@@ -323,7 +321,6 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		params ["_dialog", "_obj"];
 		_dialog params ["_type"];
 
-		// Exit if the selected object is not a player.
 		if (isNull _obj) exitWith {["Error: no unit"] call zen_common_fnc_showMessage};
 		if !(_obj isKindOf "Man") exitWith {["Error: not a soldier"] call zen_common_fnc_showMessage};
 

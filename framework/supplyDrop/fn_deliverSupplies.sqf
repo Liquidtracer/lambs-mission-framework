@@ -54,7 +54,6 @@ _veh setPos (_veh modelToWorld [0, 0, 200]);
 _veh setDir _dir;
 _veh setVelocityModelSpace [0, 150, 0];
 
-// Fire countermeasures!
 _veh addEventHandler ["Hit", {
 	params ["_unit"];
 	[_unit, 1] spawn lmf_paradrop_fnc_fireCountermeasures;

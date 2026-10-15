@@ -11,7 +11,7 @@ lmf_enemySide = EAST; // Enemy side: WEST, EAST or INDEPENDENT.
 
 // Warmup
 lmf_warmup = true; // Starts the mission with warmup.
-lmf_maxWarmupTime = ""; // Maximum warmup duration as "MM:SS"; "" disables the deadline.
+lmf_maxWarmupTime = ""; // Mission-time warmup deadline as "MM:SS"; "" disables the deadline.
 
 // Respawn
 lmf_respawnType = "OFF"; // Exactly "OFF", "WAVE" or "TICKETS".
@@ -25,12 +25,12 @@ lmf_camoCoef = 1; // Higher values make players easier for AI to spot.
 lmf_jipTp = true; // Enables JIP teleport to friendlies.
 lmf_personalArsenal = true; // Enables role-aware ACE Personal Arsenal during warmup; requires lmf_playerGear.
 
-// Player gear (only relevant if lmf_playerGear = true)
-lmf_personalRadio = true; // Gives everyone an AN/PRC-343.
-lmf_playerGps = 2; // Recipients: 0 = all, 1 = leaders, 2 = none.
+// Player loadout options
+lmf_personalRadio = true; // Gives everyone the configured personal radio.
+lmf_playerGps = 2; // Recipients: 0 = all, 1 = configured leader and pilot roles, 2 = none.
 lmf_pistolAll = false; // Gives all players sidearms.
 lmf_playerNvg = 0; // Recipients: 0 = all, 1 = pilots, 2 = none.
-lmf_playerMaps = 0; // Recipients: 0 = all, 1 = leaders, 2 = none.
+lmf_playerMaps = 0; // Recipients: 0 = all, 1 = configured leader and pilot roles, 2 = none.
 lmf_riflemanLat = true; // Gives riflemen a light anti-tank weapon.
 
 // Map systems

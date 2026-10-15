@@ -1,14 +1,9 @@
 /*
-	Get Player equipment configuration
-	Internal LMF helper; not a supported custom-script API.
-	Returns the machine-local registry, loading it synchronously if absent.
-	Works regardless of lmf_playerGear. Treat the returned registry as read-only.
+	Get player equipment configuration
+	Internal accessor that loads the local registry when needed.
+	Treat the returned registry pools as read-only.
 
-	Arguments: None
-	Returns: Existing Player equipment registry <HASHMAP>
-
-	Example:
-		private _config = call lmf_equipment_fnc_getPlayerConfig;
+	Returns: Player equipment registry <HASHMAP>
 */
 
 if (isNil "lmf_player_config") then {
