@@ -11,3 +11,12 @@
 *.jpg binary
 *.jpeg binary
 *.png binary
+
+
+# Exclude repository and development files from release archives
+/AGENTS.md export-ignore
+/README.md export-ignore
+/CHANGELOG.md export-ignore
+/docs/** export-ignore
+/.gitattributes export-ignore
+/mission.sqm export-ignore
