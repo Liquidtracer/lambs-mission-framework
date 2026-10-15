@@ -3,6 +3,28 @@
 	Registers LMF Zeus modules when ZEN is enabled.
 */
 
+// Register once per client, including a hosted server's interface.
+if (isNil "lmf_zen_spawnFeedbackEh") then {
+	lmf_zen_spawnFeedbackEh = ["lmf_zen_spawnFeedback", {
+		params ["_requester", "_label", "_status", "_reason"];
+		if (!hasInterface || {player != _requester}) exitWith {};
+		private _name = [(_label splitString "(") # 0] call CBA_fnc_trim;
+		private _message = switch (_status) do {
+			case "Success": {format ["%1 spawned", _label]};
+			case "Cancelled": {format ["%1 blocked: %2", _name, _reason]};
+			case "Waiting": {format ["%1 waiting: %2", _name, _reason]};
+			default {
+				private _text = format ["%1 failed to spawn", _name];
+				if !(_reason in ["Group creation failed.", "Spawner returned no result.", "Spawner returned an invalid result.", "No living group remained after initialization.", "No living group or vehicle remained after preparation."]) then {
+					_text = format ["%1: %2", _text, _reason];
+				};
+				_text
+			};
+		};
+		[_message] call zen_common_fnc_showMessage;
+	}] call CBA_fnc_addEventHandler;
+};
+
 lmf_zen_groupTypes = ["TEAM", "SQUAD", "SENTRY", "ATTEAM", "AATEAM", "MGTEAM", "CUSTOM AMOUNT"];
 lmf_zen_formationTypes = ["STAG COLUMN", "LINE", "DIAMOND", "FILE"];
 lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
@@ -14,8 +36,8 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 	if (isNull _obj) exitWith {["Error: no unit"] call zen_common_fnc_showMessage};
 
-	[_obj] remoteExec ["lmf_equipment_fnc_applyRoleFromClass"];
-	["Loadout reloaded for %1", name _obj] call zen_common_fnc_showMessage;
+	[_obj] remoteExec ["lmf_equipment_fnc_applyRoleFromClass", _obj];
+	["Loadout reload requested for %1", name _obj] call zen_common_fnc_showMessage;
 
 }, "\A3\ui_f\data\igui\cfg\actions\reammo_ca.paa"] call zen_custom_modules_fnc_register;
 
@@ -35,7 +57,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		// Respawn the player and show feedback.
 		[5] remoteExec ["setPlayerRespawnTime", _plr];
-		["Respawned %1", name _plr] call zen_common_fnc_showMessage;
+		["Respawn requested for %1", name _plr] call zen_common_fnc_showMessage;
 	}, {}, []] call zen_dialog_fnc_create;
 }, "\A3\modules_f\data\portraitrespawn_ca.paa"] call zen_custom_modules_fnc_register;
 
@@ -60,8 +82,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_type = round _amount;
 		};
 
-		[_pos, _type, _radius, _distrib, _topDown] remoteExec ["lmf_ai_fnc_spawnGarrison"];
-		["Garrisoning %1 at %2m radius", _type, _radius] call zen_common_fnc_showMessage;
+		[_pos, _type, _radius, _distrib, _topDown, [player, format ["Garrison (%1)", _type]]] remoteExec ["lmf_ai_fnc_spawnGarrison", 2];
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
 }, "\A3\modules_f_bootcamp\data\portraitbootcampstage.paa"] call zen_custom_modules_fnc_register;
@@ -94,8 +115,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_type = round _amount;
 		};
 
-		[_pos, _patrolTarget, _type, _radius, _speed, _formation] remoteExec ["lmf_ai_fnc_spawnPatrol"];
-		["Patrol started: %1 (%2m radius)", _type, _radius] call zen_common_fnc_showMessage;
+		[_pos, _patrolTarget, _type, _radius, _speed, _formation, [player, format ["Patrol (%1)", _type]]] remoteExec ["lmf_ai_fnc_spawnPatrol", 2];
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
 }, "\A3\modules_f_bootcamp\data\portraitbootcampstage.paa"] call zen_custom_modules_fnc_register;
@@ -116,8 +136,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_type = round _amount;
 		};
 
-		[_pos, _type, 1] remoteExec ["lmf_ai_fnc_spawnInfantryQrf"];
-		["Infantry QRF spawned: %1", _type] call zen_common_fnc_showMessage;
+		[_pos, _type, 1, [player, format ["Infantry QRF (%1)", _type]]] remoteExec ["lmf_ai_fnc_spawnInfantryQrf", 2];
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
 }, "\A3\modules_f_bootcamp\data\portraitbootcampstage.paa"] call zen_custom_modules_fnc_register;
@@ -140,8 +159,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_type = round _amount;
 		};
 
-		[_pos, _type, _radius, 1] remoteExec ["lmf_ai_fnc_spawnInfantryHunters"];
-		["Hunter group spawned: %1 (%2m radius)", _type, _radius] call zen_common_fnc_showMessage;
+		[_pos, _type, _radius, 1, [player, format ["Infantry Hunter (%1)", _type]]] remoteExec ["lmf_ai_fnc_spawnInfantryHunters", 2];
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
 }, "\A3\modules_f_bootcamp\data\portraitbootcampstage.paa"] call zen_custom_modules_fnc_register;
@@ -159,8 +177,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		_pos = ASLToATL _pos;
 
-		[_pos, _type, 1] remoteExec ["lmf_ai_fnc_spawnVehicleQrf"];
-		["Vehicle QRF spawned: %1", _type] call zen_common_fnc_showMessage;
+		[_pos, _type, 1, 300, [player, format ["Vehicle QRF (%1)", _type]]] remoteExec ["lmf_ai_fnc_spawnVehicleQrf", 2];
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
 }, "\A3\ui_f\data\map\vehicleicons\iconcar_ca.paa"] call zen_custom_modules_fnc_register;
@@ -197,10 +214,9 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 			_flyHeight,
 			_dropVehicle,
 			_tickets,
-			parseNumber _timer
-		] remoteExec ["lmf_ai_fnc_spawnParadropQrf"];
-
-		["Para QRF spawned at %1m altitude (%2)", _flyHeight, _type] call zen_common_fnc_showMessage;
+			parseNumber _timer,
+			[player, format ["Paradrop QRF (%1)", _type]]
+		] remoteExec ["lmf_ai_fnc_spawnParadropQrf", 2];
 
 	}, {}, _pos] call zen_dialog_fnc_create;
 }, "\A3\ui_f\data\map\vehicleicons\iconparachute_ca.paa"] call zen_custom_modules_fnc_register;
@@ -245,7 +261,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		};
 
 		[_spawnPos, _pos, lmf_supplyDropAircraft, _type#0, _type#2] remoteExec ["lmf_supplyDrop_fnc_deliverSupplies", 2];
-		["Supply Drop spawned: %1", _type#1] call zen_common_fnc_showMessage;
+		["Supply drop requested: %1", _type#1] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;
 }, "\A3\ui_f_orange\Data\CfgTaskTypes\airdrop_ca.paa"] call zen_custom_modules_fnc_register;
@@ -312,29 +328,29 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 		if !(_obj isKindOf "Man") exitWith {["Error: not a soldier"] call zen_common_fnc_showMessage};
 
 		// Role selection
-		if (_type#0 isEqualTo "PLATOON_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonLeader", _obj]; ["Applied: Platoon Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "PLATOON_SERGEANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonSergeant", _obj]; ["Applied: Platoon Sergeant"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "MEDIC") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMedic", _obj]; ["Applied: Medic"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "RTO") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRadioOperator", _obj]; ["Applied: RTO"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "JTAC") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyJtac", _obj]; ["Applied: JTAC"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "PLATOON_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonLeader", _obj]; ["Requested: Platoon Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "PLATOON_SERGEANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPlatoonSergeant", _obj]; ["Requested: Platoon Sergeant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "MEDIC") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMedic", _obj]; ["Requested: Medic"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "RTO") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRadioOperator", _obj]; ["Requested: RTO"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "JTAC") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyJtac", _obj]; ["Requested: JTAC"] call zen_common_fnc_showMessage;};
 
-		if (_type#0 isEqualTo "SQUAD_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applySquadLeader", _obj]; ["Applied: Squad Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "TEAM_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyTeamLeader", _obj]; ["Applied: Team Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "AUTORIFLEMAN") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAutorifleman", _obj]; ["Applied: Autorifleman"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "GRENADIER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyGrenadier", _obj]; ["Applied: Grenadier"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "RIFLEMAN") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRifleman", _obj]; ["Applied: Rifleman"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "SQUAD_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applySquadLeader", _obj]; ["Requested: Squad Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "TEAM_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyTeamLeader", _obj]; ["Requested: Team Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "AUTORIFLEMAN") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAutorifleman", _obj]; ["Requested: Autorifleman"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "GRENADIER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyGrenadier", _obj]; ["Requested: Grenadier"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "RIFLEMAN") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyRifleman", _obj]; ["Requested: Rifleman"] call zen_common_fnc_showMessage;};
 
-		if (_type#0 isEqualTo "ANTI_TANK_GUNNER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankGunner", _obj]; ["Applied: AT Gunner"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "ANTI_TANK_ASSISTANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankAssistant", _obj]; ["Applied: AT Assistant"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "MACHINE_GUNNER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunner", _obj]; ["Applied: Machine Gunner"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "MACHINE_GUNNER_ASSISTANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunnerAssistant", _obj]; ["Applied: MG Assistant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "ANTI_TANK_GUNNER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankGunner", _obj]; ["Requested: AT Gunner"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "ANTI_TANK_ASSISTANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyAntiTankAssistant", _obj]; ["Requested: AT Assistant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "MACHINE_GUNNER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunner", _obj]; ["Requested: Machine Gunner"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "MACHINE_GUNNER_ASSISTANT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyMachineGunnerAssistant", _obj]; ["Requested: MG Assistant"] call zen_common_fnc_showMessage;};
 
-		if (_type#0 isEqualTo "VEHICLE_PLATOON_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehiclePlatoonLeader", _obj]; ["Applied: Crew Leader"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "VEHICLE_COMMANDER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCommander", _obj]; ["Applied: Crew Sergeant"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "VEHICLE_CREW") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCrew", _obj]; ["Applied: Crewman"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "HELICOPTER_PILOT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterPilot", _obj]; ["Applied: Helo Pilot"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "HELICOPTER_CREW") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterCrew", _obj]; ["Applied: Helo Crew"] call zen_common_fnc_showMessage;};
-		if (_type#0 isEqualTo "PILOT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPilot", _obj]; ["Applied: Pilot"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "VEHICLE_PLATOON_LEADER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehiclePlatoonLeader", _obj]; ["Requested: Crew Leader"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "VEHICLE_COMMANDER") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCommander", _obj]; ["Requested: Crew Sergeant"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "VEHICLE_CREW") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyVehicleCrew", _obj]; ["Requested: Crewman"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "HELICOPTER_PILOT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterPilot", _obj]; ["Requested: Helo Pilot"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "HELICOPTER_CREW") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyHelicopterCrew", _obj]; ["Requested: Helo Crew"] call zen_common_fnc_showMessage;};
+		if (_type#0 isEqualTo "PILOT") exitWith {[_obj] remoteExec ["lmf_equipment_fnc_applyPilot", _obj]; ["Requested: Pilot"] call zen_common_fnc_showMessage;};
 
 	}, {}, _this#1] call zen_dialog_fnc_create;
 }, "\A3\ui_f\data\igui\cfg\actions\gear_ca.paa"] call zen_custom_modules_fnc_register;
@@ -372,6 +388,7 @@ lmf_zen_speedMode = ["SLOW", "FAST", "ATTACK"];
 
 		_pos = ASLToATL _pos;
 		private _vehicle = _type#0 createVehicle _pos;
+		if (isNull _vehicle) exitWith {["Failed: vehicle creation failed."] call zen_common_fnc_showMessage;};
 		["Vehicle spawned: %1", getText (configFile >> "CfgVehicles" >> typeOf _vehicle >> "displayName")] call zen_common_fnc_showMessage;
 
 	}, {}, _this#0] call zen_dialog_fnc_create;

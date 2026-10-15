@@ -12,6 +12,7 @@
 		3: Vehicle classname or CAR/CARARMED/TRUCK/APC/TANK category to drop <STRING> (default: "" for infantry)
 		4: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 		5: Respawn delay in seconds <NUMBER> (default: 300; managed replacements only)
+		6: Optional ZEN feedback [player object, label] <ARRAY> (default: [])
 
 	Example:
 		private _handle = [spawn_1, "mrk_dropZone", 200, "TANK"] spawn lmf_ai_fnc_spawnParadropQrf;
@@ -23,8 +24,12 @@
 	Managed scripts finish after the final preparation or cancellation, without a combined result.
 */
 
+private _feedback = _this param [6, [], [[]]];
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if (!_spawner || {!canSuspend}) exitWith {objNull};
+if (!_spawner || {!canSuspend}) exitWith {
+	[_feedback, "Failed", "Scheduled server execution is required."] call lmf_ai_fnc_reportSpawn;
+	objNull
+};
 
 private _managed = count _this > 4;
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
@@ -401,7 +406,7 @@ private _spawnOnce = {
 };
 
 if (_managed) exitWith {
-	[_spawnOnce, _tickets, _respawnTime, _spawnPos, 1000, 5] call lmf_ai_fnc_runWaves;
+	[_spawnOnce, _tickets, _respawnTime, _spawnPos, 1000, 5, _feedback] call lmf_ai_fnc_runWaves;
 };
 
 call _spawnOnce

@@ -61,6 +61,7 @@ class ai {
 		class isSpawner {};
 		class getPlayerProximityState {};
 		class runWaves {};
+		class reportSpawn {};
 		class requestSpawn {};
 		class processSpawnQueue {};
 		class spawnGroup {};

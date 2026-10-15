@@ -12,6 +12,7 @@
 		3: Patrol radius in meters <NUMBER> (default: 200)
 		4: Patrol speed preset <STRING> (default: "SLOW"; "FAST", "SLOW" or "ATTACK")
 		5: Patrol formation <STRING> (default: "STAG COLUMN")
+		6: Optional ZEN feedback [player object, label] <ARRAY> (default: [])
 
 	Example:
 		private _handle = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] spawn lmf_ai_fnc_spawnPatrol;
@@ -20,8 +21,12 @@
 	The one-shot promise completes after InitPost/gear attempts and initial group setup.
 */
 
+private _feedback = _this param [6, [], [[]]];
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if (!_spawner || {!canSuspend}) exitWith {grpNull};
+if (!_spawner || {!canSuspend}) exitWith {
+	[_feedback, "Failed", "Scheduled server execution is required."] call lmf_ai_fnc_reportSpawn;
+	grpNull
+};
 
 #include "spawnDefinitions.sqf"
 
@@ -46,7 +51,7 @@ if (_patrolSpeed == "ATTACK") then {
 
 private _type = [_grpType] call _typeMaker;
 private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
-if (isNull _grp) exitWith {grpNull};
+if (isNull _grp) exitWith {[_feedback, "Failed", "Group creation failed."] call lmf_ai_fnc_reportSpawn; grpNull};
 [_spawnPos, _grp, selectRandom _boat] call lmf_ai_fnc_spawnBoatForGroup;
 _grp deleteGroupWhenEmpty true;
 _grp setGroupIdGlobal [format ["Infantry Patrol (%1)", groupId _grp]];
@@ -93,4 +98,9 @@ _grp addEventHandler ["UnitKilled", {
 }];
 
 _grp setVariable ["lmf_ai_spawning", nil];
+if (units _grp findIf {alive _x} != -1) then {
+	[_feedback, "Success", "Group created and initialized."] call lmf_ai_fnc_reportSpawn;
+} else {
+	[_feedback, "Failed", "No living group remained after initialization."] call lmf_ai_fnc_reportSpawn;
+};
 _grp

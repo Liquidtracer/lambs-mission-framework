@@ -77,7 +77,7 @@ private _adminAccess = ["admin", "all"] select ((getPlayerUID player) in lmf_adm
 
 	private _receiver = [_to] call lmf_chat_fnc_findPlayerByName;
 	if (isNull _receiver) exitWith {systemChat "Could not find receiver"};
-	[_msg, "whisper", name _receiver] call lmf_chat_fnc_sendChatMessage;
+	[_msg, "whisper", _receiver] call lmf_chat_fnc_sendChatMessage;
 }, "all", false] call CBA_fnc_registerChatCommand;
 
 ["zeus", {

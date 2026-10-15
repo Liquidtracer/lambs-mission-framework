@@ -10,6 +10,7 @@
 		1: Group type or soldier count <STRING or NUMBER> (default: "TEAM"; "SQUAD", "TEAM", "SENTRY", "ATTEAM", "AATEAM" or "MGTEAM")
 		2: Hunting radius in meters <NUMBER> (default: 500)
 		3: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
+		4: Optional ZEN feedback [player object, label] <ARRAY> (default: [])
 
 	Example:
 		private _handle = [spawn_1, "TEAM", 1500] spawn lmf_ai_fnc_spawnInfantryHunters;
@@ -19,8 +20,12 @@
 	Managed scripts finish after the final preparation or cancellation, without a combined result.
 */
 
+private _feedback = _this param [4, [], [[]]];
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if (!_spawner || {!canSuspend}) exitWith {grpNull};
+if (!_spawner || {!canSuspend}) exitWith {
+	[_feedback, "Failed", "Scheduled server execution is required."] call lmf_ai_fnc_reportSpawn;
+	grpNull
+};
 
 private _managed = count _this > 3;
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
@@ -90,7 +95,7 @@ private _spawnOnce = {
 };
 
 if (_managed) exitWith {
-	[_spawnOnce, _tickets, 0, _spawnPos, 500, 5] call lmf_ai_fnc_runWaves;
+	[_spawnOnce, _tickets, 0, _spawnPos, 500, 5, _feedback] call lmf_ai_fnc_runWaves;
 };
 
 call _spawnOnce

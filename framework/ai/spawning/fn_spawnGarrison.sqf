@@ -11,6 +11,7 @@
 		2: Garrison radius in meters <NUMBER> (default: 100)
 		3: Distribution <NUMBER> (default: 1; 0 = evenly, 1 = building by building, 2 = random)
 		4: Fill from the roof down <BOOLEAN> (default: false; applies to distribution 0 and 1)
+		5: Optional ZEN feedback [player object, label] <ARRAY> (default: [])
 
 	Example:
 		private _handle = [garrison_1, "TEAM", 100, 1, false] spawn lmf_ai_fnc_spawnGarrison;
@@ -19,8 +20,12 @@
 	The one-shot promise completes after InitPost/gear attempts and initial group setup.
 */
 
+private _feedback = _this param [5, [], [[]]];
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if (!_spawner || {!canSuspend}) exitWith {grpNull};
+if (!_spawner || {!canSuspend}) exitWith {
+	[_feedback, "Failed", "Scheduled server execution is required."] call lmf_ai_fnc_reportSpawn;
+	grpNull
+};
 
 #include "spawnDefinitions.sqf"
 
@@ -29,7 +34,7 @@ _spawnPos = _spawnPos call CBA_fnc_getPos;
 
 private _type = [_grpType] call _typeMaker;
 private _grp = [_spawnPos, lmf_enemySide, _type] call lmf_ai_fnc_spawnGroup;
-if (isNull _grp) exitWith {grpNull};
+if (isNull _grp) exitWith {[_feedback, "Failed", "Group creation failed."] call lmf_ai_fnc_reportSpawn; grpNull};
 _grp deleteGroupWhenEmpty true;
 _grp setGroupIdGlobal [format ["Infantry Garrison (%1)", groupId _grp]];
 _grp setFormation "DIAMOND";
@@ -90,4 +95,9 @@ _grp addEventHandler ["UnitKilled", {
 _grp enableDynamicSimulation true;
 
 _grp setVariable ["lmf_ai_spawning", nil];
+if (units _grp findIf {alive _x} != -1) then {
+	[_feedback, "Success", "Group created and initialized."] call lmf_ai_fnc_reportSpawn;
+} else {
+	[_feedback, "Failed", "No living group remained after initialization."] call lmf_ai_fnc_reportSpawn;
+};
 _grp

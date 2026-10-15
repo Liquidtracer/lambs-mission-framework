@@ -11,7 +11,7 @@
 			[{!(profileName isEqualTo _sender) && !isNull (getAssignedCuratorLogic player)}, format ["(Zeus) %1:", _sender]];
 		};
 		case "whisper": {
-			[{profileName isEqualTo _receiver}, format ["Whisper from %1:", _sender]];
+			[{if (_receiver isEqualType objNull) then {player isEqualTo _receiver} else {profileName isEqualTo _receiver}}, format ["Whisper from %1:", _sender]];
 		};
 		default {
 			[{true}, format ["Notice (%1):", _sender]];

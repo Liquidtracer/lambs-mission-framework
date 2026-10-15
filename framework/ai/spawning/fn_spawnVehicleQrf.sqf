@@ -10,6 +10,7 @@
 		1: Vehicle type <STRING> (default: "TRUCK"; "CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK" or "DRONE")
 		2: Total tickets <NUMBER> (optional; omitted = one-shot, supplied = managed, including 1)
 		3: Respawn delay in seconds <NUMBER> (default: 300)
+		4: Optional ZEN feedback [player object, label] <ARRAY> (default: [])
 
 	Example:
 		private _handle = [spawn_1, "TANK"] spawn lmf_ai_fnc_spawnVehicleQrf;
@@ -20,8 +21,12 @@
 	Managed scripts finish after the final preparation or cancellation, without a combined result.
 */
 
+private _feedback = _this param [4, [], [[]]];
 private _spawner = [] call lmf_ai_fnc_isSpawner;
-if (!_spawner || {!canSuspend}) exitWith {objNull};
+if (!_spawner || {!canSuspend}) exitWith {
+	[_feedback, "Failed", "Scheduled server execution is required."] call lmf_ai_fnc_reportSpawn;
+	objNull
+};
 
 private _managed = count _this > 2;
 if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
@@ -33,7 +38,7 @@ private _dir = random 360;
 if !(_spawnPos isEqualType []) then {_dir = getDir _spawnPos;};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 _vicType = toUpper _vicType;
-if (_vicType == "DRONE" && {_drones isEqualTo []}) exitWith {objNull};
+if (_vicType == "DRONE" && {_drones isEqualTo []}) exitWith {[_feedback, "Failed", "No drones configured."] call lmf_ai_fnc_reportSpawn; objNull};
 
 private _fncDismountEh = {
 	params ["_group", "_newTarget"];
@@ -376,7 +381,7 @@ private _spawnOnce = {
 };
 
 if (_managed) exitWith {
-	[_spawnOnce, _tickets, _respawnTime, _spawnPos, 1000, 5] call lmf_ai_fnc_runWaves;
+	[_spawnOnce, _tickets, _respawnTime, _spawnPos, 1000, 5, _feedback] call lmf_ai_fnc_runWaves;
 };
 
 call _spawnOnce
