@@ -64,13 +64,16 @@ if (_veh isKindOf "Plane") then {_markerType = "b_plane"};
 if (_veh isKindOf "Helicopter") then {_markerType = "b_air"};
 
 // Prep pilot
-private _grp = [_spawnPos, side (playableUnits + switchableUnits select 0), ["B_Pilot_F"], _veh, "ANY"] call lmf_ai_fnc_spawnGroup;
+private _grp = [_spawnPos, side (playableUnits + switchableUnits select 0), ["B_Pilot_F"], _veh, "DRIVER"] call lmf_ai_fnc_spawnGroup;
 if (isNull _grp || {units _grp isEqualTo []}) exitWith {deleteGroup _grp; deleteVehicle _veh};
 _grp deleteGroupWhenEmpty true;
 _grp setCombatMode "BLUE";
 _grp setBehaviourStrong "CARELESS";
 [_grp, "ATLAS"] call lmf_ai_fnc_assignCallsign;
 _grp addVehicle _veh;
+private _pilot = units _grp select 0;
+// Seating happens in the queue; establish the driver's assignment after group registration.
+_pilot assignAsDriver _veh;
 _grp setVariable ["lambs_danger_dangerAI", "disabled"];
 {_x setVariable ["lambs_danger_disableAI", true]} count units _grp;
 _grp enableAttack false;
@@ -79,10 +82,8 @@ if (lmf_bft) then {
 	[_grp, _markerType, groupId _grp] call lmf_bft_fnc_setCallsign;
 };
 
-private _pilot = units _grp select 0;
 _pilot setVariable ["acex_headless_blacklist", true];
 _pilot call lmf_equipment_fnc_applyPilot;
-_pilot moveInAny _veh;
 _pilot disableAI "CHECKVISIBLE";
 _pilot disableAI "TARGET";
 _pilot disableAI "AUTOTARGET";
@@ -124,9 +125,26 @@ private _cargoSize = [_crate] call ace_cargo_fnc_getSizeItem;
 [_crate, 1] call ace_cargo_fnc_setSize;
 [_crate, _veh, true] call ace_cargo_fnc_loadItem;
 
-_grp setVariable ["lmf_ai_spawning", nil];
-_veh enableSimulationGlobal _simulation;
-_veh setVelocityModelSpace [0, 150, 0];
+// Check occupancy and assignment together with release, without a scheduler gap.
+private _ready = false;
+isNil {
+	_ready = alive _veh && {local _veh} && {local _grp} && {alive _pilot} && {local _pilot}
+		&& {driver _veh == _pilot} && {objectParent _pilot == _veh}
+		&& {assignedVehicle _pilot == _veh} && {assignedVehicleRole _pilot isEqualTo ["driver"]};
+	if (_ready) then {
+		_grp setVariable ["lmf_ai_spawning", nil];
+		_veh enableSimulationGlobal _simulation;
+		_veh setVelocityModelSpace [0, 150, 0];
+	};
+};
+if (!_ready) exitWith {
+	diag_log format ["LMF Supply Drop: pilot preparation failed. Aircraft=%1 alive=%2 local=%3; pilot=%4 alive=%5 local=%6; groupLocal=%7; driver=%8; parent=%9; assignedVehicle=%10; assignedRole=%11", _type, alive _veh, local _veh, _pilot, alive _pilot, local _pilot, local _grp, driver _veh, objectParent _pilot, assignedVehicle _pilot, assignedVehicleRole _pilot];
+	deleteVehicle _crate;
+	deleteVehicleCrew _veh;
+	deleteVehicle _pilot;
+	deleteVehicle _veh;
+	deleteGroup _grp;
+};
 
 // Allow time to slow down before passing the release point.
 waitUntil {sleep 0.5; (_veh distance2D _dropPos) < 1000 || {!alive _veh}};
