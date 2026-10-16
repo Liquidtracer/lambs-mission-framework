@@ -22,6 +22,8 @@ Read **Common project context** before technical work, then the relevant module 
 
 Function names are `lmf_<system>_fnc_<handling>`. Registered function classes match `fn_<handling>.sqf`; subfolders do not change the system tag. Runtime-defined helpers use the same naming pattern, but are defined at their initialization points. Registration is not an API whitelist: public use is determined by contracts, examples and call sites. The absence of public/private labels is accepted design, not a need for rebuilding.
 
+**Release design:** A future complete Release package will include a starter `mission.sqm` with preconfigured Eden components alongside integration files, framework and settings. The final starter and its packaging are not implemented; the current development mission is not that deliverable. Existing missions retain their Eden content and merge LMF integration. This packaging direction does not change runtime initialization or the Eden-only ownership of `mission.sqm`.
+
 Script/include files have names without `fn_`; XEH files, config headers and settings follow established conventions. Naming and comment rules are in [development.md](development.md).
 
 LMF 2.0.0's system names are not backward compatible, and there are no legacy aliases. When transferring, framework, settings, LMF config, mission calls and any Eden calls must be checked together. Active framework helpers/state use `lmf_`. The mission's own `a2k_*` must not be renamed as LMF cleanup.

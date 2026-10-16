@@ -2,6 +2,34 @@
 
 The canonical practical mission-maker reference for mission scripts and triggers using the LMF 2.0.0 system-based names. Code and settings paths are relative to the mission root. See [architecture.md](architecture.md) for technical context and [development.md](development.md) for development conventions.
 
+## Eden setup and Release workflow
+
+The repository contains the development mission `LMF_DEV.Altis`. The planned Release package will include a ready-to-use starter `mission.sqm` together with LMF integration files, `framework/` and `settings/`. The final starter and packaging for this workflow are not implemented yet; the current development `mission.sqm` is not a clean Release template.
+
+For a new mission, the intended workflow is to start from that complete package, then move, customize or remove its preconfigured components in Eden. Components should be organized in clearly named Eden layers so their purpose and related objects are easy to identify. Until the starter is available, create a mission in Eden and follow the [installation instructions](../README.md#installation).
+
+For an existing mission, preserve its `mission.sqm` and merge LMF integration into its files. Once available, copy the required components from the starter using Eden, or configure them manually as below. Resolve duplicate variable names when copying. All `mission.sqm` changes must be made through Eden Editor.
+
+### Feature components
+
+Names such as `crateRoles` and `groundSpawner` are **Eden object variable names**, not special object classes. Assign them in the object's Variable Name field. A spawner is the object players interact with; its pad is a separate object defining the spawn position and direction, not a marker.
+
+| Feature | Required Eden setup when used |
+| --- | --- |
+| Role Selector | An interactable object named `crateRoles`; role choices come from `settings/cfg_Player.sqf`. |
+| Supply Spawner | An interactable object named `supplySpawner` and a pad object named `supplyPad`. |
+| Ground Vehicle Spawner | An interactable object named `groundSpawner` and a pad object named `groundPad`; choices come from `lmf_groundVehicles`. |
+| Air Vehicle Spawner | An interactable object named `airSpawner` and a pad object named `airPad`; choices come from `lmf_airVehicles`. |
+| Player Supply Drop | A marker named `respawn` for calculating the delivery aircraft's spawn position, plus the [request settings](#supply-drop-and-forward-deploy). No supply spawner/pad pair is needed. |
+
+For manual setup, place a suitable interaction object and, for a spawner, a pad object with the exact names above. Position and rotate the pad to suit the spawned assets and keep it clear; the spawner rejects nearby soldiers or vehicles within 7 m. Keep each spawner and its pad together when moving or removing a feature. LMF adds their actions during initialization; no object init call is needed for these menus.
+
+These components are optional at mission level: include the ones needed by the features you enable. Other optional systems have their own requirements in their reference sections. The planned starter will collect the relevant objects and markers for convenient reuse, not make every component mandatory.
+
+### AI spawn positions
+
+AI spawning does not depend on the role crate, asset spawners or dedicated Game Logic objects. Names such as `spawn_1` and `garrison_1` in examples are ordinary objects chosen by the mission maker to supply a position. The six AI spawners accept an object or position array for their spawn position; a trigger is also an object. Other arguments have their own supported types: for example, Patrol accepts a marker as its patrol center, while Paradrop QRF accepts an area for its optional drop zone. Check each function's argument list rather than assuming all position arguments are interchangeable.
+
 ## Mission settings
 
 Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locally on every machine during preInit; it is not a server-synchronized runtime settings interface. Player loadout details belong in `settings/cfg_Player.sqf`, AI classes and gear in `settings/cfg_AI.sqf`, and briefing content in `settings/cfg_Briefing.sqf`.
@@ -22,10 +50,15 @@ Edit `settings/cfg_Mission.sqf` before starting the mission. It is loaded locall
 
 ### Player gear and equipment
 
-- `lmf_playerGear` applies the configured LMF loadouts. With `false`, starting Eden equipment is retained and its startup snapshot is restored on respawn. With custom gear enabled, `lmf_keepRole = true` restores the original slot role on respawn; `false` gives Rifleman.
+- `lmf_playerGear` enables automatic LMF loadouts. With `false`, starting Eden equipment is retained and its startup snapshot is restored on respawn. Explicit role selection remains available.
+- `lmf_keepRole` controls respawn with LMF loadouts enabled: `true` reapplies the role matching the respawned unit's classname (normally the original slot role); `false` gives Rifleman. It does not preserve a manually selected role and has no effect on snapshot restoration with `lmf_playerGear = false`.
 - `lmf_personalArsenal` enables role-aware ACE customization during warmup; it requires both `lmf_playerGear` and `lmf_warmup`.
-- `lmf_personalRadio` gives everyone the configured personal radio (AN/PRC-343 in the current player settings). `lmf_pistolAll` gives everyone a sidearm; disabling it retains role-specific sidearms. `lmf_riflemanLat` gives Rifleman the configured light anti-tank weapon. These switches are applied whenever an LMF role/base loadout is applied, including explicit calls with automatic custom gear disabled.
-- `lmf_playerMaps` and `lmf_playerGps`: `0` = everyone, `1` = configured leader and pilot roles, `2` = none. These follow loadout roles, not current group leadership. `lmf_playerNvg`: `0` = everyone, `1` = helicopter/plane pilots, `2` = none. These settings also apply to explicit LMF loadout calls with automatic custom gear disabled.
+- `lmf_personalRadio` gives everyone the configured personal radio (AN/PRC-343 in the current player settings).
+- `lmf_pistolAll` gives everyone a sidearm; disabling it retains role-specific sidearms.
+- `lmf_riflemanLat` gives Rifleman the configured light anti-tank weapon. These switches apply whenever the corresponding LMF loadout is applied, including explicit calls with automatic custom gear disabled.
+- `lmf_playerMaps` controls map/compass distribution: `0` = everyone, `1` = Platoon Leader, Platoon Sergeant, Squad Leader, Vehicle Platoon Leader, Vehicle Commander, Helicopter Pilot and Pilot, `2` = none. The base loadout gives everyone a watch independently; mode `0` also adds a red chemlight shield.
+- `lmf_playerGps` independently controls GPS distribution: `0` = everyone, `1` = Platoon Leader, Platoon Sergeant, Squad Leader, Vehicle Platoon Leader, Vehicle Commander, Helicopter Pilot and Pilot, `2` = none.
+- `lmf_playerNvg` controls night vision: `0` = everyone, `1` = helicopter/plane pilots, `2` = none. These equipment settings follow loadout roles, not current group leadership, and also apply to explicit LMF loadout calls with automatic custom gear disabled.
 - `lmf_camoCoef` sets the player's camouflage coefficient; higher values make players easier for AI to spot. `lmf_jipTp` enables one successful JIP teleport to a suitable friendly player within five minutes of offer initialization; leaving the 200 m start area, death or changing unit ends the offer. Vehicle destinations use only unlocked ordinary cargo seats, never driver, commander, gunner or other turret/FFV positions (Arma 3 2.22+). Without eligible cargo, teleport requires a suitable ground position beside a slow-moving target on land.
 
 ### Map and BFT
@@ -74,16 +107,23 @@ For explicit scripted initialization, call `[crate_1] call lmf_supplyCrates_fnc_
 ### Supply Drop and Forward Deploy
 
 - `lmf_supplyDropLimit` sets the shared mission request quota; `0` disables the player request module. Requests require an assigned map, a supported long-range radio and inactive warmup. Place a marker named `respawn` for the aircraft spawn-position calculation. Accepted requests share a 30-second cooldown.
-- `lmf_supplyDropAircraft` independently selects the delivery transport classname; it does not use `lmf_airVehicles`. Planes and helicopters use the same fly-over parachute delivery. `lmf_supplyDropVehicles` enables requests for usable `lmf_groundVehicles` entries; the vehicle submenu is omitted when none exist. Direct [Supply Drop calls](#supply-drop) bypass the player request quota and cooldown.
+- `lmf_supplyDropAircraft` is the configured delivery aircraft classname for player Supply Drop requests. Planes and helicopters use the same fly-over parachute delivery.
+- `lmf_supplyDropVehicles` enables requests for usable `lmf_groundVehicles` entries; the vehicle submenu is omitted when none exist. Direct [Supply Drop calls](#supply-drop) bypass the player request quota and cooldown.
 - `lmf_forwardDeploy` enables group-leader registration during warmup and requires `lmf_warmup`. `lmf_forwardDeploy_height = 0` selects ground deployment; positive values select an airdrop in meters, with values below `100` raised to `100`. See [Forward Deploy](#forward-deploy) for required Eden asset registration and controls.
 
 ## Player equipment
 
-Configure Player gear in `settings/cfg_Player.sqf` before mission start. The loader builds a machine-local registry; loadout functions, Role Selector, ZEN, Personal Arsenal and Supply Crates read it through the lazy accessor. Do not edit the registry directly or include the settings file in custom consumers. AI gear uses the separate `settings/cfg_AI.sqf` configuration.
+Configure player roles and equipment in `settings/cfg_Player.sqf` before mission start. LMF uses this configuration for automatic loadouts, Role Selector, ZEN loadouts, Personal Arsenal and Supply Crates. AI gear uses the separate `settings/cfg_AI.sqf` configuration.
 
 ### Roles and clothing
 
-Each of the 20 role definitions is `[classname, display name, rank]`. Use a unique Eden unit classname per role; matching ignores classname case. An empty classname has no automatic assignment, and an unconfigured classname receives no automatic LMF role. The display name is used for the current role and selection menus. Explicit role selection does not change the unit's classname.
+LMF provides 20 configurable roles. Each role definition is `[classname, display name, rank]`:
+
+1. **Classname:** The unit class placed in Eden selects its automatic LMF role when `lmf_playerGear` is enabled. This is the unit's class, not its Eden variable name or player name. Use a unique classname per role; matching ignores case. An empty classname disables automatic matching for that role, and an unconfigured unit class receives no automatic LMF role.
+2. **Display name:** The text shown as the current role and in selection menus. Renaming it does not change the role's equipment or behavior.
+3. **Rank:** The rank assigned when that role's loadout is applied.
+
+The role's clothing pools and weapon key then determine its configured equipment, together with role-specific supplies and capabilities. For example, the Medic role uses the `_med*` clothing and weapon settings and applies the Medic equipment and trait. Selecting Medic through Role Selector or a script applies that role without changing the unit's classname; classname matching on respawn can therefore select a different role again.
 
 The role's `*Uniform`, `*Vest`, `*Headgear`, `*Goggles` and `*Backpack` arrays provide selection pools. For example, `_medVest = [""]` inherits `_rVest`. Only the exact one-element array `[""]` inherits. Vehicle Commander and Vehicle Crew inherit each slot from Vehicle Platoon Commander (`_vpl*`), including its resolved Rifleman fallback. For example, `_vpsgVest = [""]` inherits `_vplVest`; an explicit vest pool overrides it independently. Vehicle Platoon Commander, other roles (including helicopter crew and pilots), and direct `applyBaseLoadout` calls retain Rifleman fallback. `[]` does **not** inherit or provide fallback equipment. Mixed arrays and duplicate entries are retained; duplicates retain their random-selection weighting.
 
@@ -114,7 +154,7 @@ Run direct calls on the unit's owner after LMF initialization. For a local playe
 
 The first call explicitly selects Medic; the second reapplies the classname role and requires an interface client. ZEN **LMF Utility → Apply New Loadout** sends the selected role to the unit's owner. **Reload Original Loadout** reapplies the classname role; it does not restore an inventory snapshot.
 
-Explicit role calls, the role crate and ZEN remain available with `lmf_playerGear = false`. PreInit then skips Player configuration, but consumers load it synchronously when needed. With custom gear enabled, `lmf_keepRole = true` reapplies the original slot role on respawn; false gives Rifleman. It does not preserve the last role selected manually or through ZEN. With custom gear disabled, respawn restores the startup Eden loadout snapshot regardless of `lmf_keepRole` or later manual equipment changes.
+Explicit role calls, the role crate and ZEN remain available with `lmf_playerGear = false`; LMF loads player configuration when needed. With custom gear enabled, `lmf_keepRole = true` matches the respawned unit's classname again (normally restoring its original slot role); `false` gives Rifleman. It does not preserve the last role selected manually or through ZEN. With custom gear disabled, respawn restores the startup Eden loadout snapshot regardless of `lmf_keepRole` or later manual equipment changes.
 
 Personal Arsenal requires `lmf_playerGear`, `lmf_personalArsenal` and `lmf_warmup`, and is available only during active warmup after the intro, including after respawn. It reads the current `lmf_currentRoleKey` on each opening, so Role Selector, ZEN and explicit role calls change its clothing and weapon/attachment options. Missing/invalid roles cannot open it. Optics use the current role's weapon category and its `OPTICS` pool, also used by the loadout system. Joining after warmup does not offer the action.
 
@@ -132,11 +172,21 @@ Personal Arsenal offers clothing, weapon variants and attachments from the curre
 
 Argument 0 is the unit (default `objNull`); argument 1 is an exact uppercase weapon key (default `"CARBINE"`). The function distributes that category's weapon, ammunition and attachments; it does not apply a complete role or clothing. Null/nonlocal units are rejected. Unknown keys and supplied non-string values distribute nothing. Numeric Player weapon IDs are no longer supported; update custom mission calls as well as role settings. Do not use the return value as a success indicator.
 
-Custom scripts should normally use the documented equipment functions above and configure equipment in `settings/cfg_Player.sqf`. The Player registry and its accessor are internal LMF implementation details, not supported custom-script APIs.
+Custom scripts should normally use the documented equipment functions above and configure equipment in `settings/cfg_Player.sqf`. Do not include that settings file in custom consumers or edit the machine-local registry directly. The Player registry and its accessor are internal LMF implementation details, not supported custom-script APIs.
 
 ## AI spawning
 
 Enemy side: settings/cfg\_Mission.sqf · AI classes and equipment: settings/cfg_AI.sqf
+
+Use an object or `[x,y,z]` position as the spawn argument; no dedicated Game Logic is required. To spawn a team at an Eden trigger's position, put this in its **On Activation** field and configure a condition that can activate on the server:
+
+```sqf
+if (isServer) then {
+	[thisTrigger, "TEAM"] spawn lmf_ai_fnc_spawnInfantryQrf;
+};
+```
+
+`thisTrigger` supplies the trigger object directly; no variable name or second position object is needed. `isServer` limits the call to the server, while `spawn` provides scheduled execution on that machine. Run after LMF preInit and leave the trigger non-repeatable for a single activation; a repeatable trigger starts another independent call each time it activates. See BIKI [trigger variables](https://community.bohemia.net/wiki/Eden_Editor:_Trigger), [spawn](https://community.bohemia.net/wiki/spawn) and [multiplayer execution](https://community.bohemia.net/wiki/Multiplayer_Scripting).
 
 ### Shared options
 
@@ -240,7 +290,9 @@ private _handle = [spawn_1, "mrk_patrol", "TEAM", 200, "SLOW", "STAG COLUMN"] sp
 
 ### Infantry QRF
 
-Returns an infantry GROUP with a GUARD task; Arma and LAMBS handle combat without LMF moving its waypoints on contact. Additional tickets provide replacement groups after losses. Spawning over water creates a boat group.
+Creates an infantry group with a GUARD waypoint at its spawn position. Under Arma's [GUARD behavior](https://community.bohemia.net/wiki/Waypoints#Guard), it waits there when no guarded point or known enemy requires a response. Guard groups can be sent to engage enemies known to any group on their side; they do not need to detect the enemy themselves. If the mission contains “Guarded by” triggers, the engine also assigns guard groups to those points according to their priority. Such triggers are optional, and GUARD does not confine the group to a defensive radius around its spawn.
+
+LMF does not move this infantry waypoint on contact; Arma and the installed AI mods handle the response. A one-shot call returns the prepared GROUP. Additional tickets provide replacement groups after losses. Spawning over water creates a boat group.
 
 **Run on:** Server · **Use:** spawn
 
@@ -259,7 +311,11 @@ private _handle = [spawn_1, "TEAM"] spawn lmf_ai_fnc_spawnInfantryQrf;
 
 ### Infantry hunter
 
-Returns an infantry GROUP that actively hunts the nearest living non-civilian player within range without prior detection. Individual movement orders use the player's 3D position immediately and then every 13–17 seconds, including upper floors; actual navigation depends on the building. Hunters use FULL speed and normal Arma combat AI while LAMBS group and individual reactions are disabled during hunting. When casualties leave one survivor, hunting stops and the soldier joins an eligible friendly group or receives GUARD. An initially single-soldier spawn still hunts. Airborne aircraft are excluded. Spawning over water creates a boat group using the shared landing flow.
+Returns an infantry GROUP that pursues the nearest living non-civilian player within the configured horizontal radius of its leader, without prior detection. Airborne aircraft and headless clients are excluded. Individual movement orders use the player's 3D position immediately and then every 13–17 seconds, including upper floors; actual navigation depends on the building. Hunters use FULL speed and normal Arma combat AI while LMF disables LAMBS group and individual reactions during hunting.
+
+When casualties leave one survivor, LMF stops pursuit, clears its LAMBS restrictions and restores normal attack, fleeing and movement behavior. The soldier joins the nearest eligible LMF enemy-side group within 1,500 m. Recipients must be marked joinable, alive, finished spawning and led on land; helicopter insertion groups are excluded until their leader is on foot. Other hunter groups are not recipients. If none qualifies, the survivor's old movement orders are replaced by an active GUARD waypoint at its current position, using the [GUARD behavior described above](#infantry-qrf). A group initially spawned with one soldier still hunts; this transition is caused by casualties.
+
+Spawning over water creates a boat group using the shared landing flow. Without a target, hunters that have not landed from a boat can receive GUARD until pursuit resumes. After boat landing, they clear landing orders and wait at their current positions if no target is in range; hunting resumes when a target becomes available.
 
 **Run on:** Server · **Use:** spawn
 
@@ -321,12 +377,21 @@ Zeus **LMF AI → Vehicle QRF → DRONE** exposes the category and randomly sele
 
 Spawns an aircraft that drops enemy infantry or a crewed vehicle, then departs and is cleaned up. The infantry payload is one MG team plus one AT team.
 
+**A drop zone is optional.** Omitting it selects autonomous mode: the aircraft receives GUARD, and LMF checks player proximity every three seconds to initiate the drop. Each check uses a newly randomized horizontal threshold between 600 and 1,200 m; this proximity check does not require enemy detection. With no nearby player, the aircraft continues waiting for a drop opportunity.
+
 **Run on:** Server · **Use:** spawn
 
 **Example**
 
 ```sqf
-private _infantryHandle = [spawn_1, "mrk_dropZone", 200, ""] spawn lmf_ai_fnc_spawnParadropQrf;
+[spawn_1] spawn lmf_ai_fnc_spawnParadropQrf;
+```
+
+For a fixed zone, use an area marker name, trigger object or Location value available on the server. For example, with an area marker named `mrk_dropZone` or a trigger named `dropZone_1`:
+
+```sqf
+[spawn_1, "mrk_dropZone"] spawn lmf_ai_fnc_spawnParadropQrf;
+[spawn_1, dropZone_1] spawn lmf_ai_fnc_spawnParadropQrf;
 private _vehicleHandle = [spawn_1, "mrk_dropZone", 200, "TANK"] spawn lmf_ai_fnc_spawnParadropQrf;
 [spawn_1, "mrk_dropZone", 200, "TANK", 3, 300] spawn lmf_ai_fnc_spawnParadropQrf;
 ```
@@ -352,7 +417,7 @@ Direct classnames found in one of these five configured vehicle categories use t
 
 Vehicle payloads always return and track the vehicle OBJECT. For CAR/TRUCK/APC, a surviving empty vehicle delays replacement even if the infantry is dead; destroying the vehicle permits replacement even if infantry survives. Vehicle QRF instead tracks the infantry group for these categories. Tickets, respawn delay and proximity checks otherwise retain the shared wave rules.
 
-**Drop zone:** Use a marker, trigger or location for a fixed zone. The only supported array value is \[0,0,0], which selects autonomous mode; ordinary position arrays are unsupported. In autonomous mode, an object spawn position supplies the initial aircraft heading; an array spawn position uses a random heading. A fixed drop zone determines the heading towards that zone.
+**Drop zone:** A fixed zone supplies a random approach point within its area; the drop starts when the aircraft is inside the area, checked every three seconds. Give the marker, trigger or Location a usable area. The only supported array value is \[0,0,0], which selects autonomous mode; ordinary position arrays are unsupported. In autonomous mode, an object spawn position supplies the initial aircraft heading; an array spawn position uses a random heading. A fixed drop zone determines the heading towards its sampled approach point. Area handling uses [BIS_fnc_randomPosTrigger](https://community.bohemia.net/wiki/BIS_fnc_randomPosTrigger) and [inArea](https://community.bohemia.net/wiki/inArea).
 
 ### Supply drop
 
