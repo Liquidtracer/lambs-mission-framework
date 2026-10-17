@@ -8,26 +8,46 @@
 	You can link to map markers using HTML tags: <marker name='mrk_name'>[MARKER TEXT]</marker>
 */
 
+// Example OPORD for an Altis infantry mission. Adapt the scenario to your Eden mission.
 // Situation
-private _brfSituation = "Development mission for LAMBS Mission Framework on Altis.";
+private _brfSituation = "CSAT troops occupy a settlement on Altis. Defensive positions cover the main approaches, while patrols operate in the surrounding area. Enemy reinforcements may respond if the garrison is alerted.";
 
 // Enemy
-private _brfEnemyFaction = "Test opposition";
-private _brfEnemy = [];
+private _brfEnemyFaction = "CSAT local security forces";
+private _brfEnemy = [
+	["Composition", "Infantry holding the settlement, supported by nearby patrols."],
+	["Threats", "Prepared defensive positions and possible reinforcements."],
+	["MLCOA", "Maintain security and patrol the approaches."],
+	["MDCOA", "Call reinforcements and counterattack once engaged."]
+];
 
 // Friendly
-private _brfFriendFaction = "LMF test players";
-private _brfFriend = ["Playable groups are available for framework testing."];
+private _brfFriendFaction = "NATO Task Force FOX";
+private _brfFriend = [
+	"FOX: Infantry platoon (players).",
+	"Higher HQ: Provides mission tasking and support."
+];
 
 // Mission
-private _brfMission = "Develop and test LMF features in Eden and on a dedicated server, including Join-in-Progress.";
+private _brfMission = "FOX will secure the settlement and deny CSAT control of the area in order to establish a position for follow-on operations.";
 
-private _brfExecIntent = "Verify the feature under test without unrelated scenario objectives.";
-private _brfExecConop = [];
-private _brfExecCoord = [];
+// Execution
+private _brfExecIntent = "Approach under cover, isolate the defenders and clear the objective. End state: The settlement is secure and FOX is regrouped.";
+private _brfExecConop = [
+	"Phase I (Approach): Reconnoiter the settlement and identify enemy positions.",
+	"Phase II (Assault): Clear the objective and defeat any reinforcements.",
+	"Phase III (Consolidate): Regroup, treat casualties and report mission complete."
+];
+private _brfExecCoord = [
+	"Maintain positive identification and avoid unnecessary civilian casualties.",
+	"Squad leaders report contacts and casualties to platoon HQ."
+];
 
 // Logistics
-private _brfAdministration = ["Player equipment and framework options are configured in settings/."];
+private _brfAdministration = [
+	"Medical: Treat and report casualties using ACE medical procedures.",
+	"Resupply: Coordinate ammunition and medical supply requirements within FOX."
+];
 
 // Special thanks: [name, explanation].
 private _thanks = [

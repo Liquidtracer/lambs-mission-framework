@@ -235,7 +235,7 @@ private _dmrAmmo = ["20Rnd_762x51_Mag"];
 private _dmrOptic = ["optic_DMS", "optic_SOS", "optic_AMS"];
 private _dmrAttach1 = ["acc_pointer_IR"];
 private _dmrAttach2 = [""];
-private _dmrBipod = ["bipod_01_F_blk", "bipod_01_F_snd", "bipod_01_F_mtp"];
+private _dmrBipod = ["bipod_01_F_blk", "bipod_01_F_mtp"];
 
 // Light machine gun (LMG)
 private _lmg = ["LAMBS_LMG_03_brn_F","LMG_03_F"];
@@ -252,7 +252,7 @@ private _mmgAmmo = ["130Rnd_338_Mag"];
 private _mmgOptic = ["optic_MRCO", "optic_DMS", "optic_Hamr"];
 private _mmgAttach1 = ["acc_pointer_IR"];
 private _mmgAttach2 = [""];
-private _mmgBipod = ["bipod_01_F_blk", "bipod_01_F_snd", "bipod_01_F_mtp"];
+private _mmgBipod = ["bipod_01_F_blk", "bipod_01_F_mtp"];
 
 // Light anti-tank
 private _lat = [""];
