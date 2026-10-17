@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="192" height="192" fill="none">
+  <title>LMF waypoint emblem</title>
+  <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="10.5" fill="#294840" stroke="#5C786B" stroke-width="1.5"/>
+<path d="M12.5 33V24.5H23.5V15.5H29" fill="none" stroke="#F4F2E6" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+<circle cx="12.5" cy="33" r="3.7" fill="#DDB77C" stroke="#294840" stroke-width="1.2"/>
+<path d="M35 9L41.5 15.5L35 22L28.5 15.5Z" fill="#DDB77C"/>
+<circle cx="35" cy="15.5" r="2" fill="#294840"/>
+</svg>
