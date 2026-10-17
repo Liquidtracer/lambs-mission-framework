@@ -25,7 +25,7 @@ private _addEntry = {
 
 if (lmf_warmup_isActive && {lmf_playerGear} && {lmf_personalArsenal}) then {
 	["Personal Arsenal", "Customize clothing, weapons and attachments for your current role.",
-		" Self-Interact » Equipment » Personal Arsenal"] call _addEntry;
+		" Self-Interact » Personal Arsenal"] call _addEntry;
 };
 
 if (lmf_bft && {count (lmf_bftInfantryCallsigns + lmf_bftGroundCallsigns + lmf_bftAirCallsigns) > 0}) then {
