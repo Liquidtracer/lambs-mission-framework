@@ -177,4 +177,4 @@ private _action = ["lmf_equipment_personalArsenal", "Personal Arsenal", ["A3\ui_
 	params ["_target", "_player"];
 	lmf_warmup_isActive && {alive _player} && {[_player, _target] call ace_common_fnc_canInteractWith}
 }] call ace_interact_menu_fnc_createAction;
-["CAManBase", 1, ["ACE_SelfActions", "ACE_Equipment"], _action, true] call ace_interact_menu_fnc_addActionToClass;
+["CAManBase", 1, ["ACE_SelfActions"], _action, true] call ace_interact_menu_fnc_addActionToClass;

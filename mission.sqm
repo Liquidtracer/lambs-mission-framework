@@ -8,7 +8,7 @@ class EditorData
 	toggles=1;
 	class ItemIDProvider
 	{
-		nextID=622;
+		nextID=631;
 	};
 	class LayerIndexProvider
 	{
@@ -16,10 +16,10 @@ class EditorData
 	};
 	class Camera
 	{
-		pos[]={14742.601,90.360909,16692.174};
-		dir[]={-0.69607788,-0.58828235,0.41158998};
-		up[]={-0.50638312,0.80865365,0.29942423};
-		aside[]={0.50898057,-1.3102544e-07,0.86078256};
+		pos[]={14677.338,57.589108,16718.523};
+		dir[]={-0.54139316,-0.66090947,0.51970387};
+		up[]={-0.47678649,0.75046569,0.45768547};
+		aside[]={0.69250858,0,0.72140968};
 	};
 };
 binarizationWanted=0;
@@ -97,7 +97,7 @@ class ScenarioData
 };
 class CustomAttributes
 {
-	class Category1
+	class Category2
 	{
 		name="Scenario";
 		class Attribute0
@@ -541,7 +541,7 @@ class Mission
 								class Item0
 								{
 									dataType="Marker";
-									position[]={14627.871,17.91,16753.049};
+									position[]={14630.437,17.91,16770.053};
 									name="respawn";
 									markerType="ELLIPSE";
 									type="rectangle";
@@ -549,7 +549,7 @@ class Mission
 									fillName="SolidBorder";
 									a=7;
 									b=7;
-									angle=315.6329;
+									angle=315.63287;
 									drawBorder=1;
 									id=374;
 								};
@@ -558,7 +558,7 @@ class Mission
 									dataType="Logic";
 									class PositionInfo
 									{
-										position[]={14645.254,17.91,16770.861};
+										position[]={14626.95,17.91,16766.48};
 									};
 									id=375;
 									type="ModuleCurator_F";

@@ -104,6 +104,48 @@ For explicit scripted initialization, call `[crate_1] call lmf_supplyCrates_fnc_
 
 **LMF 2.0 integration:** Use SMALL / `lmf_supSmall` and the Eden variable names `supplySpawner` / `supplyPad`, without legacy aliases. Update existing spawner/pad variable names manually in Eden. The shared definitions array is internal; mission makers configure only the five classname settings.
 
+#### Custom configured weapon crates
+
+Use `lmf_supplyCrates_fnc_addWeaponToCrate` to add assembled weapons from `settings/cfg_Player.sqf` to an existing container. It preserves existing cargo and each explicit successful call adds more equipment. It works independently of `lmf_playerGear`, loading the Player registry through LMF's internal accessor when needed.
+
+```sqf
+[marksmanCrate, "DMR", 1, 8] call lmf_supplyCrates_fnc_addWeaponToCrate;
+```
+
+| Argument | Contract |
+| --- | --- |
+| 0: Container OBJECT | Required, non-null cargo container with positive configured `maximumLoad`; units are rejected. Give the crate an Eden variable name matching the call. |
+| 1: Weapon category STRING | Required, exact uppercase Player `WEAPONS` key: `FLARE_GUN`, `PISTOL`, `SMG`, `CARBINE`, `RIFLE`, `RIFLE_GL`, `DMR`, `LMG`, `MMG`, `LAT` or `MAT`. |
+| 2: Weapon count NUMBER | Optional, default `1`; finite positive integer. |
+| 3: Extra magazine count NUMBER | Optional, default `0`; finite non-negative integer. This is the total number of spare magazines, **not per weapon**. |
+
+Returns `true` after a valid addition, or `false` for a rejected call, with a concise RPT diagnostic. Run on the server using `call`; no scheduled context is required. Client/HC calls return `false` and are not forwarded. Do not replay the call for JIP: the global cargo commands synchronize inventory, while each explicit server call intentionally adds another batch.
+
+For `init.sqf`:
+
+```sqf
+if (isServer) then {
+	[marksmanCrate, "DMR", 1, 8] call lmf_supplyCrates_fnc_addWeaponToCrate;
+	[machineGunCrate, "LMG", 2, 6] call lmf_supplyCrates_fnc_addWeaponToCrate;
+};
+```
+
+For `initServer.sqf`, including multiple categories in one crate:
+
+```sqf
+[specialWeaponsCrate, "DMR", 1, 8] call lmf_supplyCrates_fnc_addWeaponToCrate;
+[specialWeaponsCrate, "LMG", 2, 6] call lmf_supplyCrates_fnc_addWeaponToCrate;
+[specialWeaponsCrate, "CARBINE"] call lmf_supplyCrates_fnc_addWeaponToCrate;
+```
+
+Each call randomly selects one configured weapon, then one compatible normal `AMMO` magazine for its primary muzzle. All copies receive that same configuration and a full loaded magazine; spares use the same magazine. The DMR example gives one loaded rifle plus eight spares; the LMG example gives two loaded weapons plus six spares total. Pool order and duplicate weighting are retained. Incompatible magazine options are excluded for the selected weapon; no compatible option rejects the call. Empty required pools, invalid required classnames/types and invalid counts reject before changing cargo. A selected `""` in a required weapon/ammunition pool also returns `false`, preserving intentional blank options.
+
+`OPTICS`, `ATTACHMENTS_1`, `ATTACHMENTS_2` and `BIPODS` are sampled once in that order. Missing/empty optional pools and selected `""` omit an attachment. Invalid or incompatible selected attachments are omitted with an RPT diagnostic. Compatibility determines muzzle, side rail, optic and bipod placement; if two selections occupy the same slot, the later selection replaces the earlier one. Optional selections are not rerolled. The assembled configuration replaces any attachments built into the weapon classname.
+
+Only ordinary `AMMO` is distributed. `TRACER_AMMO` and `GL_AMMO_1`–`GL_AMMO_4` are ignored: for example, `RIFLE_GL` receives rifle ammunition but no loaded or spare underbarrel grenades. `true` is not a guarantee of player carrying capacity or sufficient physical container space; the weapon cargo command ignores available space and neither cargo command returns an insertion-success value.
+
+Normally choose a **different container classname** from the five configured automatic LMF Supply Crates. Their existing initializer clears and fills cargo and can overwrite additions made before initialization, including during deferred initialization of newly spawned crates. This helper does not override that initializer or mark a crate initialized. Existing Supply Crates, Supply Spawner, Supply Drop and ACE interactions retain their behavior.
+
 ### Supply Drop and Forward Deploy
 
 - `lmf_supplyDropLimit` sets the shared mission request quota; `0` disables the player request module. Requests require an assigned map, a supported long-range radio and inactive warmup. Place a marker named `respawn` for the aircraft spawn-position calculation. Accepted requests share a 30-second cooldown.
@@ -139,7 +181,7 @@ Edit each category's weapon, ammunition, optic, attachment and bipod pools in th
 
 Flare gun settings `_flareGun` and `_flareGunAmmo` remain scalar strings. Radio, binocular and NVG settings are also scalar strings. Grenade and weapon optic pools are arrays. Clothing inheritance does not apply to weapon/attachment pools: `[""]` supplies an empty classname, and `[]` receives no fallback or validation.
 
-Supply Crates use the first classname in the relevant configured weapon/ammunition/grenade pool, not a random choice or every variant. A first entry of `""` skips that supply; keep a one-element `[""]` pool for an unused entry rather than `[]`. Crate quantities and fixed medical, explosive and vehicle supplies are defined by the existing crate initializer.
+Automatic Supply Crates use the first classname in the relevant configured weapon/ammunition/grenade pool, not a random choice or every variant. A first entry of `""` skips that supply; keep a one-element `[""]` pool for an unused entry rather than `[]`. Crate quantities and fixed medical, explosive and vehicle supplies are defined by the existing crate initializer. The independent [custom weapon crate helper](#custom-configured-weapon-crates) uses random selection and validates empty pools separately.
 
 ### Assignment and respawn
 

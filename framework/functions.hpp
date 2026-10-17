@@ -150,6 +150,7 @@ class supplyCrates {
 	tag = "lmf_supplyCrates";
 	class functions {
 		file = "framework\supplyCrates";
+		class addWeaponToCrate {};
 		class getDefinition {};
 		class initSupplyCrate {};
 	};
