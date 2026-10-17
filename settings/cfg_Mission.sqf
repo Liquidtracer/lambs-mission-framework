@@ -5,7 +5,7 @@
 
 // Mission metadata
 lmf_missionTitle = "LAMBS Mission Framework";
-lmf_missionSubtitle = "Development mission";
+lmf_missionSubtitle = "Example mission";
 lmf_author = "Alex2k";
 lmf_enemySide = EAST; // Enemy side: WEST, EAST or INDEPENDENT.
 
