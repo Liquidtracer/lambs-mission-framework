@@ -1,6 +1,6 @@
 # LMF changelog
 
-## LMF 2.0.0 - Unreleased
+## LMF 2.0 (v2.0.0)
 
 - **Added:** Startup mission information and group-arrival notifications for leaders.
 - **Added:** Zeus Infantry Patrol can target a living player's position at confirmation while spawning at the clicked position.
