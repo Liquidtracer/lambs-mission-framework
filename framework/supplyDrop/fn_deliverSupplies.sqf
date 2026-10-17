@@ -166,8 +166,10 @@ _veh doMove _straightAhead;
 
 sleep 1;
 
-private _flare = createVehicle ["F_20mm_Yellow", _veh modelToWorld [0, 0, 1], [], 0, "CAN_COLLIDE"];
-_flare setVelocity [0, 0, -0.1];
+if (sunOrMoon < 1) then {
+	private _flare = createVehicle ["F_20mm_Yellow", _veh modelToWorld [0, 0, 1], [], 0, "CAN_COLLIDE"];
+	_flare setVelocity [0, 0, -0.1];
+};
 
 // Finish landing independently of the aircraft's return.
 [_crate] spawn {

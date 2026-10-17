@@ -44,7 +44,8 @@ lmf_bftAirCallsigns = []; // Air: NAME1-4.
 
 // Ground vehicle classnames.
 lmf_groundVehicles = [
-	"CUP_M1240_OGPK_M240_NATO",
+	"B_LSV_01_unarmed_F",
+	"B_LSV_01_AT_F",
 	"B_Quadbike_01_F"
 ];
 
@@ -55,15 +56,15 @@ lmf_airVehicles = [
 ];
 
 // Shared supply crates: enabled categories must use unique classnames (case-insensitive).
-lmf_supLarge = "I_supplyCrate_F"; // Large Supplies; "" disables this category.
+lmf_supLarge = "B_supplyCrate_F"; // Large Supplies; "" disables this category.
 lmf_supSmall = "Box_IND_Ammo_F"; // Small Supplies; "" disables this category.
-lmf_supExplosives = "Box_IND_AmmoOrd_F"; // Explosives; "" disables this category.
+lmf_supExplosives = "Box_NATO_AmmoOrd_F"; // Explosives; "" disables this category.
 lmf_supMedical = "ACE_medicalSupplyCrate"; // Medical; "" disables this category.
-lmf_supVehicle = "Box_IND_AmmoVeh_F"; // Vehicle Supplies (RRR); "" disables this category.
+lmf_supVehicle = "Box_NATO_AmmoVeh_F"; // Vehicle Supplies (RRR); "" disables this category.
 
 // Supply drop
 lmf_supplyDropLimit = 3; // Number of available supply drops.
-lmf_supplyDropAircraft = "B_Heli_Transport_01_unarmed_F"; // Aircraft classname; planes and helicopters use the same parachute delivery.
+lmf_supplyDropAircraft = "B_T_VTOL_01_vehicle_F"; // Aircraft classname; planes and helicopters use the same parachute delivery.
 lmf_supplyDropVehicles = true; // Allows vehicle requests through supply drop.
 
 // Forward deploy
