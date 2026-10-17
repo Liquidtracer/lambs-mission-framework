@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="assets/LMF_Waypoint_Logo.svg" alt="LMF waypoint logo" width="112">
+  <a href="https://github.com/alexandertoftesund/lambs-mission-framework">
+    <img src="assets/LMF_Waypoint_Logo.svg" alt="LMF waypoint logo" width="112">
+  </a>
 </p>
 
 <h1 align="center">LAMBS Mission Framework</h1>
