@@ -4,11 +4,11 @@ The canonical practical mission-maker reference for mission scripts and triggers
 
 ## Eden setup and Release workflow
 
-The repository contains the development mission `LMF_DEV.Altis`. The planned Release package will include a ready-to-use starter `mission.sqm` together with LMF integration files, `framework/` and `settings/`. The final starter and packaging for this workflow are not implemented yet; the current development `mission.sqm` is not a clean Release template.
+The repository contains the maintained Eden example mission, `LMF_DEV.Altis`. LMF 2.0 releases distribute a ready-to-use snapshot with `mission.sqm`, integration files, `framework/` and `settings/`. The working folder keeps its name between releases so it can be developed and tested in place.
 
-For a new mission, the intended workflow is to start from that complete package, then move, customize or remove its preconfigured components in Eden. Components should be organized in clearly named Eden layers so their purpose and related objects are easy to identify. Until the starter is available, create a mission in Eden and follow the [installation instructions](../README.md#installation).
+For a new mission, copy the complete example mission from the Release package, open it in Eden Editor, and move, customize or remove its preconfigured components. The named Eden building blocks can be reused as needed; they are not universal requirements.
 
-For an existing mission, preserve its `mission.sqm` and merge LMF integration into its files. Once available, copy the required components from the starter using Eden, or configure them manually as below. Resolve duplicate variable names when copying. All `mission.sqm` changes must be made through Eden Editor.
+For an existing mission, preserve its `mission.sqm` and merge LMF integration into its files. Copy the required components from the example mission using Eden, or configure them manually as below. Resolve duplicate variable names when copying. All `mission.sqm` changes must be made through Eden Editor.
 
 ### Feature components
 
@@ -24,7 +24,7 @@ Names such as `crateRoles` and `groundSpawner` are **Eden object variable names*
 
 For manual setup, place a suitable interaction object and, for a spawner, a pad object with the exact names above. Position and rotate the pad to suit the spawned assets and keep it clear; the spawner rejects nearby soldiers or vehicles within 7 m. Keep each spawner and its pad together when moving or removing a feature. LMF adds their actions during initialization; no object init call is needed for these menus.
 
-These components are optional at mission level: include the ones needed by the features you enable. Other optional systems have their own requirements in their reference sections. The planned starter will collect the relevant objects and markers for convenient reuse, not make every component mandatory.
+These components are optional at mission level: include the ones needed by the features you enable. Other optional systems have their own requirements in their reference sections. The included example mission collects these objects and markers for convenient reuse; none is mandatory unless you use its corresponding feature.
 
 ### AI spawn positions
 
