@@ -1,6 +1,9 @@
-# LAMBS Mission Framework
+<p align="center">
+  <img src="assets/LMF_Waypoint_Logo.svg" alt="LMF waypoint logo" width="112">
+</p>
 
-**LMF 2.0 — Arma 3 Mission Framework**
+<h1 align="center">LAMBS Mission Framework</h1>
+<p align="center"><strong>LMF 2.0 — Arma 3 Mission Framework</strong></p>
 
 LAMBS Mission Framework (LMF) is a reusable framework for building cooperative Arma 3 missions. It provides configurable AI, player equipment, logistics and mission systems so mission makers can focus on creating scenarios.
 
