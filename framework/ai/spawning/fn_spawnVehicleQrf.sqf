@@ -29,16 +29,25 @@ if (!_spawner || {!canSuspend}) exitWith {
 };
 
 private _managed = count _this > 2;
-if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
 
 params [["_spawnPos", [0, 0, 0]], ["_vicType", "TRUCK"], ["_tickets", 1], ["_respawnTime", 300]];
+_vicType = toUpper _vicType;
+if !(_vicType in ["CAR", "CARARMED", "TRUCK", "APC", "TANK", "HELITRANSPORT", "HELIATTACK", "DRONE"]) exitWith {
+	[_feedback, "Failed", format ["Unsupported vehicle category: %1.", _vicType]] call lmf_ai_fnc_reportSpawn;
+	objNull
+};
+private _vehiclePool = _vehicles getOrDefault [_vicType, []];
+if (_vehiclePool isEqualTo []) exitWith {
+	[_feedback, "Failed", format ["No %1 vehicles configured in cfg_AI.sqf.", _vicType]] call lmf_ai_fnc_reportSpawn;
+	objNull
+};
+
+if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 private _dir = random 360;
 if !(_spawnPos isEqualType []) then {_dir = getDir _spawnPos;};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
-_vicType = toUpper _vicType;
-if (_vicType == "DRONE" && {_drones isEqualTo []}) exitWith {[_feedback, "Failed", "No drones configured."] call lmf_ai_fnc_reportSpawn; objNull};
 
 private _fncDismountEh = {
 	params ["_group", "_newTarget"];
@@ -192,7 +201,7 @@ private _spawnOnce = {
 	};
 	if (_setup isEqualTo []) exitWith {objNull};
 	_setup params ["_name", "_crewClass", "_infantryType"];
-	private _class = selectRandom (_vehicles get _vicType);
+	private _class = selectRandom _vehiclePool;
 	private _isAir = _class isKindOf "Air";
 	private _veh = objNull;
 	private _simulation = true;

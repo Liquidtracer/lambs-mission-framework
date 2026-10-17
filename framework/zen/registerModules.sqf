@@ -13,13 +13,7 @@ if (isNil "lmf_zen_spawnFeedbackEh") then {
 			case "Success": {format ["%1 spawned", _label]};
 			case "Cancelled": {format ["%1 blocked: %2", _name, _reason]};
 			case "Waiting": {format ["%1 waiting: %2", _name, _reason]};
-			default {
-				private _text = format ["%1 failed to spawn", _name];
-				if !(_reason in ["Group creation failed.", "Spawner returned no result.", "Spawner returned an invalid result.", "No living group remained after initialization.", "No living group or vehicle remained after preparation."]) then {
-					_text = format ["%1: %2", _text, _reason];
-				};
-				_text
-			};
+			default {if (_reason == "") then {format ["%1 failed to spawn", _label]} else {format ["%1: %2", _label, _reason]}};
 		};
 		[_message] call zen_common_fnc_showMessage;
 	}] call CBA_fnc_addEventHandler;

@@ -32,7 +32,6 @@ if (!_spawner || {!canSuspend}) exitWith {
 };
 
 private _managed = count _this > 4;
-if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 
 #include "spawnDefinitions.sqf"
 
@@ -45,15 +44,27 @@ params [
 	["_respawnTime", 300]
 ];
 
+private _isVehicleDrop = _dropVehicle != "";
+if (_paraVehicle isEqualTo []) exitWith {
+	[_feedback, "Failed", "No transport aircraft configured in cfg_AI.sqf (_paraVehicle)."] call lmf_ai_fnc_reportSpawn;
+	if (_isVehicleDrop) then {objNull} else {grpNull}
+};
+private _payloadCategory = toUpper _dropVehicle;
+private _isCategoryDrop = _payloadCategory in ["CAR", "CARARMED", "TRUCK", "APC", "TANK"];
+private _payloadPool = _vehicles getOrDefault [_payloadCategory, []];
+if (_isCategoryDrop && {_payloadPool isEqualTo []}) exitWith {
+	[_feedback, "Failed", format ["No %1 vehicles configured in cfg_AI.sqf.", _payloadCategory]] call lmf_ai_fnc_reportSpawn;
+	objNull
+};
+
+if (_managed) then {waitUntil {sleep 1; CBA_missionTime > 0};};
 private _dir = if (_spawnPos isEqualType objNull) then {getDir _spawnPos} else {random 360};
 _spawnPos = _spawnPos call CBA_fnc_getPos;
 private _isAutonomous = _dropZone isEqualTo [0, 0, 0];
 private _dzPos = if (_dropZone isEqualType []) then {_dropZone} else {_dropZone call BIS_fnc_randomPosTrigger};
-private _isVehicleDrop = _dropVehicle != "";
 
 private _spawnOnce = {
 	// Aircraft spawning
-	if (_paraVehicle isEqualTo []) exitWith {if (_isVehicleDrop) then {objNull} else {grpNull}};
 	private _isAirSpawn = (_spawnPos # 2) > 20 || surfaceIsWater _spawnPos;
 	private _spawnType = if (_isAirSpawn) then {"FLY"} else {"NONE"};
 
@@ -117,8 +128,8 @@ private _spawnOnce = {
 		private _class = _dropVehicle;
 		private _categories = ["CAR", "CARARMED", "TRUCK", "APC", "TANK"];
 		_vicType = toUpper _dropVehicle;
-		if (_vicType in _categories) then {
-			_class = selectRandom (_vehicles get _vicType);
+		if (_isCategoryDrop) then {
+			_class = selectRandom _payloadPool;
 		} else {
 			_vicType = (lmf_ai_config get "VEHICLE_BY_CLASS") getOrDefault [toLower _class, ""];
 			if !(_vicType in _categories) then {_vicType = ""};
