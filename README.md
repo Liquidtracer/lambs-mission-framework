@@ -5,7 +5,7 @@
 </p>
 
 <h1 align="center">LAMBS Mission Framework</h1>
-<p align="center"><strong>LMF 2.0 — Arma 3 Mission Framework</strong></p>
+<p align="center"><strong>LMF 2.0 | Arma 3 Mission Framework</strong></p>
 
 LAMBS Mission Framework (LMF) is a reusable framework for building cooperative Arma 3 missions. It provides configurable AI, player equipment, logistics and mission systems so mission makers can focus on creating scenarios.
 
@@ -39,8 +39,8 @@ For an existing mission, follow the guide's integration steps rather than replac
 ## Documentation
 
 - [Latest release and Mission Maker Guide](https://github.com/alexandertoftesund/lambs-mission-framework/releases/latest)
-- [Mission Maker Reference](docs/mission-maker-reference.md) — practical Markdown reference
-- [Changelog](CHANGELOG.md) — version history
+- [Mission Maker Reference](docs/mission-maker-reference.md) - practical Markdown reference
+- [Changelog](CHANGELOG.md) - version history
 
 ---
 
