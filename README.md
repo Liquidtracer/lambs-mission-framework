@@ -38,7 +38,8 @@ For an existing mission, follow the guide's integration steps rather than replac
 
 ## Documentation
 
-- [Latest release and Mission Maker Guide](https://github.com/alexandertoftesund/lambs-mission-framework/releases/latest)
+- [Mission Maker Guide (online)](https://alexandertoftesund.github.io/lambs-mission-framework/)
+- [Latest release and offline guide](https://github.com/alexandertoftesund/lambs-mission-framework/releases/latest)
 - [Mission Maker Reference](docs/mission-maker-reference.md) - practical Markdown reference
 - [Changelog](CHANGELOG.md) - version history
 
