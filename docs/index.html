@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1" name="viewport"/><meta content="light" name="color-scheme"/><meta content="LAMBS Mission Framework mission-maker guide for Arma 3. Installation, configuration, AI spawning, SQF examples and system reference." name="description"/><title>LMF 2.0 | Mission Maker Guide</title><style>
+:root{--paper:#fff;--rail:#fbfcfd;--ink:#243547;--soft:#566879;--faint:#748595;--line:#e4eaf0;--accent:#236b9c;--hover:#eef5f9;--code:#182633;--side:278px;--top:70px}
+*{box-sizing:border-box}
+html{scroll-behavior:auto;scroll-padding-top:102px}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-size:16px;line-height:1.68;-webkit-font-smoothing:antialiased}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+button,input{font:inherit}button,a{-webkit-tap-highlight-color:transparent}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid #438aba;outline-offset:3px}
+::selection{background:#d5e9f6;color:#16334a}
+/* Top bar */
+.top{height:var(--top);position:fixed;top:0;left:0;right:0;z-index:40;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 34px;gap:20px}
+.top-left,.top-right{display:flex;align-items:center;gap:20px;min-width:0}
+.mark{display:flex;align-items:center;gap:11px;font-size:18px;font-weight:730;letter-spacing:-.025em;color:#253d54;white-space:nowrap}
+.mark:hover{text-decoration:none}.mark svg{width:33px;height:33px;flex:none}
+.doc-label{font-size:14px;color:#6c7d8e;white-space:nowrap}
+.version-pill{order:2;color:#7a8896;background:none;border:0;font-size:12px;white-space:nowrap}.version-pill i{display:none}
+.top-search{display:flex;align-items:center;gap:10px;width:244px;height:40px;border:1px solid #dce5ed;border-radius:8px;background:#fafcfd;padding:0 12px;color:#66798a;cursor:pointer;text-align:left;font-size:13.5px}
+.top-search:hover{border-color:#a8c4d8;background:white}.top-search svg{width:17px;height:17px;flex:none}.top-search kbd{margin-left:auto}
+.github-link{display:flex;gap:7px;align-items:center;color:#536c80;font-size:13px;font-weight:570;white-space:nowrap}.github-link svg{width:17px;height:17px}
+.mobile-btn{display:none;padding:8px;border:0;background:transparent;color:#456176;cursor:pointer}.mobile-btn svg{width:23px;height:23px}
+kbd{border:1px solid #dfe7ef;background:#fff;border-radius:5px;padding:1px 6px;font-size:11px;color:#728494;font-family:inherit}
+/* Sidebar: section labels + wider hit targets + clear nested list */
+.sidebar{position:fixed;top:var(--top);bottom:0;left:0;width:var(--side);border-right:1px solid var(--line);background:var(--rail);display:flex;flex-direction:column;z-index:32}
+.sidebar-scroll{overflow:auto;flex:1;padding:25px 16px 28px;scrollbar-width:thin;scrollbar-color:#c8d4df transparent}
+.sb-heading{font-size:12px;letter-spacing:.055em;text-transform:uppercase;font-weight:750;color:#65788b;margin:28px 14px 9px;line-height:1.4}
+.sb-heading:first-child{margin-top:2px}
+.sb-link{display:block;font-size:15px;color:#3d5266;padding:10px 14px;line-height:1.4;border-left:3px solid transparent;border-radius:5px;font-weight:530;margin:2px 0;transition:background-color .12s,color .12s}
+.sb-link:hover{background:#edf3f7;text-decoration:none;color:#1d4867}
+.sb-link.active{border-left-color:#2773a8;color:#155780;background:#e8f2f8;font-weight:740}
+.sb-child{position:relative;font-size:14.5px;font-weight:450;margin:0 0 0 21px;padding:8px 8px 8px 18px;border-left:1px solid #dbe4eb;border-radius:0 5px 5px 0;color:#607284}
+.sb-child.active{border-left:2px solid #2773a8;margin-left:21px;padding-left:17px}
+.sidebar-footer{border-top:1px solid var(--line);padding:17px 24px 21px}.source-link{font-size:13px;color:#607b8e;line-height:1.4}
+/* Page */
+.main{margin:var(--top) 0 0 var(--side);min-height:calc(100vh - var(--top))}
+.main-width{width:min(100%,960px);margin:0 auto;padding:66px 75px 110px}
+.article{display:none}.article.active{display:block}
+.page-heading{margin:0 0 35px;padding:0 0 25px;border-bottom:1px solid var(--line)}
+h1,h2,h3,h4{color:#1c3042;line-height:1.3;margin:0;letter-spacing:-.028em}
+h1{font-size:41px;font-weight:720;letter-spacing:-.045em;margin:0 0 9px}
+.subtitle{margin:0;color:#677b8b;font-size:17px;line-height:1.6}
+.article-body{font-size:16px;line-height:1.73;color:#34495b}
+.article-body p{margin:0 0 19px}
+.article-body>h2,.article-body>h3{scroll-margin-top:100px}
+.article-body>h2{font-size:26px;font-weight:680;margin:46px 0 19px}
+.article-body>h2:first-child{margin-top:0}
+.article-body>h3{font-size:20px;font-weight:680;margin:32px 0 13px}
+.article-body>ul,.article-body>ol{margin:0 0 26px;padding-left:27px}
+.article-body li{margin:9px 0;padding-left:2px}.article-body li::marker{color:#8194a5}
+.article-body strong{font-weight:690;color:#203b51}
+.article-body code:not(pre code){font-family:ui-monospace,'Cascadia Code',Consolas,monospace;font-size:.87em;color:#285d80;background:#f1f5f8;border-radius:4px;padding:2px 5px;overflow-wrap:anywhere}
+.article-body a{border-bottom:1px solid #afcfdf}.article-body a:hover{text-decoration:none;border-color:#3b8ab7}
+.article-body h2:target,.article-body h3:target{color:#175f8d}
+/* Reference content */
+.table-wrap{overflow:auto;width:100%;margin:19px 0 32px;border:1px solid var(--line);border-radius:7px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.55;text-align:left}
+th,td{padding:12px 15px;vertical-align:top;text-align:left;border-bottom:1px solid #e8edf2}
+thead{background:#f7f9fb}th{font-weight:730;color:#52677a;font-size:13px;white-space:nowrap}
+td:first-child{font-weight:580}tr:last-child td{border-bottom:0}
+.arg-number{color:#718597;font-family:ui-monospace,Consolas,monospace;font-weight:560}
+.article-body table code:not(pre code){background:none;padding:0;color:#295e7d}
+.meta-line{font-size:14px;font-weight:630;color:#61778a;background:none;margin:6px 0 17px;letter-spacing:0}
+.callout{border-left:3px solid #95b5cb;padding:7px 0 7px 18px;margin:25px 0;color:#4e6678;font-size:15px}
+.callout.warning{border-left-color:#95b5cb}.callout-head{font-weight:680;margin-bottom:4px;color:#3a5064}.callout p:last-child{margin-bottom:0}
+.code-shell{margin:20px 0 29px;overflow:hidden;background:var(--code);border:1px solid #263b4e;border-radius:9px}
+.code-head{display:flex;align-items:center;justify-content:space-between;padding:9px 15px;border-bottom:1px solid #354a5c;color:#9bafbf;font-family:ui-monospace,Consolas,monospace;font-size:12px;line-height:22px}
+.code-tag{font-weight:560}.copy-btn{border:0;background:transparent;color:#becdd7;border-radius:5px;cursor:pointer;display:flex;align-items:center;gap:8px;padding:4px 6px;font-family:inherit;font-size:12px}
+.copy-btn:hover{color:white}.copy-btn.copied{color:#acdfc9}.copy-btn svg{height:15px;width:15px}
+.article-body pre{font-family:ui-monospace,'Cascadia Code',Consolas,monospace;background:var(--code);color:#e2eaf0;font-size:14px;line-height:1.75;margin:0;padding:20px 20px 22px;overflow-x:auto;tab-size:4}
+.article-body pre code{font-family:inherit;font-size:inherit;white-space:pre}.article-body pre .c1{color:#9eafba;font-style:italic}.article-body pre .s2{color:#bbdfb8}.article-body pre .mi{color:#f0bd99}.article-body pre .k{color:#a1d4f2}.article-body pre .nf{color:#d7ecf5}
+.topic-list{list-style:none;padding:0!important;margin:12px 0 30px!important;border-top:1px solid var(--line)}
+.topic-list li{padding:12px 0!important;margin:0!important;border-bottom:1px solid var(--line);font-size:15px;color:#65788b}
+.topic-list a{font-weight:660;display:inline-block;min-width:158px;color:#2b6184}
+.simple-steps{counter-reset:steps;list-style:none;padding:0!important;margin:7px 0 29px!important}
+.simple-steps li{position:relative;padding:6px 0 6px 42px!important;margin:7px 0}
+.simple-steps li:before{content:counter(steps);counter-increment:steps;position:absolute;left:0;top:9px;width:25px;height:25px;border:1px solid #d6e1e9;border-radius:50%;font-size:13px;line-height:23px;text-align:center;color:#5b7c93}
+.flow-text{color:#63798a;font-size:15px;border-bottom:1px solid var(--line);padding:0 0 20px}
+.definitions{margin-bottom:25px}.definitions p{border-left:3px solid #dae7ef;padding-left:16px;margin:15px 0}
+.chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 24px}.chip-grid code{white-space:nowrap}
+.footer{font-size:13px;color:#8494a1;margin:64px 0 0;padding-top:20px;border-top:1px solid var(--line)}
+.right-rail,.drawer-cover{display:none}
+/* Search */
+.search-dialog{position:fixed;margin:0;top:min(15vh,120px);left:50%;transform:translateX(-50%);width:min(630px,calc(100vw - 28px));max-height:min(76vh,780px);padding:0;border:1px solid #d7e1e9;border-radius:12px;background:#fff;box-shadow:0 20px 80px #172c4150;overflow:hidden}
+.search-dialog::backdrop{background:#10223559}.search-row{display:flex;align-items:center;gap:12px;height:68px;border-bottom:1px solid var(--line);padding:0 20px}.search-row svg{width:20px;height:20px;color:#7792a6}
+.search-row input{border:0;outline:0;flex:1;min-width:0;color:#253d50;font-size:16px;background:transparent}.search-close{background:#f3f5f7;border:1px solid var(--line);border-radius:5px;color:#627688;font-size:12px;cursor:pointer;padding:5px 9px}
+.search-results{overflow-y:auto;max-height:55vh;padding:10px}.search-result{display:block;border-radius:6px;padding:13px 15px;margin:2px 0;color:#223a4e}
+.search-result:hover,.search-result:focus{background:#f2f6f9;text-decoration:none}.search-title{display:inline-block;font-size:15px;font-weight:680}.search-page{font-size:12px;color:#77899a;margin-left:10px}.search-excerpt{font-size:13px;color:#697e8e;margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.search-empty{padding:30px 24px;font-size:15px;line-height:1.8;color:#788c9d}.search-foot{border-top:1px solid var(--line);padding:11px 20px;display:flex;justify-content:space-between;gap:10px;font-size:12px;color:#7b8f9f}
+.toast{position:fixed;z-index:100;bottom:24px;left:50%;transform:translate(-50%,8px);background:#243a4d;color:#fff;border-radius:6px;padding:10px 16px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .15s,transform .15s}.toast.visible{opacity:1;transform:translate(-50%,0)}
+@media(max-width:1160px){.main-width{padding-left:51px;padding-right:51px}.github-link span{display:none}.top{padding:0 23px}}
+@media(max-width:880px){:root{--top:64px}.top{padding:0 18px}.mobile-btn{display:block}.top-left{gap:12px}.top-right{gap:12px}.doc-label{display:none}.version-pill{display:none}.top-search{width:42px;height:42px;justify-content:center;padding:0}.top-search .search-label,.top-search kbd{display:none}.github-link{display:none}.sidebar{width:min(320px,85vw);transform:translateX(-101%);transition:transform .18s ease;box-shadow:18px 0 40px #17283808}.sidebar.open{transform:translateX(0)}.drawer-cover.open{display:block;position:fixed;inset:var(--top) 0 0;z-index:30;background:#20354766}.main{margin:var(--top) 0 0}.main-width{padding:46px 37px 75px}.page-heading{margin-bottom:30px}h1{font-size:37px}}
+@media(max-width:520px){.main-width{padding:33px 21px 70px}h1{font-size:34px}.subtitle{font-size:16px}.article-body{font-size:16px}.article-body>h2{font-size:23px;margin-top:37px}.article-body>h3{font-size:19px}.article-body pre{font-size:13px;padding:18px 15px}table{font-size:13.5px}th,td{padding:10px 12px}th{font-size:12.5px}.topic-list a{display:block}.topic-list li{font-size:15px}.code-head{padding:8px 12px}.top{padding:0 13px}.mark{font-size:17px}}
+@media(prefers-reduced-motion:reduce){*{animation-duration:0s!important;transition-duration:0s!important}}
+@media print{.top,.sidebar,.right-rail,.code-head,.drawer-cover{display:none!important}.main{margin:0}.main-width{padding:0;width:100%}.article{display:block!important;break-after:page}.article-body pre{white-space:pre-wrap;word-break:break-word}.footer{display:none}}
+
+/* The first-mission walkthrough uses the same quiet visual language as the guide. */
+.eden-example{border:1px solid var(--line);border-radius:9px;background:#f7f9fb;overflow:hidden;margin:23px 0 27px}
+.eden-example svg{display:block;width:100%;height:auto}
+.eden-example figcaption{border-top:1px solid var(--line);padding:9px 16px;color:#728597;font-size:13px;line-height:1.5;background:#fff}
+.eden-example .scene-label{font:600 17px Inter,Arial,sans-serif;fill:#284052}
+.eden-example .scene-small{font:500 13px Inter,Arial,sans-serif;fill:#607589}
+.eden-example .scene-title{font:600 13px Inter,Arial,sans-serif;letter-spacing:1.2px;fill:#8294a4}
+.eden-example .game-logic{fill:#276f9a;stroke:#fff;stroke-width:4}
+@media(max-width:520px){.eden-example{margin:19px 0 22px}.eden-example .scene-label{font-size:26px}.eden-example .scene-small{font-size:20px}.eden-example .scene-title{font-size:20px}.eden-example figcaption{font-size:12.5px}}
+
+
+/* v8: calm, explicit separation of navigation sections and links. */
+:root{--side:294px;--rail:#f8fafc}
+.sidebar{background:var(--rail);border-right:1px solid #dce5ed}
+.sidebar-scroll{padding:24px 17px 36px;scrollbar-color:#bccbd8 transparent}
+.sb-group{padding:0 0 14px;margin:0 0 15px;border-bottom:1px solid #dfe6ed}
+.sb-group:last-child{border-bottom:0;padding-bottom:0;margin-bottom:0}
+.sb-heading{margin:0 0 10px!important;padding:0 10px 4px;display:block;
+  color:#19354e;font-size:17px;line-height:1.4;font-weight:750;letter-spacing:-.015em;text-transform:none}
+.sb-link{font-size:15px;line-height:1.38;color:#53687a;font-weight:450;
+  border-left:3px solid transparent;border-radius:6px;margin:1px 0;padding:9px 12px 9px 15px;
+  transition:background-color .12s ease,color .12s ease}
+.sb-link:hover{background:#edf3f7;color:#1d4d70;text-decoration:none}
+.sb-link.active{border-left-color:#2876a8;background:#e6f1f8;color:#174d73;font-weight:710}
+.sb-child{font-size:14px;font-weight:450;color:#697a88;margin-left:16px;
+  padding:7px 10px 7px 19px;border-left:1px solid #d4e0e9;border-radius:0 5px 5px 0}
+.sb-child.active{border-left:2px solid #2876a8;margin-left:16px;padding-left:18px}
+.top-right{margin-left:auto}
+@media(max-width:880px){.sidebar{width:min(340px,88vw)}.sidebar-scroll{padding-top:23px}}
+
+
+/* v10: restrained example annotations */
+.article-body pre .c1{color:#8ab9a3}
+/* A small topic index with an explicit destination for every link. */
+.topic-index{border-top:1px solid var(--line);margin:7px 0 28px}
+.topic-row{display:grid;grid-template-columns:155px minmax(0,1fr);gap:21px;padding:17px 0;border-bottom:1px solid var(--line)}
+.topic-row>strong{font-size:15.5px;line-height:1.55;font-weight:700;color:#263e52}
+.topic-links{display:flex;flex-wrap:wrap;gap:5px 17px;align-items:start}
+.article-body .topic-links>a{font-size:15.5px;line-height:1.55;font-weight:540;color:#2b698f;border-bottom:0;text-underline-offset:3px}
+.article-body .topic-links>a:hover{color:#154d71;text-decoration:underline}
+.next-step{margin-top:30px!important;padding-top:18px;border-top:1px solid var(--line);font-size:15.5px}
+@media(max-width:600px){.topic-row{grid-template-columns:1fr;gap:5px;padding:15px 0}.topic-links{gap:4px 15px}.article-body .topic-links>a{font-size:15px}}
+
+/* Keep complete settings and inline SQF tokens readable, including on narrow screens. */
+.article-body code:not(pre code){white-space:nowrap;overflow-wrap:normal;word-break:normal}
+.article-body .table-wrap{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.article-body .table-wrap table{min-width:540px}
+.article-body table td,.article-body table th{overflow-wrap:normal;word-break:normal}
+.article-body .code-shell{max-width:100%}
+
+/* ========================================================================
+   LMF / MISSION MAKER GUIDE VISUAL SYSTEM
+   A restrained operations-manual treatment. No external assets or fonts.
+   This layer intentionally styles the existing components without changing
+   the documentation, navigation or its interaction code.
+   ======================================================================== */
+:root {
+  --paper: #f7f7f2;
+  --rail: #192d2e;
+  --ink: #20312f;
+  --soft: #546760;
+  --faint: #718079;
+  --line: #dce2da;
+  --accent: #27675c;
+  --hover: #e9f0e9;
+  --code: #152529;
+  --forest: #15282b;
+  --forest-dark: #0e1d21;
+  --forest-mid: #243a3b;
+  --sand: #c6a16a;
+  --sand-deep: #946e39;
+  --surface: #ffffff;
+  --side: 294px;
+  --top: 76px;
+}
+html {scroll-padding-top: 108px; color-scheme: light;}
+body {background:var(--paper); color:var(--ink); font-family:Inter,'Segoe UI',-apple-system,BlinkMacSystemFont,Arial,sans-serif; font-size:16px; line-height:1.72;}
+::selection {background:#e3d5b5; color:#142d29;}
+a {color:var(--accent); text-underline-offset:3px;}
+a:focus-visible,button:focus-visible,input:focus-visible,summary:focus-visible,
+.search-result:focus-visible {outline:3px solid #d0a764;outline-offset:3px;}
+
+/* Brand and command bar */
+.top {
+  background:var(--forest-dark);
+  border-bottom:1px solid #385051;
+  box-shadow:0 3px 14px rgba(15,30,31,.12);
+  padding:0 34px;
+  gap:26px;
+}
+.top-left {gap:0;}
+.mark {
+  gap:13px;
+  color:#f5f5ec;
+  font-size:22px;
+  font-weight:780;
+  line-height:1;
+  letter-spacing:.12em;
+  padding-right:25px;
+  margin-right:24px;
+  border-right:1px solid #395050;
+}
+.mark:hover {color:#ffffff;}
+.mark svg {width:40px;height:40px;filter:drop-shadow(0 2px 5px rgba(0,0,0,.15));}
+.doc-label {font-size:12px; font-weight:660; letter-spacing:.14em; text-transform:uppercase;color:#bdcbc4;}
+.top-search {
+  width:275px;
+  height:43px;
+  border:1px solid #405858;
+  border-radius:7px;
+  padding:0 12px;
+  background:#1d3133;
+  color:#bdc9c4;
+  font-size:13px;
+  transition:background-color .14s,border-color .14s;
+}
+.top-search:hover {background:#2a4242;border-color:#84998e;color:#fff;}
+.top-search svg {color:var(--sand);width:18px;height:18px;}
+.top-search kbd {color:#dce0d2;border-color:#5b6a62;background:#2c4242;padding:0 7px;font-size:12px;}
+.mobile-btn {color:#eff0df;border:1px solid #455d59;border-radius:7px;}
+.mobile-btn:hover {background:#273e3f;}
+
+/* Navigation rail */
+.sidebar {background:var(--rail);border-right:1px solid #324949;box-shadow:inset -1px 0 rgba(255,255,255,.025);}
+.sidebar-scroll {padding:22px 16px 34px;scrollbar-color:#5c7470 transparent;}
+.sb-group {border-bottom:1px solid #314644;margin-bottom:19px;padding-bottom:18px;}
+.sb-heading {
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.145em;
+  text-transform:uppercase;
+  color:var(--sand);
+  padding:0 13px 5px;
+  margin:0 0 8px!important;
+}
+.sb-link {
+  font-size:14.5px;
+  color:#c7d0ca;
+  border-left:3px solid transparent;
+  border-radius:5px;
+  padding:9px 12px 9px 14px;
+  font-weight:480;
+  margin:2px 0;
+  transition:background-color .13s,color .13s,border-color .13s;
+}
+.sb-link:hover {background:#2b4342;color:#ffffff;}
+.sb-link.active {
+  background:#304a46;
+  color:#f8f6e8;
+  border-left-color:var(--sand);
+  font-weight:730;
+  box-shadow:inset 0 0 0 1px rgba(219,224,201,.045);
+}
+.sb-child {
+  color:#9fb2aa;
+  font-size:13.8px;
+  border-left:1px solid #4b615d;
+  border-radius:0 5px 5px 0;
+  margin-left:19px;
+  padding:7px 10px 7px 18px;
+}
+.sb-child.active {border-left:2px solid var(--sand);margin-left:19px;padding-left:17px;}
+
+/* Reading surface and page identity */
+.main {background:var(--paper);}
+.main-width {width:min(100%,960px);padding:65px 66px 110px;}
+.page-heading {
+  position:relative;
+  margin:0 0 33px;
+  padding:0 0 26px;
+  border-bottom:1px solid #d5ddd3;
+}
+.page-heading::before {
+  content:none;
+  display:none;
+  color:var(--sand-deep);
+  font-size:10.5px;
+  line-height:1.6;
+  font-weight:800;
+  letter-spacing:.17em;
+  margin-bottom:16px;
+}
+.page-heading::after {
+  content:"";
+  position:absolute;
+  bottom:-1px;
+  left:0;
+  width:64px;
+  height:2px;
+  background:var(--sand);
+}
+h1,h2,h3,h4 {color:#1c302e;}
+h1 {font-size:43px;line-height:1.16;letter-spacing:-.047em;font-weight:750;margin:0 0 9px;}
+.subtitle {font-size:16.5px;color:#607168;line-height:1.6;}
+.article-body {font-size:16px;line-height:1.75;color:#374e46;}
+.article-body p {margin-bottom:19px;}
+.article-body>h2 {
+  font-size:24px;
+  font-weight:740;
+  letter-spacing:-.035em;
+  line-height:1.34;
+  margin:47px 0 18px;
+  padding-top:22px;
+  border-top:1px solid #dce2d9;
+}
+.article-body>h2:first-child {padding-top:0;border-top:0;margin-top:0;}
+.article-body>h3 {font-size:19px;font-weight:720;margin:33px 0 14px;}
+.article-body h2:target,.article-body h3:target {color:#27675c;}
+.article-body strong {color:#223c36;font-weight:710;}
+.article-body li {margin:8px 0;}
+.article-body li::marker {color:#9d8155;}
+.article-body a {color:var(--accent);border-bottom-color:#94b4a8;}
+.article-body a:hover {border-color:var(--accent);}
+.article-body code:not(pre code) {
+  font-family:ui-monospace,'Cascadia Code',Consolas,monospace;
+  background:#eaf0e9;
+  color:#275f54;
+  border:1px solid #dde8dd;
+  padding:2px 5px;
+  border-radius:4px;
+  white-space:nowrap;
+  overflow-wrap:normal;
+  word-break:normal;
+}
+.meta-line {
+  font-size:12px;
+  line-height:1.6;
+  font-weight:740;
+  letter-spacing:.055em;
+  color:#496359;
+  background:#edf2eb;
+  border-left:3px solid #8cab8d;
+  border-radius:0 5px 5px 0;
+  padding:9px 13px;
+  margin:9px 0 18px;
+}
+.callout {border:1px solid #d8e2d6;border-left:4px solid #7eac9a;border-radius:0 8px 8px 0;background:#eff4ee;padding:14px 20px;color:#415b51;}
+.callout.warning {border-color:#e5dac0;border-left-color:#b48a4f;background:#fbf6e9;}
+.callout-head {color:#25423a;}
+.next-step {border-top:1px solid #d5ddd3;}
+
+/* Landing: an understated cover panel followed by a functional index */
+#start .page-heading {
+  isolation:isolate;
+  background:
+    linear-gradient(rgba(145,179,157,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(145,179,157,.06) 1px,transparent 1px),
+    linear-gradient(123deg,#14292b,#28433d);
+  background-size:40px 40px,40px 40px,auto;
+  border:1px solid #37514a;
+  border-bottom:0;
+  border-radius:12px 12px 0 0;
+  padding:43px 43px 14px;
+  margin:0;
+}
+#start .page-heading::before {content:"LAMBS MISSION FRAMEWORK";display:block;color:#dcc398;font-size:11px;letter-spacing:.15em;margin-bottom:19px;}
+#start .page-heading::after {display:none;}
+#start h1 {color:#f7f7ed;font-size:53px;letter-spacing:-.053em;max-width:650px;}
+#start .article-body>p:first-child {
+  background:#28433d;
+  color:#e1eae0;
+  border:1px solid #37514a;
+  border-top:0;
+  border-radius:0 0 12px 12px;
+  padding:5px 43px 40px;
+  margin:0 0 45px;
+  font-size:17px;
+  line-height:1.77;
+  box-shadow:0 11px 27px rgba(29,46,37,.085);
+}
+#start .article-body>h2:first-of-type {border-top:0;padding:0;font-size:22px;letter-spacing:-.025em;margin:0 0 17px;}
+.topic-index {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+  margin:0 0 35px;
+  border-top:0;
+}
+.topic-row {
+  display:block;
+  position:relative;
+  min-width:0;
+  padding:23px 23px 24px;
+  background:#fff;
+  border:1px solid #dbe3da;
+  border-top:3px solid #849d8b;
+  border-radius:7px;
+  box-shadow:0 3px 13px rgba(40,56,45,.035);
+  transition:border-color .12s,box-shadow .12s;
+}
+.topic-row:hover {border-color:#a6beb0;box-shadow:0 5px 17px rgba(40,56,45,.055);}
+.topic-row:nth-child(2) {border-top-color:#b4a276;}
+.topic-row:nth-child(3) {border-top-color:#527c73;}
+.topic-row:nth-child(4) {border-top-color:#718883;}
+.topic-row>strong {display:block;font-size:17px;font-weight:760;line-height:1.4;margin-bottom:14px;color:#203a32;}
+.topic-links {display:flex;align-items:flex-start;flex-direction:column;gap:5px;}
+.article-body .topic-links>a {
+  font-size:14.5px;
+  line-height:1.55;
+  font-weight:550;
+  color:#2c6759;
+  border:0;
+  padding:2px 0;
+}
+.article-body .topic-links>a::before {content:"›";color:#a58d62;font-weight:850;margin-right:9px;font-size:16px;}
+.article-body .topic-links>a:hover {color:#184b40;text-decoration:underline;text-underline-offset:3px;}
+
+/* SQF console */
+.code-shell {
+  margin:21px 0 31px;
+  border-radius:9px;
+  border:1px solid #38504d;
+  background:var(--code);
+  box-shadow:0 7px 17px rgba(12,25,27,.075);
+  overflow:hidden;
+}
+.code-head {
+  padding:9px 15px;
+  border-bottom:1px solid #304b49;
+  background:#1d3535;
+  color:#a9c0b5;
+  font-size:11.5px;
+  letter-spacing:.07em;
+}
+.code-tag {font-weight:800;color:#d4c39f;text-transform:uppercase;}
+.code-tag::before {content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#89b7a1;margin-right:10px;vertical-align:1px;}
+.copy-btn {
+  border:1px solid #4a6460;
+  border-radius:5px;
+  background:#2b4846;
+  padding:5px 11px;
+  color:#f0ebdd;
+  font-size:11.5px;
+  font-weight:680;
+  letter-spacing:0;
+}
+.copy-btn:hover {background:#3b5e58;color:#fff;border-color:#6e9284;}
+.copy-btn.copied {color:#bdf1d2;border-color:#579b7a;background:#254b40;}
+.article-body pre {background:var(--code);color:#ebf1e8;padding:21px 22px 24px;font-size:13.6px;line-height:1.78;scrollbar-color:#46645e #182b2e;}
+.article-body pre .c1 {color:#94b6a3;font-style:italic;}
+.article-body pre .s2 {color:#bbdba9;}
+.article-body pre .mi {color:#efbd83;}
+.article-body pre .k {color:#96d5ca;}
+.article-body pre .nf {color:#d8e3c5;}
+
+/* Reference tables */
+.table-wrap {
+  border:1px solid #d4ddd3;
+  background:#fff;
+  border-radius:9px;
+  margin:20px 0 31px;
+  box-shadow:0 2px 10px rgba(36,58,43,.035);
+  overflow:auto;
+}
+table {color:#354e45;font-size:14.3px;line-height:1.58;}
+thead {background:#e9efe9;}
+th {
+  background:#e9efe9;
+  color:#314b40;
+  font-size:11.5px;
+  line-height:1.45;
+  letter-spacing:.065em;
+  text-transform:uppercase;
+  font-weight:810;
+  border-bottom:1px solid #d5dfd4;
+}
+th,td {padding:13px 16px;border-bottom:1px solid #e9ede6;}
+tbody tr:nth-child(even) {background:#fafbf8;}
+tbody tr:hover {background:#f1f5ee;}
+td:first-child {font-weight:610;color:#2e4940;}
+.arg-number {color:#8e7147;font-weight:750;}
+.article-body table code:not(pre code) {background:none;border:0;padding:0;color:#2f675a;}
+.article-body .table-wrap {max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;}
+.article-body .table-wrap table {min-width:540px;}
+
+/* Technical sketch */
+.eden-example {border:1px solid #d3dfd5;border-radius:9px;background:#edf2ec;box-shadow:0 3px 14px rgba(27,46,30,.045);}
+.eden-example figcaption {background:#f7f9f4;color:#567065;border-top:1px solid #dbe5d9;}
+.eden-example .game-logic {fill:#427b6b;}
+.eden-example .scene-label {fill:#2e4e44;}
+.eden-example .scene-small {fill:#61796b;}
+.eden-example .scene-title {fill:#587368;}
+
+/* Search and confirmation UI */
+.search-dialog {border:1px solid #cdd9ce;border-radius:11px;background:#fcfdfa;box-shadow:0 24px 78px rgba(6,23,22,.29);}
+.search-dialog::backdrop {background:#091b1cb8;}
+.search-row {border-bottom:1px solid #dce4db;}
+.search-row svg {color:#598473;}
+.search-row input {color:#1b3730;}
+.search-close {background:#e9eee6;border:1px solid #d5dfd2;color:#455e52;font-weight:700;}
+.search-result {border-left:3px solid transparent;border-radius:5px;color:#24443a;}
+.search-result:hover,.search-result:focus {background:#eff5ed;border-left-color:#6b9c83;}
+.search-page,.search-excerpt {color:#697d71;}
+.search-foot {border-top:1px solid #dce4db;background:#f3f5f0;color:#657b70;}
+.toast {background:#1b3835;color:#f4f8ee;border:1px solid #416457;border-radius:7px;box-shadow:0 7px 22px rgba(4,20,19,.18);}
+
+/* Narrow layouts: preserve the reading width and tap targets. */
+@media (max-width:1160px) {
+  .main-width {padding-left:48px;padding-right:48px;}
+  .top {padding-left:24px;padding-right:24px;}
+}
+@media (max-width:880px) {
+  :root {--top:68px;}
+  .top {padding:0 18px;}
+  .mark {margin:0;padding:0;border-right:0;font-size:20px;}
+  .mark svg {width:36px;height:36px;}
+  .top-left {gap:13px;}
+  .mobile-btn {display:block;}
+  .top-search {width:44px;height:44px;padding:0;justify-content:center;}
+  .top-search .search-label,.top-search kbd {display:none;}
+  .sidebar {width:min(340px,88vw);box-shadow:14px 0 35px rgba(4,22,21,.2);}
+  .drawer-cover.open {background:#0c201fb3;}
+  .main-width {padding:48px 36px 80px;}
+  h1 {font-size:39px;}
+}
+@media (max-width:600px) {
+  .topic-index {grid-template-columns:1fr;gap:11px;}
+  .topic-row {padding:20px 20px 21px;}
+  .topic-links {gap:3px;}
+}
+@media (max-width:520px) {
+  .top {padding:0 14px;}
+  .main-width {padding:34px 20px 72px;}
+  .page-heading {margin-bottom:28px;padding-bottom:23px;}
+  .page-heading::before {font-size:10px;margin-bottom:13px;letter-spacing:.135em;}
+  h1 {font-size:34px;letter-spacing:-.04em;}
+  .article-body {font-size:15.7px;line-height:1.73;}
+  .article-body>h2 {font-size:22px;margin-top:37px;padding-top:19px;}
+  .article-body>h3 {font-size:18px;}
+  #start .page-heading {padding:29px 24px 7px;}
+  #start h1 {font-size:40px;}
+  #start .page-heading::before {font-size:9px;letter-spacing:.13em;}
+  #start .article-body>p:first-child {padding:8px 24px 29px;margin-bottom:36px;font-size:15.7px;}
+  #start .article-body>h2:first-of-type {font-size:21px;}
+  .article-body pre {font-size:12.5px;padding:18px 15px 21px;}
+  .code-head {padding:8px 12px;}
+  th,td {padding:11px 12px;}
+  .topic-row>strong {font-size:16px;}
+  .article-body .topic-links>a {font-size:14.5px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  * {animation-duration:0s!important;transition-duration:0s!important;}
+}
+@media print {
+  body,.main {background:#fff!important;color:#111!important;}
+  .top,.sidebar,.drawer-cover,.code-head {display:none!important;}
+  .page-heading::before,.page-heading::after,.sidebar-scroll::before {display:none!important;}
+  #start .page-heading,#start .article-body>p:first-child {background:#fff!important;color:#111!important;border:0!important;box-shadow:none!important;padding:0!important;}
+  #start h1 {color:#111!important;}
+  .main-width {padding:0!important;width:100%!important;}
+  .article {display:block!important;break-after:page;}
+  .article-body pre {white-space:pre-wrap;word-break:break-word;}
+  .topic-index {display:block;}
+  .topic-row {break-inside:avoid;}
+}
+
+
+/* Overview layout: a compact starting point above three naturally sized topic cards. */
+#start .article-body>p:first-child {
+  border-bottom:0;
+  border-radius:0;
+  padding-bottom:15px;
+  margin-bottom:0;
+  box-shadow:none;
+}
+#start .start-shortcuts {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:8px 25px;
+  padding:0 43px 34px;
+  margin:0 0 45px;
+  background:#28433d;
+  border:1px solid #37514a;
+  border-top:0;
+  border-radius:0 0 12px 12px;
+  box-shadow:0 11px 27px rgba(29,46,37,.085);
+}
+#start .article-body .start-shortcuts a {
+  color:#f4edd9;
+  background:transparent;
+  border:0;
+  border-bottom:1px solid rgba(220,195,152,.55);
+  padding:4px 0;
+  font-size:14.5px;
+  font-weight:680;
+  line-height:1.55;
+  text-decoration:none;
+  text-underline-offset:4px;
+}
+#start .article-body .start-shortcuts a::before {
+  content:"›";
+  color:#dcc398;
+  font-weight:800;
+  margin-right:9px;
+  font-size:17px;
+}
+#start .article-body .start-shortcuts a:hover {
+  color:#fff;
+  border-bottom-color:#fff;
+}
+#start .topic-index {align-items:start;}
+#start .topic-column {display:flex;flex-direction:column;gap:14px;min-width:0;}
+#start .topic-index .topic-row--configuration {border-top-color:#b4a276;}
+#start .topic-index .topic-row--ai {border-top-color:#527c73;}
+#start .topic-index .topic-row--support {border-top-color:#718883;}
+@media (max-width:600px) {
+  #start .topic-column {gap:11px;}
+}
+@media (max-width:520px) {
+  #start .article-body>p:first-child {padding-bottom:13px;margin-bottom:0;}
+  #start .start-shortcuts {padding:0 24px 25px;margin-bottom:36px;gap:5px 19px;}
+}
+@media print {
+  #start .start-shortcuts {background:#fff!important;color:#111!important;border:0!important;box-shadow:none!important;padding:0 0 20px!important;}
+  #start .article-body .start-shortcuts a {color:#111!important;}
+  #start .topic-index {display:block;}
+  #start .topic-column {display:block;}
+}
+
+/* GitHub Pages documentation links */
+.top .github-link {color:#e3ece4;border:1px solid #48665c;padding:6px 11px;border-radius:6px}
+.top .github-link:hover {color:#fff;border-color:#b7c5ae;text-decoration:none}
+@media(max-width:880px){.top .github-link{display:none}}
+</style></head>
+<body><header class="top"><div class="top-left"><button aria-controls="sidebar" aria-expanded="false" aria-label="Open navigation" class="mobile-btn" id="menuButton" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"></path></svg></button><a class="mark" href="#start"><svg aria-hidden="true" fill="none" viewBox="0 0 48 48"><rect x="0.75" y="0.75" width="46.5" height="46.5" rx="10.5" fill="#294840" stroke="#5C786B" stroke-width="1.5"/>
+<path d="M12.5 33V24.5H23.5V15.5H29" fill="none" stroke="#F4F2E6" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+<circle cx="12.5" cy="33" r="3.7" fill="#DDB77C" stroke="#294840" stroke-width="1.2"/>
+<path d="M35 9L41.5 15.5L35 22L28.5 15.5Z" fill="#DDB77C"/>
+<circle cx="35" cy="15.5" r="2" fill="#294840"/></svg><span>LMF</span></a><span class="doc-label">Mission Maker Guide | LMF 2.0</span></div><div class="top-right"><a class="github-link" href="https://github.com/alexandertoftesund/lambs-mission-framework" target="_blank" rel="noopener noreferrer">GitHub</a><button aria-label="Search guide" class="top-search" id="searchButton" type="button"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.6"></circle><path d="m16 16 5 5"></path></svg><span class="search-label">Search guide...</span><kbd>/</kbd></button></div></header>
+<aside aria-label="Guide sections" class="sidebar" id="sidebar"><nav class="sidebar-scroll"><div aria-label="Getting started" class="sb-group" role="group"><div class="sb-heading">Getting started</div><a class="sb-link" data-page="start" href="#start">Overview</a><a class="sb-link" data-page="installation" href="#installation">Installation</a><a class="sb-link" data-page="first-mission" href="#first-mission">Your first mission</a></div><div aria-label="Configuration" class="sb-group" role="group"><div class="sb-heading">Configuration</div><a class="sb-link" data-page="configuration" href="#configuration">Mission settings</a><a class="sb-link" data-page="equipment" href="#equipment">Player equipment</a><a class="sb-link" data-page="ai-equipment" href="#ai-equipment">AI equipment</a><a class="sb-link" data-page="briefing" href="#briefing">Briefing</a></div><div aria-label="AI" class="sb-group" role="group"><div class="sb-heading">AI</div><a class="sb-link" data-page="ai-spawning" href="#ai-spawning">AI spawning</a><a class="sb-link sb-child" data-page="garrison" href="#garrison">Garrison</a><a class="sb-link sb-child" data-page="patrol" href="#patrol">Patrol</a><a class="sb-link sb-child" data-page="infantry-qrf" href="#infantry-qrf">Infantry QRF</a><a class="sb-link sb-child" data-page="hunters" href="#hunters">Hunters</a><a class="sb-link sb-child" data-page="vehicle-qrf" href="#vehicle-qrf">Vehicle QRF</a><a class="sb-link sb-child" data-page="para-qrf" href="#para-qrf">Paradrop QRF</a><a class="sb-link" data-page="ai-tasks" href="#ai-tasks">AI tasks</a></div><div aria-label="Systems &amp; support" class="sb-group" role="group"><div class="sb-heading">Systems &amp; support</div><a class="sb-link" data-page="passenger-paradrop" href="#passenger-paradrop">Passenger paradrop</a><a class="sb-link" data-page="fire-support" href="#fire-support">Fire support</a><a class="sb-link" data-page="supply-drop" href="#supply-drop">Supply Drop</a><a class="sb-link" data-page="forward-deploy" href="#forward-deploy">Forward Deploy</a><a class="sb-link" data-page="bft" href="#bft">Blue Force Tracking</a><a class="sb-link" data-page="utilities" href="#utilities">Messages &amp; utilities</a></div></nav></aside><div class="drawer-cover" id="drawerCover"></div>
+<main class="main"><div class="main-width"><article class="article active" data-page="start" data-title="Overview" id="start"><div class="page-heading"><h1>Getting started</h1></div><div class="article-body">
+<p>LMF lets you add defenders, patrols and reinforcements to an Arma 3 mission without building the AI systems yourself. It also handles player loadouts, respawn, supplies and Blue Force Tracking. Pick a topic below, or start with the short example mission.</p>
+<nav class="start-shortcuts" aria-label="Start here">
+<a href="#installation">Installation</a>
+<a href="#first-mission">Your first mission</a>
+</nav>
+<h2 id="start-explore">Find what you need</h2>
+<nav aria-label="Guide topics" class="topic-index">
+<div class="topic-column">
+<div class="topic-row topic-row--configuration">
+<strong>Configuration</strong>
+<div class="topic-links">
+<a href="#configuration">Mission settings</a>
+<a href="#equipment">Player equipment</a>
+<a href="#ai-equipment">AI equipment</a>
+<a href="#briefing">Briefing</a>
+</div>
+</div>
+<div class="topic-row topic-row--ai">
+<strong>AI</strong>
+<div class="topic-links">
+<a href="#ai-spawning">AI spawning</a>
+<a href="#ai-tasks">AI tasks</a>
+</div>
+</div>
+</div>
+<div class="topic-column">
+<div class="topic-row topic-row--support">
+<strong>Systems &amp; support</strong>
+<div class="topic-links">
+<a href="#passenger-paradrop">Passenger paradrop</a>
+<a href="#fire-support">Fire support</a>
+<a href="#supply-drop">Supply Drop</a><a href="#forward-deploy">Forward Deploy</a>
+<a href="#bft">Blue Force Tracking</a>
+<a href="#utilities">Messages &amp; utilities</a>
+</div>
+</div>
+</div>
+</nav>
+</div></article><article class="article" data-page="installation" data-title="Installation" id="installation">
+<div class="page-heading"><h1>Installation</h1></div>
+<div class="article-body">
+<h2 id="installation-requirements">Requirements</h2>
+<p>Arma 3 2.22 or newer, CBA A3, ACE3 and ACRE2. LAMBS Danger FSM is recommended; ZEN is optional.</p>
+<p><strong>Example mission equipment:</strong> The included example mission uses LAMBS Core reskins in its default player loadouts. LAMBS Core is not required by LMF itself. Mission makers outside the LAMBS community can replace these classnames in <code>settings/cfg_Player.sqf</code> with their own equipment or Arma 3 gear.</p>
+<h2 id="installation-copy">Start a new mission</h2>
+<p>The LMF Release includes a ready-to-use Arma 3 example mission. Its <code>mission.sqm</code> contains preconfigured Eden objects and markers, alongside <code>description.ext</code>, <code>framework/</code>, <code>settings/</code> and the mission's other integration files.</p>
+<ol>
+<li>Download LMF from <a href="https://github.com/alexandertoftesund/lambs-mission-framework/releases" rel="noopener noreferrer" target="_blank">GitHub Releases</a>.</li>
+<li>Copy the complete included example mission into your Arma 3 missions folder.</li>
+<li>Open the example mission in Eden Editor.</li>
+<li>Configure the four files in <code>settings/</code>: <code>cfg_Mission.sqf</code> for mission options, <code>cfg_Player.sqf</code> for player equipment, <code>cfg_AI.sqf</code> for the enemy faction and AI equipment, and <code>cfg_Briefing.sqf</code> for the briefing.</li>
+<li>Move, customize or remove optional Eden building blocks, then build your mission. Keep the objects and markers needed for the features you use.</li>
+</ol>
+<h3 id="installation-eden-building-blocks">Included Eden building blocks</h3>
+<p>The example mission already contains these components. The names below are <strong>Variable Names</strong> assigned to ordinary Eden objects, not special object types or modules.</p>
+<div class="table-wrap"><table><thead><tr><th>Variable name</th><th>Used for</th></tr></thead><tbody>
+<tr><td><code>crateRoles</code></td><td>ACE menu for changing player roles.</td></tr>
+<tr><td><code>supplySpawner</code> + <code>supplyPad</code></td><td>Supply menu and the position where crates appear.</td></tr>
+<tr><td><code>groundSpawner</code> + <code>groundPad</code></td><td>Ground vehicle menu and its spawn position.</td></tr>
+<tr><td><code>airSpawner</code> + <code>airPad</code></td><td>Aircraft menu and its spawn position.</td></tr>
+<tr><td><code>respawn</code> (map marker)</td><td>Required for <strong>player-requested Supply Drops</strong>, not every mission.</td></tr>
+</tbody></table></div>
+<p>These building blocks are optional unless you use the corresponding feature. You can reposition or remove them in Eden; keep each spawner and its pad together. Other standard LMF objects and markers are also included in the example mission.</p>
+<p>The Release download also includes optional Player and AI loadout examples in <code>examples/loadouts/</code>, outside the playable mission folder.</p>
+<h2 id="installation-existing">Adding LMF to an existing mission?</h2>
+<ol>
+<li>Keep your existing <code>mission.sqm</code>, <code>description.ext</code>, mission scripts and other mission-specific files. Do not replace them with the example mission's files.</li>
+<li>Copy the <code>framework/</code> and <code>settings/</code> folders from the Release into your mission folder. Preserve any settings you have already customized.</li>
+<li>Merge LMF function registration, event handlers and notifications into your existing <code>description.ext</code> without replacing your settings.</li>
+<li>In Eden Editor, copy the building blocks you need from the example mission, or configure ordinary objects manually with the Variable Names above. Avoid duplicate variable names.</li>
+<li>Adapt <code>settings/cfg_Mission.sqf</code>, <code>cfg_Player.sqf</code>, <code>cfg_AI.sqf</code> and <code>cfg_Briefing.sqf</code> to your mission.</li>
+</ol>
+<p>The <code>description.ext</code> integration needs <code>CfgFunctions</code> (including <code>framework/functions.hpp</code>), <code>Extended_PreInit_EventHandlers</code>, <code>Extended_PostInit_EventHandlers</code>, <code>Extended_InitPost_EventHandlers</code> and the <code>CfgNotifications.hpp</code> include in <code>framework/notifications/</code>. Merge existing class entries instead of defining them twice.</p>
+<p>Your existing mission scripts can stay in place. If your <code>description.ext</code> enables <code>cba_settings_hasSettingsFile = 1</code>, include and configure <code>CBA_settings.sqf</code>. Add <code>onFlare.sqs</code> only if you want LMF's flare reaction.</p>
+</div></article><article class="article" data-page="first-mission" data-title="Your First Mission" id="first-mission"><div class="page-heading"><h1>Your first mission</h1></div><div class="article-body">
+<p>Create a village with a garrison, a patrol and reinforcements. This example uses three Game Logics to mark where the AI should appear.</p><p>Configure the enemy unit classnames in <code>settings/cfg_AI.sqf</code> before spawning AI.</p>
+<h2 id="first-mission-eden">1. Mark three spawn positions in Eden</h2>
+<p>Place three empty <strong>Game Logics</strong> and set their <strong>Variable Name</strong> in Eden:</p>
+<ul>
+<li><code>garrison_1</code> – place it inside the village, near buildings.</li>
+<li><code>patrol_1</code> – place it just outside the village.</li>
+<li><code>qrf_1</code> – place it farther away, out of sight of players.</li>
+</ul>
+<figure aria-label="Example spawn positions: garrison_1 in the village, patrol_1 nearby, qrf_1 farther away." class="eden-example">
+<svg aria-labelledby="example-map-title example-map-desc" role="img" viewbox="0 0 760 280" xmlns="http://www.w3.org/2000/svg">
+<title id="example-map-title">Three example spawn positions in Eden</title>
+<desc id="example-map-desc">Schematic placement: garrison_1 in a cluster of buildings, patrol_1 near the village, qrf_1 farther away.</desc>
+<rect fill="#f7f9fb" height="280" width="760"></rect>
+<path d="M0 210 C130 175 210 208 305 178 S540 110 760 156" fill="none" stroke="#e4eaf0" stroke-width="32"></path>
+<path d="M0 210 C130 175 210 208 305 178 S540 110 760 156" fill="none" stroke="#fff" stroke-width="26"></path>
+<path d="M0 210 C130 175 210 208 305 178 S540 110 760 156" fill="none" stroke="#dae3eb" stroke-dasharray="6 9" stroke-width="1.5"></path>
+<circle cx="286" cy="117" fill="#ebf2ed" r="88" stroke="#cfddd2" stroke-dasharray="5 7" stroke-width="1.5"></circle>
+<g fill="#c5d0c8" stroke="#9fafab" stroke-width="1.4">
+<rect height="29" rx="3" transform="rotate(-10 235 69)" width="40" x="215" y="55"></rect>
+<rect height="31" rx="3" transform="rotate(9 291 58)" width="45" x="268" y="43"></rect>
+<rect height="27" rx="3" transform="rotate(-8 335 99)" width="38" x="316" y="85"></rect>
+<rect height="26" rx="3" transform="rotate(5 223 134)" width="33" x="206" y="121"></rect>
+<rect height="27" rx="3" transform="rotate(6 290 164)" width="43" x="269" y="151"></rect>
+<rect height="25" rx="3" transform="rotate(6 364 143)" width="37" x="345" y="130"></rect>
+</g>
+<g fill="none" stroke="#2e759e" stroke-dasharray="4 5" stroke-width="1.5"><path d="M286 113 L395 59"></path><path d="M128 197 L60 145"></path><path d="M615 213 L569 249"></path></g>
+<circle class="game-logic" cx="286" cy="113" r="9"></circle>
+<circle class="game-logic" cx="128" cy="197" r="9"></circle>
+<circle class="game-logic" cx="615" cy="213" r="9"></circle>
+<g class="scene-label"><text x="398" y="54">garrison_1</text><text x="18" y="139">patrol_1</text><text x="500" y="264">qrf_1</text></g>
+</svg>
+</figure><p>Game Logics are just one option. LMF spawners can also use other Eden objects or <code>[x,y,z]</code> positions. A trigger can serve as a spawn position too.</p>
+<h2 id="first-mission-script">2. Add the script</h2>
+<p>Open <code>init.sqf</code> in your mission folder (create it if needed) and add:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="k">if</span> (<span class="k">isServer</span>) <span class="k">then</span> {
+    <span class="c1">// 8 soldiers defending the village</span>
+    [garrison_1, <span class="s2">"SQUAD"</span>, <span class="mi">75</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnGarrison</span>;
+
+    <span class="c1">// 4 soldiers patrolling within 200 m</span>
+    [patrol_1, patrol_1, <span class="s2">"TEAM"</span>, <span class="mi">200</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnPatrol</span>;
+
+    <span class="c1">// 4 soldiers with a GUARD task</span>
+    [qrf_1, <span class="s2">"TEAM"</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnInfantryQrf</span>;
+};
+</code></pre>
+<p><code>SQUAD</code> creates eight soldiers and <code>TEAM</code> creates four. The values <code>75</code> and <code>200</code> set the garrison and patrol radii in metres.</p>
+<h2 id="first-mission-reinforcements">3. Optional: add reinforcements</h2>
+<p>To create three QRF groups over time instead of one, replace the third line with:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[qrf_1, <span class="s2">"TEAM"</span>, <span class="mi">3</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnInfantryQrf</span>; <span class="c1">// 3 groups total</span>
+</code></pre>
+<p>After the previous QRF is eliminated, LMF can send the next group. Replacement waves stop if a player on the ground is within 500 m of <code>qrf_1</code>. See <a href="#ai-spawning-spawn-once-or-use-waves">Wave rules</a>.</p>
+</div></article><article class="article" data-page="configuration" data-title="Configuration" id="configuration"><div class="page-heading"><h1>Mission settings</h1><p class="subtitle">Mission options, vehicles and supplies.</p></div><div class="article-body">
+<div class="table-wrap"><table><thead><tr><th>File</th><th>Responsibility</th></tr></thead><tbody><tr><td><a href="#configuration"><code>settings/cfg_Mission.sqf</code></a></td><td>Mission name, enemy side, warmup, respawn, BFT, vehicles and supplies.</td></tr><tr><td><a href="#equipment"><code>settings/cfg_Player.sqf</code></a></td><td>Player roles, clothing, weapons and ammunition.</td></tr><tr><td><a href="#ai-equipment"><code>settings/cfg_AI.sqf</code></a></td><td>Enemy infantry, vehicle types, equipment and skill.</td></tr><tr><td><a href="#briefing"><code>settings/cfg_Briefing.sqf</code></a></td><td>Briefing text.</td></tr></tbody></table></div>
+<h2 id="configuration-mission-settings">General settings</h2>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>Meaning</th></tr></thead><tbody><tr><td><code>lmf_missionTitle</code></td><td>Title shown at the start.</td></tr><tr><td><code>lmf_missionSubtitle</code></td><td>Optional subtitle. Use <code>""</code> to hide it.</td></tr><tr><td><code>lmf_author</code></td><td>Author shown in the briefing.</td></tr><tr><td><code>lmf_enemySide</code></td><td>Side used for enemy AI: <code>WEST</code>, <code>EAST</code> or <code>INDEPENDENT</code>.</td></tr><tr><td><code>lmf_oldSchoolMap</code></td><td>When enabled, disables sharing map markers and drawings, and hides new markers placed by others. BFT is controlled separately.</td></tr></tbody></table></div>
+<h2 id="configuration-warmup-and-respawn">Warmup and respawn</h2>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>What it does</th></tr></thead><tbody><tr><td><code>lmf_warmup</code></td><td>Turns warmup on or off.</td></tr><tr><td><code>lmf_maxWarmupTime</code></td><td>Mission time when warmup ends, in <code>"MM:SS"</code> format. Use <code>""</code> if an admin should end it manually.</td></tr><tr><td><code>lmf_respawnType</code></td><td><code>"OFF"</code>: no normal respawn. <code>"WAVE"</code>: regular respawn waves. <code>"TICKETS"</code>: respawn waves with a limit per player.</td></tr><tr><td><code>lmf_respawnTime</code></td><td>Seconds between respawn waves. Use a number above 0.</td></tr><tr><td><code>lmf_respawnTickets</code></td><td>How many times each player can respawn in <code>TICKETS</code> mode. Use a whole number (0 or more).</td></tr></tbody></table></div>
+<p><code>WAVE</code> respawns players at set times. With a 30-second interval, waves occur at roughly 00:30, 01:00 and 01:30 of mission time, regardless of when someone dies. <code>TICKETS</code> uses the same timing but limits each player’s respawns. The count may reset when a player reconnects.</p>
+<p>If a respawn setting is invalid, LMF turns off normal respawning. Admin commands can still respawn players.</p>
+<h2 id="configuration-player-equipment">Player equipment</h2>
+<div class="table-wrap"><table><thead><tr><th>Setting</th><th>Meaning</th></tr></thead><tbody><tr><td><code>lmf_playerGear</code></td><td>Applies LMF loadouts automatically. If disabled, players respawn with the equipment they had when the mission started.</td></tr><tr><td><code>lmf_keepRole</code></td><td>With LMF loadouts enabled: <code>true</code> gives players their original Eden role on respawn; <code>false</code> gives them Rifleman.</td></tr><tr><td><code>lmf_personalArsenal</code></td><td>Lets players customize their role’s equipment in ACE Arsenal during warmup. Requires both <code>lmf_playerGear</code> and <code>lmf_warmup</code>.</td></tr><tr><td><code>lmf_personalRadio</code></td><td>Gives every player the configured personal radio.</td></tr><tr><td><code>lmf_pistolAll</code></td><td>Gives everyone a pistol when enabled. Otherwise, only the configured roles receive one.</td></tr><tr><td><code>lmf_riflemanLat</code></td><td>Gives Riflemen the configured light anti-tank weapon.</td></tr><tr><td><code>lmf_playerMaps</code></td><td>Who receives a map and compass: <code>0</code> everyone, <code>1</code> Platoon Leader, Platoon Sergeant, Squad Leader, Vehicle Platoon Leader, Vehicle Commander, Helicopter Pilot and Pilot, <code>2</code> nobody.</td></tr><tr><td><code>lmf_playerGps</code></td><td>Who receives a GPS: <code>0</code> everyone, <code>1</code> Platoon Leader, Platoon Sergeant, Squad Leader, Vehicle Platoon Leader, Vehicle Commander, Helicopter Pilot and Pilot, <code>2</code> nobody.</td></tr><tr><td><code>lmf_playerNvg</code></td><td>Who receives night-vision goggles: <code>0</code> everyone, <code>1</code> pilots, <code>2</code> nobody.</td></tr><tr><td><code>lmf_camoCoef</code></td><td>Camouflage setting. Higher values make players easier for AI to spot.</td></tr><tr><td><code>lmf_jipTp</code></td><td>Offers a player joining an ongoing mission one teleport to a suitable friendly player shortly after joining.</td></tr></tbody></table></div>
+<h2 id="configuration-vehicles">Vehicles</h2>
+<p>List the ground vehicles and aircraft offered in the spawn menus:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="nf">lmf_groundVehicles</span> = [<span class="s2">"B_MRAP_01_F"</span>, <span class="s2">"B_Quadbike_01_F"</span>];
+<span class="nf">lmf_airVehicles</span> = [<span class="s2">"B_Heli_Light_01_F"</span>, <span class="s2">"B_Heli_Transport_01_F"</span>];
+</code></pre>
+<p>For the vehicle menus, use the <code>groundSpawner</code> / <code>groundPad</code> and <code>airSpawner</code> / <code>airPad</code> objects from the starter mission. In your own Eden setup, assign these as <strong>Variable Names</strong> to ordinary objects. The pads mark where vehicles appear.</p>
+<h2 id="configuration-supply-crates">Supply crates</h2><p>For the Supply Spawner menu, use the starter mission’s <code>supplySpawner</code> and <code>supplyPad</code> objects. The first holds the ACE menu; the second is where crates appear. In an existing mission, give ordinary Eden objects these <strong>Variable Names</strong>.</p>
+<div class="table-wrap"><table><thead><tr><th>Category</th><th>Setting</th></tr></thead><tbody><tr><td>LARGE</td><td><code>lmf_supLarge</code></td></tr><tr><td>SMALL</td><td><code>lmf_supSmall</code></td></tr><tr><td>EXPLOSIVES</td><td><code>lmf_supExplosives</code></td></tr><tr><td>MEDICAL</td><td><code>lmf_supMedical</code></td></tr><tr><td>VEHICLE</td><td><code>lmf_supVehicle</code></td></tr></tbody></table></div>
+<p>Choose a crate classname for each category in <code>settings/cfg_Mission.sqf</code>. Use <code>""</code> to leave a category out. Give each enabled category a different classname.</p>
+<p>Place a crate with one of your configured classnames in Eden, or spawn it from the Supply Spawner menu. With <code>lmf_playerGear = true</code>, LMF fills these crates automatically, once per crate. When disabled, the menus still spawn your crates with their existing cargo.</p>
+<h3 id="configuration-add-weapon-to-crate">Add Weapon to Crate</h3>
+<p>Add weapons from <code>settings/cfg_Player.sqf</code> to an existing crate, complete with mounted attachments and ammunition.</p>
+<p>In Eden, place an ordinary ammunition box and set its <strong>Variable Name</strong> to <code>marksmanCrate</code>. Add this to <code>initServer.sqf</code>:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[marksmanCrate, <span class="s2">"DMR"</span>, <span class="mi">1</span>, <span class="mi">8</span>] <span class="k">call</span> <span class="nf">lmf_supplyCrates_fnc_addWeaponToCrate</span>;
+</code></pre>
+<p>This adds one DMR with mounted attachments, one loaded magazine and eight extra magazines. The <code>DMR</code> category does not require a separate Marksman player role.</p>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody>
+<tr><td><span class="arg-number">0</span></td><td>Existing cargo crate or container, identified by its Eden Variable Name</td><td>Object · required</td></tr>
+<tr><td><span class="arg-number">1</span></td><td>Exact uppercase weapon category from <code>cfg_Player.sqf</code>, such as <code>"DMR"</code>, <code>"LMG"</code> or <code>"RIFLE_GL"</code></td><td>String · required</td></tr>
+<tr><td><span class="arg-number">2</span></td><td>Number of assembled weapons, each with one full magazine</td><td>Positive whole number · default <code>1</code></td></tr>
+<tr><td><span class="arg-number">3</span></td><td>Total extra magazines added to the crate, <strong>not per weapon</strong></td><td>Whole number (0 or more) · default <code>0</code></td></tr>
+</tbody></table></div>
+<p>To add two weapon categories to the same crate (with Eden Variable Name <code>weaponCrate</code>):</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[weaponCrate, <span class="s2">"RIFLE"</span>, <span class="mi">1</span>, <span class="mi">8</span>] <span class="k">call</span> <span class="nf">lmf_supplyCrates_fnc_addWeaponToCrate</span>;
+[weaponCrate, <span class="s2">"PISTOL"</span>, <span class="mi">1</span>, <span class="mi">4</span>] <span class="k">call</span> <span class="nf">lmf_supplyCrates_fnc_addWeaponToCrate</span>;
+</code></pre>
+<p>Run the function on the <strong>server</strong>, for example in <code>initServer.sqf</code>. Its cargo changes are shared with all players, including players joining in progress (JIP). Each call <strong>adds</strong> equipment without clearing existing cargo.</p>
+<p>Use a regular crate with a different classname from the five automatically filled LMF Supply Crates, which may overwrite its contents. The selected category needs a configured weapon and compatible normal ammunition; empty selections can prevent an addition. Tracer and underbarrel grenade-launcher ammunition are not included.</p>
+<h2 id="configuration-supply-drop">Supply Drop</h2>
+<ul>
+<li><code>lmf_supplyDropLimit</code>: total number of Supply Drops players can request. <code>0</code> turns off player requests.</li>
+<li><code>lmf_supplyDropAircraft</code>: the plane or helicopter used to deliver supplies.</li>
+<li><code>lmf_supplyDropVehicles</code>: lets players request vehicles from <code>lmf_groundVehicles</code>.</li>
+</ul>
+<p>See <a href="#supply-drop">Supply Drop</a> for scripted deliveries and player requests.</p>
+</div></article><article class="article" data-page="equipment" data-title="Player Equipment" id="equipment"><div class="page-heading"><h1>Player equipment</h1><p class="subtitle">Player roles, loadouts and weapon pools.</p></div><div class="article-body"><p>Configure player roles and equipment in <code>settings/cfg_Player.sqf</code>.</p>
+<p>Optional ready-made presets are supplied in <code>examples/loadouts/Player/</code>. Copy one into your mission as <code>settings/cfg_Player.sqf</code>, then check the required mods and player unit types in Eden.</p>
+<h2 id="equipment-roles">Roles</h2>
+<p>LMF offers 20 configurable player roles, each with its own equipment and display name. At mission start, LMF can identify a player’s role from the unit type assigned to their slot in Eden.</p><p>In <code>settings/cfg_Player.sqf</code>, each role has a unit classname, a name shown to players and a rank. The classname must match the Eden unit type; give each role a different classname. An unconfigured unit type receives no automatic LMF role.</p><pre class="syntax"><code class="language-sqf" data-lang="sqf">private _medic = [<span class="s2">"B_medic_F"</span>, <span class="s2">"Medic"</span>, <span class="s2">"CORPORAL"</span>]; <span class="c1">// Example: Eden Medic unit becomes the Medic role</span>
+</code></pre>
+<p>The starter mission’s <code>crateRoles</code> object lets players change roles through ACE interaction. You can move it or provide another Eden object with the same <strong>Variable Name</strong>. The new role applies the equipment defined in <code>cfg_Player.sqf</code>.</p>
+<h2 id="equipment-clothing-and-weapon-choices">Clothing and weapon choices</h2>
+<p>Give each role a selection of uniforms, vests, helmets, facewear and backpacks. For clothing, <code>[""]</code> uses the fallback role’s choices; <code>[]</code> means no choices.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">_medVest = [<span class="s2">""</span>];   <span class="c1">// Inherits Rifleman vest pool</span>
+_vpsgVest = [<span class="s2">""</span>];  <span class="c1">// Vehicle Commander inherits VPL vest</span>
+</code></pre>
+<p>Vehicle Commander and Vehicle Crew use Vehicle Platoon Commander as their fallback for clothing and weapon category; other roles generally fall back to Rifleman.</p>
+<p>Use one of these exact weapon-category names:</p>
+<p><code>FLARE_GUN</code> · <code>PISTOL</code> · <code>SMG</code> · <code>CARBINE</code> · <code>RIFLE</code> · <code>RIFLE_GL</code> · <code>DMR</code> · <code>LMG</code> · <code>MMG</code> · <code>LAT</code> · <code>MAT</code></p>
+<p>Configure weapons, magazines and attachments for each category in the same file. Supply crates take the <strong>first</strong> entry from their configured item lists.</p>
+<h2 id="equipment-respawn-and-personal-arsenal">Respawn and Personal Arsenal</h2>
+<ul><li>With LMF loadouts enabled, respawn gives the player their original Eden role or Rifleman, depending on the <code>lmf_keepRole</code> setting. Switching roles during the mission does not change that respawn choice.</li>
+<li>With LMF loadouts disabled, respawn restores the player’s starting Eden equipment.</li>
+<li>During warmup, Personal Arsenal lets players select clothing, weapons and attachments allowed for their current role, when enabled in Mission Settings.</li></ul>
+<p>Personal Arsenal does not add ammunition or supplies. Moving to smaller containers or switching to incompatible weapons can remove items or magazines that no longer fit.</p>
+</div></article><article class="article" data-page="ai-equipment" data-title="AI equipment" id="ai-equipment"><div class="page-heading"><h1>AI equipment</h1><p class="subtitle">Enemy units, gear, skill and vehicles.</p></div><div class="article-body"><p>Edit <code>settings/cfg_AI.sqf</code> to choose your enemy units, their weapons and their vehicles.</p>
+<p>Optional AI presets are supplied in <code>examples/loadouts/AI/</code>. Copy one into your mission as <code>settings/cfg_AI.sqf</code>, then check the required mods and set the appropriate <code>lmf_enemySide</code>.</p>
+<h2 id="ai-equipment-units">Enemy units</h2>
+<p>Set the enemy unit classnames near the bottom of the file, such as <code>_rifleman</code>, <code>_squadLeader</code>, <code>_medic</code>, <code>_crew</code> and <code>_pilot</code>. Choose the enemy side in <a href="#configuration-mission-settings">Mission settings</a>.</p>
+<h2 id="ai-equipment-gear">Clothing and weapons</h2>
+<p>Set <code>_enemyGear</code> to <code>true</code> for custom AI equipment, or <code>false</code> to keep the units’ original gear. You still need to configure the unit and vehicle classnames.</p>
+<p>Clothing pools include <code>_uniform</code>, <code>_vest</code>, <code>_headgear</code> and the backpack lists. Helicopter pilots and vehicle crews have their own clothing settings.</p>
+<p>Set weapons and magazines with entries such as <code>_rifle</code> and <code>_rifleAmmo</code>. Use <code>[]</code> for an ammunition list if you want LMF to pick compatible magazines.</p>
+<h2 id="ai-equipment-skill">AI skill</h2>
+<p><code>_enemySkill</code> sets the enemy skill preset: <code>0</code> untrained, <code>1</code> regular, <code>2</code> elite.</p>
+<h2 id="ai-equipment-vehicles">Vehicles</h2>
+<p>Set vehicle choices in lists such as <code>_car</code>, <code>_tank</code> and <code>_drones</code>. <code>_paraVehicle</code> chooses the transport aircraft for Paradrop QRF.</p>
+<p>When a list has multiple classnames, LMF picks one at random. Repeating a classname makes it more likely to be chosen.</p>
+<h2 id="ai-equipment-example">Example settings</h2>
+<p>Change the matching lines already in <code>cfg_AI.sqf</code>. These are example entries, not a separate script to run.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Edit these values inside cfg_AI.sqf</span>
+<span class="k">private</span> _enemyGear = <span class="k">true</span>; <span class="c1">// Equip enemy AI with your chosen gear</span>
+<span class="k">private</span> _enemySkill = <span class="mi">1</span>; <span class="c1">// Regular (0 = untrained, 2 = elite)</span>
+<span class="k">private</span> _rifle = [<span class="s2">"arifle_Katiba_F"</span>]; <span class="c1">// Rifle used by enemy AI</span>
+<span class="k">private</span> _rifleAmmo = []; <span class="c1">// Pick compatible magazines automatically</span>
+<span class="k">private</span> _tank = [<span class="s2">"O_MBT_02_cannon_F"</span>]; <span class="c1">// Example tank</span>
+</code></pre>
+</div></article><article class="article" data-page="briefing" data-title="Briefing" id="briefing"><div class="page-heading"><h1>Briefing</h1></div><div class="article-body">
+<p>Write the briefing in <code>settings/cfg_Briefing.sqf</code>. Players will find it in their mission diary.</p>
+<h2 id="briefing-structure">SMEAC briefing</h2>
+<p>LMF uses a simplified SMEAC-style briefing: <strong>Situation</strong> describes the setting and the forces involved, <strong>Mission</strong> says what players must accomplish, <strong>Execution</strong> covers the plan, and <strong>Administration</strong> covers transport and supplies.</p>
+<h2 id="briefing-example">Example: Atsalis air-defense raid</h2>
+<p>Here is a shortened mission briefing. Edit the corresponding entries in <code>cfg_Briefing.sqf</code> for your own mission.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Situation</span>
+<span class="k">private</span> _brfSituation = <span class="s2">"CSAT holds an air-defense outpost on Atsalis."</span>;
+<span class="k">private</span> _brfEnemyFaction = <span class="s2">"CSAT 108th Air Defense Regiment"</span>;
+<span class="k">private</span> _brfEnemy = [
+    [<span class="s2">"Composition"</span>, <span class="s2">"Defenders in fixed positions and on patrol."</span>],
+    [<span class="s2">"Threats"</span>, <span class="s2">"An HMG overlooks the landing area."</span>],
+    [<span class="s2">"Reinforcements"</span>, <span class="s2">"QRFs may arrive from the mainland."</span>]
+];
+<span class="k">private</span> _brfFriendFaction = <span class="s2">"NATO Task Force Aegis"</span>;
+<span class="k">private</span> _brfFriend = [
+    <span class="s2">"FOX: Norwegian Coastal Ranger Platoon (players)"</span>,
+    <span class="s2">"USS Liberty: Destroyer (AI)"</span>
+];
+
+<span class="c1">// Mission</span>
+<span class="k">private</span> _brfMission = <span class="s2">"FOX will destroy the radar and two S-400 launchers on Atsalis."</span>;
+
+<span class="c1">// Execution</span>
+<span class="k">private</span> _brfExecIntent = <span class="s2">"Land undetected, destroy the targets and extract."</span>;
+<span class="k">private</span> _brfExecConop = [
+    <span class="s2">"Phase I: Land at &lt;marker name='mrk_ip_a'&gt;IP Alpha&lt;/marker&gt;."</span>,
+    <span class="s2">"Phase II: Destroy the radar and launchers."</span>,
+    <span class="s2">"Phase III: Return to USS Liberty by RIB."</span>
+];
+<span class="k">private</span> _brfExecCoord = [
+    <span class="s2">"Maintain light and sound discipline."</span>,
+    <span class="s2">"Bring at least three satchel charges."</span>
+];
+
+<span class="c1">// Administration</span>
+<span class="k">private</span> _brfAdministration = [
+    <span class="s2">"Transport: RIBs aboard USS Liberty."</span>,
+    <span class="s2">"Supplies: Ordnance crate aboard USS Liberty."</span>
+];
+</code></pre>
+<p>The marker link in the example makes <strong>IP Alpha</strong> clickable in the briefing. Add a marker named <code>mrk_ip_a</code> in Eden for the link to work.</p>
+</div></article><article class="article" data-page="ai-spawning" data-title="AI Spawning" id="ai-spawning"><div class="page-heading"><h1>AI spawning</h1><p class="subtitle">Select an AI spawner, choose a group size and set up replacement waves.</p></div><div class="article-body"><p>Run AI spawners on the server, for example from <code>initServer.sqf</code> or a trigger with <code>if (isServer)</code>. Use <code>spawn</code> rather than <code>call</code>: these functions need time to create and equip the AI. Garrison and Patrol create one group; QRFs and Hunters can also send replacements.</p><p>With optional ZEN, Zeus can also spawn LMF AI, request supply drops, spawn configured vehicles, change player loadouts and use selected admin tools without writing SQF.</p>
+<h2 id="ai-spawning-choose-a-spawner">Choose a spawner</h2>
+<ul>
+<li><a href="#garrison">Garrison</a>: defenders in buildings and nearby gun positions.</li>
+<li><a href="#patrol">Patrol</a>: a group that patrols an area.</li>
+<li><a href="#infantry-qrf">Infantry QRF</a>: infantry assigned an Arma 3 <code>GUARD</code> waypoint, allowing them to respond to known enemy contacts.</li>
+<li><a href="#hunters">Hunters</a>: infantry that actively pursues players.</li>
+<li><a href="#vehicle-qrf">Vehicle QRF</a>: vehicles, helicopters and drones.</li>
+<li><a href="#para-qrf">Paradrop QRF</a>: aircraft delivering infantry or vehicles.</li>
+</ul>
+<h2 id="ai-spawning-infantry-group-sizes">Infantry group sizes</h2>
+<div class="table-wrap"><table><thead><tr><th>Type</th><th>Soldiers</th></tr></thead><tbody><tr><td><code>SQUAD</code></td><td>8</td></tr><tr><td><code>ATTEAM</code></td><td>4</td></tr><tr><td><code>TEAM</code></td><td>4</td></tr><tr><td><code>AATEAM</code></td><td>3</td></tr><tr><td><code>SENTRY</code></td><td>2</td></tr><tr><td><code>MGTEAM</code></td><td>4</td></tr></tbody></table></div>
+<p>Instead of a named group size, you can enter a number, such as <code>6</code>, to spawn six soldiers.</p>
+<h2 id="ai-spawning-spawn-once-or-use-waves">Spawn once or use waves</h2>
+<p><strong>One group:</strong> Leave out the ticket count. That group spawns once and receives its task.</p>
+<p><strong>Several waves:</strong> Add a ticket count. The first group counts too, so <code>3</code> means three groups in total:</p>
+<pre><code class="language-sqf" data-lang="sqf">[spawn_1, "TEAM", 3] spawn lmf_ai_fnc_spawnInfantryQrf;
+</code></pre>
+<p>Waves stop when a player is on the ground near the spawn point. A player in the air nearby delays the next wave. A single spawn is not subject to these checks.</p>
+<div class="table-wrap"><table><thead><tr><th>Rule</th><th>Infantry QRF / Hunters</th><th>Vehicle / Paradrop QRF</th></tr></thead><tbody><tr><td>Nearby player on the ground</td><td>Within <strong>500 m</strong></td><td>Within <strong>1,000 m</strong></td></tr><tr><td>Replacement delay</td><td>No additional delay</td><td>Default <strong>300 s</strong></td></tr><tr><td>When LMF can send another wave</td><td>When all soldiers in the previous infantry group are dead</td><td>When all members of the tracked group are dead, or the tracked vehicle is destroyed</td></tr></tbody></table></div>
+<h2 id="ai-spawning-eden-trigger">Spawn from an Eden trigger</h2><p>Place an Eden trigger where the QRF should appear. Set activation to the players’ side and <strong>Present</strong>; leave <strong>Repeatable</strong> off.</p><p>In the trigger’s <strong>On Activation</strong> field:</p><pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="k">if</span> (<span class="k">isServer</span>) <span class="k">then</span> {
+    [<span class="k">thisTrigger</span>, <span class="s2">"TEAM"</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnInfantryQrf</span>;
+};
+</code></pre><p>The trigger itself provides the spawn position. When activated, it spawns one four-soldier Infantry QRF at the trigger’s position.</p>
+</div></article><article class="article" data-page="garrison" data-title="Garrison" id="garrison"><div class="page-heading"><h1>Garrison</h1><p class="subtitle">Defenders for buildings and gun positions.</p></div><div class="article-body"><p>Creates infantry to defend nearby buildings and gun positions, including available weapons on vehicles. Run this on the server with <code>spawn</code>.</p>
+<h2 id="garrison-example">Example</h2>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Four defenders within 100 m of garrison_1</span>
+[garrison_1, <span class="s2">"TEAM"</span>, <span class="mi">100</span>, <span class="mi">1</span>, <span class="k">false</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnGarrison</span>;
+</code></pre>
+<h2 id="garrison-arguments">Arguments</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Spawn position</td><td>Object / [x,y,z] · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Infantry type or count</td><td>String / Number · default <code>"TEAM"</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Garrison radius in meters</td><td>Number · default <code>100</code></td></tr><tr><td><span class="arg-number">3</span></td><td>How to fill positions: <code>0</code> spread evenly, <code>1</code> fill one building at a time, <code>2</code> random</td><td>Number · default <code>1</code></td></tr><tr><td><span class="arg-number">4</span></td><td>Fill upper floors first (used with options <code>0</code> and <code>1</code>)</td><td>Boolean · default <code>false</code></td></tr></tbody></table></div>
+<h2 id="garrison-behavior">Behavior</h2>
+<p>The four soldiers look for positions in buildings and nearby weapons within 100 m of <code>garrison_1</code>. Some defenders may leave their posts when enemies appear. You can send them to another objective with <a href="#ai-tasks-converge">Converge</a>.</p>
+</div></article><article class="article" data-page="patrol" data-title="Patrol" id="patrol"><div class="page-heading"><h1>Patrol</h1><p class="subtitle">Infantry that patrols an area.</p></div><div class="article-body"><p>Creates infantry to patrol around a marker, object or position. Run this on the server with <code>spawn</code>.</p>
+<h2 id="patrol-example">Example</h2>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Four soldiers patrol within 200 m of mrk_patrol</span>
+[spawn_1, <span class="s2">"mrk_patrol"</span>, <span class="s2">"TEAM"</span>, <span class="mi">200</span>, <span class="s2">"SLOW"</span>, <span class="s2">"STAG COLUMN"</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnPatrol</span>;
+</code></pre>
+<h2 id="patrol-arguments">Arguments</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Spawn position</td><td>Object / [x,y,z] · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Center of the patrol area</td><td>Object / marker name / position · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Infantry type or count</td><td>String / Number · default <code>"TEAM"</code></td></tr><tr><td><span class="arg-number">3</span></td><td>Distance the patrol covers around its center, in meters</td><td>Number · default <code>200</code></td></tr><tr><td><span class="arg-number">4</span></td><td>Patrol speed setting (see below)</td><td>String · default <code>"SLOW"</code></td></tr><tr><td><span class="arg-number">5</span></td><td>Formation</td><td>String · default <code>"STAG COLUMN"</code></td></tr></tbody></table></div>
+<h2 id="patrol-patrol-speed">Patrol speed</h2>
+<div class="table-wrap"><table><thead><tr><th>Value</th><th>Behavior</th></tr></thead><tbody><tr><td><code>"SLOW"</code></td><td>SAFE / LIMITED</td></tr><tr><td><code>"FAST"</code></td><td>AWARE / NORMAL</td></tr><tr><td><code>"ATTACK"</code></td><td>AWARE / LIMITED; no animation-speed override</td></tr></tbody></table></div>
+<p>Four soldiers patrol within 200 m of <code>mrk_patrol</code>. After encountering enemies on land, they switch to combat and do not resume their patrol. Over water, LMF spawns a boat group.</p>
+</div></article><article class="article" data-page="infantry-qrf" data-title="Infantry QRF" id="infantry-qrf"><div class="page-heading"><h1>Infantry QRF</h1><p class="subtitle">Infantry reinforcements with optional waves.</p></div><div class="article-body"><p>Spawns an infantry group with an Arma 3 <code>GUARD</code> waypoint. Rather than staying in place to defend a fixed area, the group can respond to known enemy contacts using Arma’s guard behavior. Add tickets to send replacements after a group is eliminated. Run this on the server with <code>spawn</code>.</p>
+<h2 id="infantry-qrf-examples">Examples</h2>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[spawn_1, <span class="s2">"TEAM"</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnInfantryQrf</span>; <span class="c1">// One group of 4</span>
+[spawn_1, <span class="s2">"TEAM"</span>, <span class="mi">3</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnInfantryQrf</span>; <span class="c1">// 3 groups over time</span>
+</code></pre>
+<h2 id="infantry-qrf-arguments">Arguments</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Spawn position</td><td>Object / [x,y,z] · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Infantry type or count</td><td>String / Number · default <code>"TEAM"</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Number of groups to spawn in total</td><td>Number · <strong>optional</strong>; omit for one-shot, pass for waves</td></tr></tbody></table></div>
+<p>A one-time spawn gives you the new <code>GROUP</code> as a result if needed. For waves, a player on the ground within 500 m of the spawn point can stop further spawning. Over water, LMF spawns a boat group.</p>
+</div></article><article class="article" data-page="hunters" data-title="Hunters" id="hunters"><div class="page-heading"><h1>Infantry Hunters</h1><p class="subtitle">Infantry that hunts nearby players.</p></div><div class="article-body"><p>Creates infantry that pursues nearby players without needing to spot them first. Run this on the server with <code>spawn</code>.</p>
+<h2 id="hunters-examples">Examples</h2>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[spawn_1, <span class="s2">"TEAM"</span>, <span class="mi">1500</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnInfantryHunters</span>; <span class="c1">// 4 hunters, 1500 m range</span>
+[spawn_1, <span class="s2">"TEAM"</span>, <span class="mi">1500</span>, <span class="mi">3</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnInfantryHunters</span>; <span class="c1">// 3 groups over time</span>
+</code></pre>
+<h2 id="hunters-arguments">Arguments</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Spawn position</td><td>Object / [x,y,z] · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Infantry type or count</td><td>String / Number · default <code>"TEAM"</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Maximum distance to search for a player, measured from the group leader</td><td>Number · default <code>500</code></td></tr><tr><td><span class="arg-number">3</span></td><td>Number of groups to spawn in total</td><td>Number · <strong>optional</strong>; omit for one-shot</td></tr></tbody></table></div>
+<p>Hunters pursue the nearest eligible player within 1,500 m in these examples, excluding players in airborne aircraft. When only one Hunter remains, hunting stops and LMF tries to move the survivor into another eligible friendly group.</p>
+</div></article><article class="article" data-page="vehicle-qrf" data-title="Vehicle QRF" id="vehicle-qrf"><div class="page-heading"><h1>Vehicle QRF</h1><p class="subtitle">Ground vehicles, helicopters and drones.</p></div><div class="article-body"><p>Creates a vehicle with crew, and with infantry passengers for certain categories. Run this on the server with <code>spawn</code>.</p>
+<h2 id="vehicle-qrf-examples">Examples</h2>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[spawn_1, <span class="s2">"TANK"</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnVehicleQrf</span>; <span class="c1">// One tank</span>
+[spawn_1, <span class="s2">"HELITRANSPORT"</span>, <span class="mi">3</span>, <span class="mi">300</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnVehicleQrf</span>; <span class="c1">// 3 helicopter deliveries</span>
+[spawn_1, <span class="s2">"DRONE"</span>, <span class="mi">3</span>, <span class="mi">300</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnVehicleQrf</span>; <span class="c1">// 3 drone waves</span>
+</code></pre>
+<p>Each uses the vehicle classnames you selected in AI equipment .</p>
+<h2 id="vehicle-qrf-arguments">Arguments</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Spawn position (object direction, random for arrays)</td><td>Object / [x,y,z] · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Vehicle category</td><td>String · default <code>"TRUCK"</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Number of deliveries in total</td><td>Number · optional; omit for one-shot</td></tr><tr><td><span class="arg-number">3</span></td><td>Wait before spawning the next group or vehicle</td><td>Number · default <code>300</code> seconds</td></tr></tbody></table></div>
+<h2 id="vehicle-qrf-vehicle-categories">Vehicle categories</h2>
+<p><code>CAR</code> · <code>CARARMED</code> · <code>TRUCK</code> · <code>APC</code> · <code>TANK</code> · <code>HELITRANSPORT</code> · <code>HELIATTACK</code> · <code>DRONE</code></p>
+<p>For replacement waves, what counts as the previous wave depends on the vehicle type:</p>
+<div class="table-wrap"><table><thead><tr><th>Category</th><th>Result from a single spawn / what triggers the next wave</th></tr></thead><tbody><tr><td><code>CAR</code>, <code>TRUCK</code></td><td>Infantry group (<code>GROUP</code>)</td></tr><tr><td><code>APC</code>, <code>HELITRANSPORT</code></td><td>Passenger group (<code>GROUP</code>)</td></tr><tr><td><code>CARARMED</code>, <code>TANK</code>, <code>HELIATTACK</code>, <code>DRONE</code></td><td>Vehicle (<code>OBJECT</code>)</td></tr></tbody></table></div>
+<p>Infantry dismounts from <code>CAR</code>, <code>TRUCK</code> and <code>APC</code> after nearby ground contact. A <code>HELITRANSPORT</code> drops off its passengers and leaves. Waves usually wait 300 seconds after the previous group or vehicle is lost.</p>
+<h2 id="vehicle-qrf-drones">Drones</h2>
+<p>Add the drone classnames you want to use to <code>_drones</code> in <code>settings/cfg_AI.sqf</code>. You can mix UAVs and UGVs. LMF chooses a random entry; an empty list spawns no drones.</p>
+<p>Compatible IED and RF drones can also use their special attacks.</p>
+</div></article><article class="article" data-page="para-qrf" data-title="Paradrop QRF" id="para-qrf"><div class="page-heading"><h1>Paradrop QRF</h1><p class="subtitle">Drop infantry or vehicles from a transport aircraft.</p></div><div class="article-body"><p>Creates an aircraft that drops infantry or a vehicle, then departs. Run this on the server with <code>spawn</code>.</p>
+<h2 id="para-qrf-examples">Examples</h2>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[spawn_1] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnParadropQrf</span>; <span class="c1">// Autonomous infantry drop</span>
+[spawn_1, <span class="s2">"mrk_dropZone"</span>, <span class="mi">200</span>, <span class="s2">""</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnParadropQrf</span>; <span class="c1">// Infantry at a fixed drop zone</span>
+[spawn_1, <span class="s2">"mrk_dropZone"</span>, <span class="mi">200</span>, <span class="s2">"TANK"</span>, <span class="mi">3</span>, <span class="mi">300</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_spawnParadropQrf</span>; <span class="c1">// 3 tank drops</span>
+</code></pre>
+<p>Without a drop zone, the aircraft uses an Arma <code>GUARD</code> waypoint and drops its infantry when it comes near players. To control the drop location, use a marker or trigger for a fixed drop zone. The third example delivers three tank drops over time.</p>
+<h2 id="para-qrf-arguments">Arguments</h2>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Where the aircraft starts; above 20 m or over water it starts in the air</td><td>Object / [x,y,z] · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Drop zone (optional). Omit for autonomous flight and drop behavior.</td><td>String / Object / Location / Array · default <code>[0,0,0]</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Flight height in meters</td><td>Number · default <code>200</code></td></tr><tr><td><span class="arg-number">3</span></td><td>Payload: empty string for infantry; vehicle classname/category</td><td>String · default <code>""</code></td></tr><tr><td><span class="arg-number">4</span></td><td>Number of drops in total</td><td>Number · optional; omit for one-shot</td></tr><tr><td><span class="arg-number">5</span></td><td>Seconds to wait before the next drop</td><td>Number · default <code>300</code></td></tr></tbody></table></div>
+<h2 id="para-qrf-payloads-and-drop-zones">Payloads and drop zones</h2>
+<p>An infantry drop brings one MG team and one AT team. For vehicles, choose <code>CAR</code>, <code>CARARMED</code>, <code>TRUCK</code>, <code>APC</code>, <code>TANK</code> or a valid vehicle classname.</p>
+<p>A fixed drop zone can be a marker name, trigger or location. Leaving it out uses autonomous mode; <code>[0,0,0]</code> explicitly selects the same mode. Other position arrays are not supported as drop zones.</p>
+<p>For a single drop, the result is the infantry group (<code>GROUP</code>) or the vehicle (<code>OBJECT</code>). The result can arrive before the drop has landed. With replacement waves, LMF waits for the dropped vehicle to be destroyed before replacing a vehicle payload, even if the infantry has already dismounted.</p>
+</div></article><article class="article" data-page="ai-tasks" data-title="AI Tasks" id="ai-tasks">
+<div class="page-heading"><h1>AI tasks</h1><p class="subtitle">Give an objective to existing AI groups.</p></div>
+<div class="article-body">
+<h2 id="ai-tasks-converge">Converge</h2>
+<p>Send selected LMF enemy groups toward an objective. Choose the groups using <strong>tags</strong>, such as <code>PATROL</code> or <code>GARRISON</code>. LMF assigns tags automatically when it spawns a group. Group names and callsigns do not affect selection.</p>
+<p>Run Converge where the AI groups are owned (normally the server). Use <code>call</code> to issue the order; the groups then move toward the objective.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Send patrols and QRFs to the objective</span>
+[objective_1, [<span class="s2">"PATROL"</span>, <span class="s2">"QRF"</span>]] <span class="k">call</span> <span class="nf">lmf_ai_fnc_taskConverge</span>;
+
+<span class="c1">// Send garrison groups instead</span>
+[objective_1, <span class="s2">"GARRISON"</span>] <span class="k">call</span> <span class="nf">lmf_ai_fnc_taskConverge</span>;
+
+<span class="c1">// Send all eligible LMF combat groups</span>
+[objective_1, <span class="s2">"ALL"</span>] <span class="k">call</span> <span class="nf">lmf_ai_fnc_taskConverge</span>;
+</code></pre>
+<p>When you supply several tags, groups matching any of them are selected. Tags are not case-sensitive.</p>
+<h2 id="ai-tasks-tags">Available tags</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Tag</th><th>Selects</th></tr></thead>
+<tbody>
+<tr><td><code>PATROL</code></td><td>Groups spawned as patrols.</td></tr>
+<tr><td><code>GARRISON</code></td><td>Groups spawned to defend buildings and gun positions.</td></tr>
+<tr><td><code>HUNTER</code></td><td>Groups spawned to hunt players.</td></tr>
+<tr><td><code>QRF</code></td><td>QRF groups, including groups previously redirected with Converge.</td></tr>
+<tr><td><code>INFANTRY</code></td><td>Infantry groups, including some vehicle passengers.</td></tr>
+<tr><td><code>VEHICLE</code></td><td>Groups operating ground vehicles.</td></tr>
+<tr><td><code>AIR</code></td><td>Groups operating aircraft.</td></tr>
+<tr><td><code>BOAT</code></td><td>Groups operating boats.</td></tr>
+<tr><td><code>DRONE</code></td><td>UAVs and UGVs. These also have an <code>AIR</code> or <code>VEHICLE</code> tag.</td></tr>
+<tr><td><code>TRANSPORT</code></td><td>Transport-only groups. These are excluded from Converge.</td></tr>
+</tbody>
+</table></div>
+<p>A group can have several tags. For example, an infantry QRF has both <code>INFANTRY</code> and <code>QRF</code>. A patrol that becomes a QRF keeps its <code>PATROL</code> tag.</p>
+<p><code>ALL</code> is a special selection option, not a group tag. It selects every eligible LMF combat group. Ordinary Eden-placed groups and transport-only aircraft are excluded, even with <code>ALL</code>. Groups still being inserted or prepared are not redirected.</p>
+<h2 id="ai-tasks-arguments">Arguments</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead>
+<tbody>
+<tr><td><span class="arg-number">0</span></td><td>Objective: object or <code>[x,y,z]</code> position</td><td>Object / Array · <strong>required</strong></td></tr>
+<tr><td><span class="arg-number">1</span></td><td>One tag, a list of tags, or <code>ALL</code> (not group names)</td><td>String / String array · <strong>required</strong></td></tr>
+<tr><td><span class="arg-number">2</span></td><td>How far boats search for a landing spot</td><td>Number · default <code>2000</code> m</td></tr>
+</tbody>
+</table></div>
+<p>The third argument is for boat landing, not a limit on how far away groups can be. Selected groups leave their previous tasks and head toward the objective. Garrison groups abandon their positions, and Hunters stop hunting.</p>
+</div></article><article class="article" data-page="passenger-paradrop" data-title="Passenger Paradrop" id="passenger-paradrop"><div class="page-heading"><h1>Passenger Paradrop</h1><p class="subtitle">Drop passengers from an existing aircraft.</p></div><div class="article-body">
+<p>Makes an existing aircraft fly to an approach point, then drop its passengers at the drop zone. The pilot stays aboard. Run this with <code>spawn</code> where the aircraft is owned (normally the server), so the flight and drop can continue over time.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Approach the waypoint, then drop passengers over mrk_dropZone</span>
+[plane_1, <span class="s2">"mrk_dropZone"</span>, <span class="s2">"mrk_dropZone_WP"</span>, <span class="mi">220</span>, <span class="mi">140</span>, <span class="k">false</span>] <span class="k">spawn</span> <span class="nf">lmf_paradrop_fnc_paradropPassengers</span>;
+</code></pre>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Existing aircraft with AI pilot</td><td>Object · required</td></tr><tr><td><span class="arg-number">1</span></td><td>Drop-zone area marker or trigger</td><td>String / Object · required</td></tr><tr><td><span class="arg-number">2</span></td><td>Approach waypoint marker name</td><td>String · required</td></tr><tr><td><span class="arg-number">3</span></td><td>Approach flight height</td><td>Number · required, meters</td></tr><tr><td><span class="arg-number">4</span></td><td>Drop height after approach point</td><td>Number · required, meters</td></tr><tr><td><span class="arg-number">5</span></td><td>Start the aircraft in the air (moves it up and gives it forward speed)</td><td>Boolean · required</td></tr></tbody></table></div>
+<p>Here <code>plane_1</code> approaches <code>mrk_dropZone_WP</code> and drops its passengers at <code>mrk_dropZone</code>. Use an aircraft with an AI pilot. Players and AI can be passengers.</p>
+</div></article><article class="article" data-page="fire-support" data-title="Fire Support" id="fire-support"><div class="page-heading"><h1>Fire Support</h1><p class="subtitle">Artillery and missile strikes against a selected object.</p></div><div class="article-body">
+<p>Orders <code>art1</code> to fire at <code>target_1</code>. For artillery, this example requests six rounds after a 10-second preparation delay. An MK41 VLS fires one missile regardless of the number of rounds. Run the strike on the server with <code>spawn</code> to allow for the delay.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Request 6 artillery rounds at target_1 after preparation</span>
+[art1, target_1, <span class="mi">10</span>, <span class="k">true</span>, <span class="mi">6</span>] <span class="k">spawn</span> <span class="nf">lmf_ai_fnc_fireSupportAtTarget</span>;
+</code></pre>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>AI artillery or VLS battery</td><td>Object · default <code>objNull</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Target object. Must pass the Arma <code>alive</code> check; not a marker or a position.</td><td>Object · default <code>objNull</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Preparation delay</td><td>Number · default <code>10</code> s</td></tr><tr><td><span class="arg-number">3</span></td><td>Mark as a player-requested strike (enables long-range radio messages and VLS BFT tracking)</td><td>Boolean · default <code>false</code></td></tr><tr><td><span class="arg-number">4</span></td><td>Rounds for artillery; MK41 VLS always fires one missile</td><td>Number · default <code>1</code></td></tr></tbody></table></div>
+<p>Use an Eden object for <code>target_1</code>, not a marker. The object must return <code>true</code> for <code>alive target_1</code>; it does not need to be a soldier. Busy batteries reject new orders. Normal cooldown is about 10 seconds for artillery or 60 seconds for VLS.</p>
+</div></article><article class="article" data-page="supply-drop" data-title="Supply Drop" id="supply-drop"><div class="page-heading"><h1>Supply Drop</h1><p class="subtitle">Deliver supplies and vehicles by air.</p></div><div class="article-body"><p>Sends an aircraft from a spawn marker to a drop marker, where it parachutes down a crate or vehicle.</p>
+<h2 id="supply-drop-deliver-supplies-from-a-script">Deliver supplies from a script</h2>
+<p>Run this on the server with <code>spawn</code>. The aircraft and delivery are handled over time.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Deliver a crate from mrk_supplySpawn to mrk_supplyDrop</span>
+[<span class="s2">"mrk_supplySpawn"</span>, <span class="s2">"mrk_supplyDrop"</span>, <span class="s2">"C_Plane_Civil_01_F"</span>, <span class="s2">"B_supplyCrate_F"</span>] <span class="k">spawn</span> <span class="nf">lmf_supplyDrop_fnc_deliverSupplies</span>;
+</code></pre>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Spawn position</td><td>String / Object / Location / Group / Task / Array · default <code>objNull</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Drop position</td><td>String / Object / Location / Group / Task / Array · default <code>objNull</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Transport classname</td><td>String · default <code>"C_Plane_Civil_01_F"</code></td></tr><tr><td><span class="arg-number">3</span></td><td>Classname of the crate or vehicle to deliver</td><td>String · default <code>"B_supplyCrate_F"</code></td></tr><tr><td><span class="arg-number">4</span></td><td>Optional configured supply crate category</td><td>String · default <code>""</code></td></tr></tbody></table></div>
+<p>In this example, the aircraft starts at <code>mrk_supplySpawn</code> and drops a crate at <code>mrk_supplyDrop</code>. To deliver the configured SMALL supply crate, use:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[<span class="s2">"mrk_supplySpawn"</span>, <span class="s2">"mrk_supplyDrop"</span>, <span class="nf">lmf_supplyDropAircraft</span>, <span class="s2">""</span>, <span class="s2">"SMALL"</span>] <span class="k">spawn</span> <span class="nf">lmf_supplyDrop_fnc_deliverSupplies</span>;
+</code></pre>
+<p>Crate categories are <code>LARGE</code>, <code>SMALL</code>, <code>EXPLOSIVES</code>, <code>MEDICAL</code> and <code>VEHICLE</code>. The chosen category must be enabled in <a href="#configuration-supply-drop">Supply Drop settings</a>.</p>
+<h2 id="supply-drop-player-requests">Player requests</h2>
+<p>To let players request Supply Drops, set <code>lmf_supplyDropLimit</code> above <code>0</code> and add a marker called <code>respawn</code>. Players need a map and a supported long-range ACRE radio, and warmup must be over. Requests have a shared 30-second cooldown.</p>
+<p>If <code>lmf_supplyDropVehicles</code> is enabled, players can request vehicles listed in <code>lmf_groundVehicles</code>. Calls made directly from scripts and ZEN deliveries do not use the player-request quota or cooldown.</p>
+<p>If the delivery aircraft is destroyed before dropping its cargo, that delivery is lost. Cargo that was already dropped continues descending. With BFT enabled, the landing position can be marked on the map.</p>
+</div></article><article class="article" data-page="forward-deploy" data-title="Forward Deploy" id="forward-deploy">
+<div class="page-heading"><h1>Forward Deploy</h1><p class="subtitle">Let groups choose a starting position during warmup.</p></div>
+<div class="article-body">
+<p>Forward Deploy lets group leaders choose where their group will deploy when warmup ends. Groups can also bring vehicles and other registered assets.</p>
+<h2 id="forward-deploy-settings">Mission settings</h2>
+<p>In <code>settings/cfg_Mission.sqf</code>, enable both <code>lmf_warmup</code> and <code>lmf_forwardDeploy</code>. Set <code>lmf_forwardDeploy_height</code> to <code>0</code> for ground deployment, or a positive height in metres for an airdrop. Airdrop heights below 100 m are treated as 100 m.</p>
+<h2 id="forward-deploy-eden">Register vehicles and assets in Eden</h2>
+<p>For each vehicle or other asset that groups can claim, put this in the object's <strong>Init</strong> field in Eden:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="k">this</span> setVariable [<span class="s2">"lmf_forwardDeploy_registration"</span>, <span class="k">true</span>];
+</code></pre>
+<p>Objects without this line are not available for Forward Deploy.</p>
+<h2 id="forward-deploy-in-mission">During warmup</h2>
+<p>Group leaders need a map. They use <strong>ACE Self-Interact → Register Forward Deploy</strong>, then left-click on the map to choose a position. Shift + left-click sets the direction; closing the map confirms it. They can cancel through <strong>Unregister Forward Deploy</strong>.</p>
+<p>Registered assets have <strong>Claim Vehicle</strong> and <strong>Unclaim Vehicle</strong> ACE interactions. LMF deploys the registered groups and claimed assets shortly after warmup ends, on the ground or by parachute depending on the height setting.</p>
+</div></article><article class="article" data-page="bft" data-title="Blue Force Tracking" id="bft"><div class="page-heading"><h1>Blue Force Tracking</h1><p class="subtitle">Map markers for groups and objects.</p></div><div class="article-body"><p>Blue Force Tracking (BFT) shows friendly groups and chosen objects on the map. Enable <code>lmf_bft</code> in <code>settings/cfg_Mission.sqf</code>.</p>
+<h2 id="bft-callsigns">Callsigns</h2>
+<p>Choose available callsigns in <code>lmf_bftInfantryCallsigns</code>, <code>lmf_bftGroundCallsigns</code> and <code>lmf_bftAirCallsigns</code>. Use an empty list for any category you want to hide from callsign selection; tracking still works.</p><p>Group leaders choose their callsign and map icon through ACE self-interaction. LMF shows the available choices from your mission settings.</p>
+<h2 id="bft-track-an-object">Track an object</h2>
+<p>Track a vehicle, supply crate or other mission object with a map icon that follows its position as it moves. Call this on the server; LMF shares the live tracking with players who have a map and BFT enabled, including players who join later.</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[vehicle_1, <span class="s2">"loc_car"</span>, <span class="s2">"ColorWEST"</span>, [<span class="mi">0.75</span>, <span class="mi">0.75</span>], <span class="s2">"Vehicle"</span>] <span class="k">call</span> <span class="nf">lmf_bft_fnc_trackObject</span>;
+</code></pre>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Object to track on the map</td><td>Object · default <code>objNull</code></td></tr><tr><td><span class="arg-number">1</span></td><td>Marker type</td><td>String · default <code>"mil_dot"</code></td></tr><tr><td><span class="arg-number">2</span></td><td>Marker color (classname from <code>CfgMarkerColors</code>)</td><td>String · default <code>"ColorWEST"</code></td></tr><tr><td><span class="arg-number">3</span></td><td>Icon scale [width, height]</td><td>Number array · default <code>[1,1]</code></td></tr><tr><td><span class="arg-number">4</span></td><td>Icon text</td><td>String · default <code>""</code></td></tr><tr><td><span class="arg-number">5</span></td><td>Seconds between checks to update marker availability and cleanup</td><td>Number · default <code>0.25</code></td></tr><tr><td><span class="arg-number">6</span></td><td>Stop tracking when <code>alive</code> becomes <code>false</code> for the object</td><td>Boolean · default <code>true</code></td></tr><tr><td><span class="arg-number">7</span></td><td>Rotate with object</td><td>Boolean · default <code>false</code></td></tr><tr><td><span class="arg-number">8</span></td><td>Seconds to show the marker. Use a negative number for no time limit</td><td>Number · default <code>-1</code></td></tr><tr><td><span class="arg-number">9</span></td><td>Draw an outline around the icon and a shadow behind the text</td><td>Boolean · default <code>false</code></td></tr></tbody></table></div>
+<p>Here <code>vehicle_1</code> is the Eden variable name of the object being tracked. The icon follows the vehicle rather than marking just its starting position. Set argument 7 to <code>true</code> if the icon should also rotate with the object.</p>
+</div></article><article class="article" data-page="utilities" data-title="Messages &amp; Utilities" id="utilities"><div class="page-heading"><h1>Messages &amp; utilities</h1><p class="subtitle">Messages and notifications.</p></div><div class="article-body"><h2 id="utilities-ace-messages">ACE messages</h2>
+<p>This displays an “HQ” message on the client running the code, not automatically on every player’s screen:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[<span class="s2">"HQ"</span>, <span class="s2">"Transport is inbound."</span>] <span class="k">call</span> <span class="nf">lmf_notifications_fnc_showAceMessage</span>;
+</code></pre>
+<div class="table-wrap"><table><thead><tr><th>#</th><th>Argument</th><th>Type / default</th></tr></thead><tbody><tr><td><span class="arg-number">0</span></td><td>Title</td><td>String · required</td></tr><tr><td><span class="arg-number">1</span></td><td>Message (structured text supported)</td><td>String · required</td></tr><tr><td><span class="arg-number">2</span></td><td>Icon image path; use an empty string for no icon</td><td>String · default radio icon</td></tr><tr><td><span class="arg-number">3</span></td><td>Message box height in ACE units</td><td>Number · default <code>3.3</code></td></tr><tr><td><span class="arg-number">4</span></td><td>Message box width in ACE units</td><td>Number · default <code>12</code></td></tr><tr><td><span class="arg-number">5</span></td><td>Sound name; empty for silence</td><td>String · default <code>"TacticalPing4"</code></td></tr><tr><td><span class="arg-number">6</span></td><td>Icon scale</td><td>Number · default <code>1.45</code></td></tr><tr><td><span class="arg-number">7</span></td><td>Show the message text in the error color</td><td>Boolean · default <code>false</code></td></tr></tbody></table></div>
+<p>To show the same message to all connected players on a dedicated server, run this on the server instead. The <code>-2</code> target sends it to clients, not the server itself:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf">[<span class="s2">"HQ"</span>, <span class="s2">"Transport is inbound."</span>] <span class="k">remoteExec</span> [<span class="s2">"lmf_notifications_fnc_showAceMessage"</span>, -<span class="mi">2</span>];
+</code></pre>
+<p>Optional arguments set the icon, sound, text box dimensions and error color. ACE controls how long the message appears.</p>
+<h2 id="utilities-standard-notifications">Standard notifications</h2>
+<p>Use standard notifications for custom messages during the mission. From a server-side script or a server-activated trigger, send the notification to all connected players:</p>
+<pre class="syntax"><code class="language-sqf" data-lang="sqf"><span class="c1">// Show a notification on every connected player's screen</span>
+[<span class="s2">"New task received"</span>] <span class="k">remoteExec</span> [<span class="s2">"lmf_notifications_fnc_showNotification"</span>, -<span class="mi">2</span>];
+</code></pre>
+<p><code>-2</code> targets clients, not the dedicated server. Use this after LMF has initialized; the message is shown once to players currently connected, not replayed to players joining later. LMF handles victory and defeat notifications as part of ending the mission.</p>
+</div></article></div></main>
+<dialog aria-label="Search guide" class="search-dialog" id="searchDialog"><div class="search-row"><svg aria-hidden="true" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" viewbox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.6"></circle><path d="m16 16 5 5"></path></svg><input aria-label="Search query" autocomplete="off" id="searchInput" placeholder="Search settings, functions and topics..." type="search"/><button class="search-close" id="searchClose" type="button">ESC</button></div><div class="search-results" id="searchResults"></div><div class="search-foot"><span>Search all sections</span><span><kbd>↵</kbd> open result   <kbd>ESC</kbd> close</span></div></dialog><div aria-live="polite" class="toast" id="toast" role="status"></div>
+<div hidden="" id="tocLinks"></div><script>
+(()=>{
+'use strict';
+const articles=[...document.querySelectorAll('.article')],links=[...document.querySelectorAll('.sb-link')],pages=new Map(articles.map(a=>[a.dataset.page,a]));
+const sidebar=document.getElementById('sidebar'),cover=document.getElementById('drawerCover'),toc=document.getElementById('tocLinks'),toast=document.getElementById('toast');
+let current='start',toastTimer=null;
+function shortText(s,max=150){return (s||'').replace(/\s+/g,' ').trim().slice(0,max)}
+function notify(s){toast.textContent=s;toast.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('visible'),1750)}
+function closeDrawer(){sidebar.classList.remove('open');cover.classList.remove('open');document.getElementById('menuButton').setAttribute('aria-expanded','false')}
+function buildToc(page){toc.replaceChildren();let headings=[...page.querySelectorAll('h2,h3')];for(const h of headings){const a=document.createElement('a');a.href='#'+h.id;a.textContent=h.textContent.replace('#','').trim();if(h.tagName==='H3')a.className='sub';toc.appendChild(a)}}
+function getPageForHash(id){if(pages.has(id))return id;const el=document.getElementById(id);if(!el)return null;const article=el.closest('.article');return article?.dataset.page||null}
+function navigate(id,scroll=true){const key=getPageForHash(id)||'start';const page=pages.get(key);if(!page)return;articles.forEach(a=>a.classList.toggle('active',a===page));links.forEach(a=>{let active=a.dataset.page===key;a.classList.toggle('active',active);if(active){a.setAttribute('aria-current','page');a.scrollIntoView({block:'nearest'});}else a.removeAttribute('aria-current')});current=key;buildToc(page);document.title=page.dataset.title+' · LMF Mission Maker Guide';closeDrawer();if(scroll){requestAnimationFrame(()=>{if(id!==key&&document.getElementById(id)){document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'})}else window.scrollTo({top:0,behavior:'instant'});updateProgress()})}else updateProgress();markToc()}
+function route(){const id=decodeURIComponent(location.hash.substring(1))||'start';navigate(id)}
+window.addEventListener('hashchange',route);route();
+document.getElementById('menuButton').addEventListener('click',()=>{let opening=!sidebar.classList.contains('open');sidebar.classList.toggle('open',opening);cover.classList.toggle('open',opening);document.getElementById('menuButton').setAttribute('aria-expanded',String(opening))});cover.addEventListener('click',closeDrawer);
+let headers={};function markToc(){const hs=[...pages.get(current).querySelectorAll('h2,h3')];let closest=hs[0]?.id;for(const h of hs){if(h.getBoundingClientRect().top<175)closest=h.id;else break;}toc.querySelectorAll('a').forEach(a=>a.classList.toggle('active',a.hash==='#'+closest))}
+function updateProgress(){const d=document.documentElement;const max=d.scrollHeight-d.clientHeight;document.getElementById('progress').style.width=(max>0?Math.max(0,Math.min(100,d.scrollTop/max*100)):0)+'%'}
+window.addEventListener('scroll',()=>{markToc();updateProgress()},{passive:true});window.addEventListener('resize',updateProgress,{passive:true});
+for(const pre of document.querySelectorAll('.article-body pre')){const shell=document.createElement('div');shell.className='code-shell';const h=document.createElement('div');h.className='code-head';const lang=pre.querySelector('code')?.dataset.lang||'TEXT';h.innerHTML='<span class="code-tag">'+(lang.toUpperCase())+'</span>';const btn=document.createElement('button');btn.type='button';btn.className='copy-btn';btn.setAttribute('aria-label','Copy '+lang+' code');btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg><span>Copy</span>';btn.addEventListener('click',async()=>{const raw=pre.querySelector('code')?.textContent||pre.textContent;try{if(navigator.clipboard&&window.isSecureContext)await navigator.clipboard.writeText(raw);else{const t=document.createElement('textarea');t.value=raw;t.style.cssText='position:fixed;left:-9999px;top:0';document.body.appendChild(t);t.select();if(!document.execCommand('copy'))throw Error('Copy blocked');t.remove()}btn.classList.add('copied');btn.lastElementChild.textContent='Copied';notify('Code copied');setTimeout(()=>{btn.classList.remove('copied');btn.lastElementChild.textContent='Copy'},1500)}catch(e){notify('Copy unavailable: select the code manually')}});h.appendChild(btn);pre.before(shell);shell.append(h,pre)}
+// Per-section search index includes full heading context and page text for discoverability.
+const items=[];for(const p of articles){const ph=p.dataset.title;items.push({title:ph,page:ph,id:p.dataset.page,description:shortText(p.querySelector('.subtitle')?.textContent,170),haystack:p.textContent.toLowerCase(),rank:0});const hs=[...p.querySelectorAll('h2,h3')];for(let i=0;i<hs.length;i++){const h=hs[i],parts=[],next=hs[i+1];let el=h.nextElementSibling;while(el&&el!==next&&!/^H[23]$/.test(el.tagName)){parts.push(el.textContent||'');el=el.nextElementSibling}const body=parts.join(' ');items.push({title:shortText(h.textContent.replace('#','')),page:ph,id:h.id,description:shortText(body,190),haystack:(h.textContent+' '+body).toLowerCase(),rank:1})}}
+const dialog=document.getElementById('searchDialog'),searchInput=document.getElementById('searchInput'),results=document.getElementById('searchResults');
+function escapeHTML(s){return s.replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function search(q){const t=q.toLowerCase().trim();results.replaceChildren();if(!t){results.innerHTML='<div class="search-empty">Search settings, functions or topics.<br>Try “spawnParadropQrf”, “respawnTickets”, or “cargo”.</div>';return}let matches=items.map(x=>({...x,score:x.title.toLowerCase().includes(t)?0:x.haystack.includes(t)?1:9})).filter(x=>x.score<9).sort((a,b)=>a.score-b.score||a.rank-b.rank||a.title.localeCompare(b.title)).slice(0,20);if(!matches.length){results.innerHTML='<div class="search-empty">No matches for “'+escapeHTML(q)+'”</div>';return}for(const m of matches){let a=document.createElement('a');a.className='search-result';a.href='#'+m.id;a.innerHTML='<span class="search-title">'+escapeHTML(m.title)+'</span><span class="search-page">'+escapeHTML(m.page)+'</span><div class="search-excerpt">'+escapeHTML(m.description)+'</div>';a.addEventListener('click',()=>dialog.close());results.append(a)}}
+function openSearch(){closeDrawer();if(!dialog.open)dialog.showModal();searchInput.value='';search('');requestAnimationFrame(()=>searchInput.focus())}
+document.getElementById('searchButton').addEventListener('click',openSearch);document.getElementById('searchClose').addEventListener('click',()=>dialog.close());searchInput.addEventListener('input',()=>search(searchInput.value));searchInput.addEventListener('keydown',e=>{if(e.key==='Enter'){const first=results.querySelector('a.search-result');if(first){e.preventDefault();first.click()}}if(e.key==='ArrowDown'){const first=results.querySelector('a.search-result');if(first){e.preventDefault();first.focus()}}});
+dialog.addEventListener('click',e=>{if(e.target===dialog)dialog.close()});
+window.addEventListener('keydown',e=>{const inputFocused=e.target instanceof HTMLElement && (e.target.matches('input,textarea')||e.target.isContentEditable);if((e.key==='/'&&!inputFocused)||(e.key.toLowerCase()==='k'&&(e.ctrlKey||e.metaKey))){e.preventDefault();openSearch()}if(e.key==='Escape')closeDrawer()});
+window.addEventListener('click',e=>{const a=e.target.closest('a[href^="#"]');if(a&&a.hash===location.hash){const id=decodeURIComponent(a.hash.slice(1));navigate(id)}});
+})();
+</script><div hidden="True" id="progress"></div></body></html>
