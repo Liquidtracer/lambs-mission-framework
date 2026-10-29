@@ -76,6 +76,7 @@ Configure the enemy unit classnames in `settings/cfg_AI.sqf` before spawning AI.
 ### 1. Mark three spawn positions in Eden
 
 Place three empty **Game Logics** and set their **Variable Name** in Eden:
+> _Assets > System(F5) > Logic Entities > Objects > Game Logic_
 
 - `garrison_1` – place it inside the village, near buildings.
 - `patrol_1` – place it just outside the village.
@@ -103,8 +104,17 @@ if (isServer) then {
 
 `SQUAD` creates eight soldiers and `TEAM` creates four. The values `75` and `200` set the garrison and patrol radii in metres.
 
+<a id="first-mission-markers"></a>
+### 3. Add markers
+
+Place relevent markers within your area of operations to inform players of objectives or known threats.
+> _Assets > Markers(F6) > Icons_
+
+> [!TIP]
+> It's good practice to keep marker variable names memorable as it's useful to reference them within `settings/cfg_Briefing.sqf`
+
 <a id="first-mission-reinforcements"></a>
-### 3. Optional: add reinforcements
+### 4. Optional: add reinforcements
 
 To create three QRF groups over time instead of one, replace the third line with:
 
